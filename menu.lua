@@ -5,9 +5,8 @@
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v7.0 - Production Grade (FULL)
+--  MUSLIM MENU v7.0 - Production Grade (FULLY FIXED)
 --  by Tormentor412
---  Architecture: MVC + Event-Driven + Glassmorphism UI
 -- ============================================================
 
 -- ============================================================
@@ -23,7 +22,7 @@ local CONFIG = {
 }
 
 -- ============================================================
---  [2] PREMIUM THEMES (Glassmorphism + Neumorphism)
+--  [2] PREMIUM THEMES
 -- ============================================================
 local THEMES = {
     midnight = {
@@ -95,7 +94,6 @@ local currentTheme = "midnight"
 -- ============================================================
 local player = game:GetService("Players").LocalPlayer
 local tweenService = game:GetService("TweenService")
-local userInput = game:GetService("UserInputService")
 
 -- ============================================================
 --  [4] GUI CREATION
@@ -129,43 +127,9 @@ function Animation:fadeOut(obj, duration)
 end
 
 -- ============================================================
---  [6] GLASSMORPHISM UI COMPONENTS
+--  [6] UI COMPONENTS
 -- ============================================================
 local UI = {}
-
-function UI:createGlassFrame(parent, size, pos, transparency)
-    local frame = Instance.new("Frame")
-    frame.Size = size
-    frame.Position = pos
-    frame.BackgroundColor3 = THEMES[currentTheme].glass
-    frame.BackgroundTransparency = transparency or 0.15
-    frame.BorderSizePixel = 0
-    frame.Parent = parent
-    
-    local blur = Instance.new("BlurEffect")
-    blur.Size = 8
-    blur.Parent = frame
-    
-    local corners = Instance.new("UICorner")
-    corners.CornerRadius = UDim.new(0, 16)
-    corners.Parent = frame
-    
-    local glow = Instance.new("Frame")
-    glow.Size = UDim2.new(1, -4, 1, -4)
-    glow.Position = UDim2.new(0, 2, 0, 2)
-    glow.BackgroundColor3 = THEMES[currentTheme].glass
-    glow.BackgroundTransparency = 0.9
-    glow.BorderSizePixel = 1
-    glow.BorderColor3 = THEMES[currentTheme].accent
-    glow.BorderTransparency = 0.5
-    glow.Parent = frame
-    
-    local glowCorners = Instance.new("UICorner")
-    glowCorners.CornerRadius = UDim.new(0, 14)
-    glowCorners.Parent = glow
-    
-    return frame
-end
 
 function UI:createButton(parent, text, pos, size, callback)
     local btn = Instance.new("TextButton")
@@ -571,4 +535,45 @@ local espContainer, espToggle, espKnob = UI:createToggle(
 
 createThemeSelector(frame)
 
-loc
+local restartBtn = UI:createButton(
+    frame,
+    "⟳ Перезапустить",
+    UDim2.new(0.05, 0, 0.82, 0),
+    UDim2.new(0.4, 0, 0, 40),
+    function()
+        Animation:fadeOut(frame, 0.2)
+        wait(0.2)
+        frame.Visible = false
+        wait(0.3)
+        frame.Visible = true
+        Animation:fadeIn(frame, 0.2)
+    end
+)
+
+local siteBtn = UI:createButton(
+    frame,
+    "🌐 Сайт",
+    UDim2.new(0.55, 0, 0.82, 0),
+    UDim2.new(0.4, 0, 0, 40),
+    function()
+        setclipboard(CONFIG.WEBSITE)
+        print("🌐 " .. CONFIG.WEBSITE .. " скопирована!")
+        siteBtn.Text = "✓ Скопировано!"
+        siteBtn.TextColor3 = Color3.fromRGB(80, 220, 140)
+        wait(1.5)
+        siteBtn.Text = "🌐 Сайт"
+        siteBtn.TextColor3 = THEMES[currentTheme].accent
+    end
+)
+
+local watermark = Instance.new("TextLabel")
+watermark.Name = "Watermark"
+watermark.Size = UDim2.new(0.6, 0, 0, 28)
+watermark.Position = UDim2.new(0.05, 0, 0.93, 0)
+watermark.BackgroundTransparency = 1
+watermark.Text = "◈ Tormentor412"
+watermark.TextColor3 = THEMES[currentTheme].accent
+watermark.TextSize = 14
+watermark.Font = Enum.Font.SourceSansBold
+watermark.TextXAlignment = Enum.TextXAlignment.Left
+watermark.Te
