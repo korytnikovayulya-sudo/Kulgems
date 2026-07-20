@@ -5,18 +5,18 @@
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v8.2 - FULL FIXED
+--  MUSLIM MENU v8.3 - FINAL FIXED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.2...")
+print("🚀 Загрузка Muslim Menu v8.3...")
 
 -- ============================================================
 --  [1] CORE CONFIGURATION
 -- ============================================================
 local CONFIG = {
     NAME = "MUSLIM MENU",
-    VERSION = "v8.2",
+    VERSION = "v8.3",
     DEVELOPER = "Tormentor412",
     GITHUB = "https://github.com/korytnikovayulya-sudo/Kulgems",
     WEBSITE = "https://korytnikovayulya-sudo.github.io/muslim-menu-site/",
@@ -213,7 +213,7 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
 end
 
 -- ============================================================
---  [7] THEME SELECTOR
+--  [7] THEME SELECTOR (РАБОЧИЙ)
 -- ============================================================
 local function createThemeSelector(parent)
     local container = Instance.new("Frame")
@@ -276,21 +276,24 @@ local function createThemeSelector(parent)
 end
 
 -- ============================================================
---  [8] UPDATE THEME (РАБОЧАЯ)
+--  [8] UPDATE THEME (ГАРАНТИРОВАННО РАБОЧАЯ)
 -- ============================================================
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     if not theme then return end
     
+    -- Обновляем основное окно
     frame.BackgroundColor3 = theme.main
     frame.BorderColor3 = theme.accent
     
+    -- Обновляем заголовок
     header.BackgroundColor3 = theme.header
     title.TextColor3 = theme.accent
     accentLine.BackgroundColor3 = theme.accent
     versionBadge.BackgroundColor3 = theme.accent
     versionBadge.TextColor3 = theme.accent
     
+    -- Обновляем все кнопки в меню
     for _, btn in pairs(frame:GetDescendants()) do
         if btn:IsA("TextButton") then
             if btn.Name ~= "CloseBtn" and btn.Name ~= "FloatBtn" and btn ~= minusBtn and btn ~= plusBtn then
@@ -307,6 +310,7 @@ local function updateTheme(themeName)
         end
     end
     
+    -- Обновляем контейнеры
     for _, container in pairs(frame:GetChildren()) do
         if container:IsA("Frame") and container ~= header and container ~= sliderContainer then
             container.BackgroundColor3 = theme.btn
@@ -314,6 +318,7 @@ local function updateTheme(themeName)
         end
     end
     
+    -- Обновляем ползунок
     if sliderContainer then
         sliderContainer.BackgroundColor3 = theme.btn
         sliderContainer.BorderColor3 = theme.accent
@@ -322,12 +327,14 @@ local function updateTheme(themeName)
         if plusBtn then plusBtn.BackgroundColor3 = theme.accent end
     end
     
+    -- Обновляем ESP
     for _, highlight in pairs(espHighlights) do
         if highlight and highlight.Parent then
             highlight.FillColor = theme.accent
         end
     end
     
+    -- Обновляем кнопку M
     if mButton then
         mButton.BackgroundColor3 = theme.main
         mButton.TextColor3 = theme.accent
@@ -336,10 +343,12 @@ local function updateTheme(themeName)
         end
     end
     
+    -- Обновляем водяной знак
     if watermark then
         watermark.TextColor3 = theme.accent
     end
     
+    -- Обновляем кнопки перезапуска и сайта
     if restartBtn then
         restartBtn.BackgroundColor3 = theme.btn
         restartBtn.TextColor3 = theme.accent
