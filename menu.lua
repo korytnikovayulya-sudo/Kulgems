@@ -5,7 +5,7 @@
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v8.3 - FINAL FIXED
+--  MUSLIM MENU v8.3 - VISIBLE SILENT AIM
 --  by Tormentor412
 -- ============================================================
 
@@ -213,7 +213,7 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
 end
 
 -- ============================================================
---  [7] THEME SELECTOR (РАБОЧИЙ)
+--  [7] THEME SELECTOR
 -- ============================================================
 local function createThemeSelector(parent)
     local container = Instance.new("Frame")
@@ -276,24 +276,21 @@ local function createThemeSelector(parent)
 end
 
 -- ============================================================
---  [8] UPDATE THEME (ГАРАНТИРОВАННО РАБОЧАЯ)
+--  [8] UPDATE THEME
 -- ============================================================
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     if not theme then return end
     
-    -- Обновляем основное окно
     frame.BackgroundColor3 = theme.main
     frame.BorderColor3 = theme.accent
     
-    -- Обновляем заголовок
     header.BackgroundColor3 = theme.header
     title.TextColor3 = theme.accent
     accentLine.BackgroundColor3 = theme.accent
     versionBadge.BackgroundColor3 = theme.accent
     versionBadge.TextColor3 = theme.accent
     
-    -- Обновляем все кнопки в меню
     for _, btn in pairs(frame:GetDescendants()) do
         if btn:IsA("TextButton") then
             if btn.Name ~= "CloseBtn" and btn.Name ~= "FloatBtn" and btn ~= minusBtn and btn ~= plusBtn then
@@ -310,7 +307,6 @@ local function updateTheme(themeName)
         end
     end
     
-    -- Обновляем контейнеры
     for _, container in pairs(frame:GetChildren()) do
         if container:IsA("Frame") and container ~= header and container ~= sliderContainer then
             container.BackgroundColor3 = theme.btn
@@ -318,7 +314,6 @@ local function updateTheme(themeName)
         end
     end
     
-    -- Обновляем ползунок
     if sliderContainer then
         sliderContainer.BackgroundColor3 = theme.btn
         sliderContainer.BorderColor3 = theme.accent
@@ -327,14 +322,12 @@ local function updateTheme(themeName)
         if plusBtn then plusBtn.BackgroundColor3 = theme.accent end
     end
     
-    -- Обновляем ESP
     for _, highlight in pairs(espHighlights) do
         if highlight and highlight.Parent then
             highlight.FillColor = theme.accent
         end
     end
     
-    -- Обновляем кнопку M
     if mButton then
         mButton.BackgroundColor3 = theme.main
         mButton.TextColor3 = theme.accent
@@ -343,12 +336,10 @@ local function updateTheme(themeName)
         end
     end
     
-    -- Обновляем водяной знак
     if watermark then
         watermark.TextColor3 = theme.accent
     end
     
-    -- Обновляем кнопки перезапуска и сайта
     if restartBtn then
         restartBtn.BackgroundColor3 = theme.btn
         restartBtn.TextColor3 = theme.accent
@@ -390,7 +381,7 @@ local function toggleESP(state)
 end
 
 -- ============================================================
---  [10] SILENT AIM (ПОЛНОСТЬЮ РАБОЧИЙ)
+--  [10] SILENT AIM - ВИДИМАЯ ВЕРСИЯ
 -- ============================================================
 local silentAimEnabled = false
 local silentAimRadius = 5
@@ -509,7 +500,7 @@ plusBtn.MouseButton1Click:Connect(function()
     sliderLabel.Text = "Радиус: " .. tostring(silentAimRadius)
 end)
 
--- Кнопка Silent Aim (ВИДИМАЯ)
+-- ===== КНОПКА SILENT AIM (ВИДИМАЯ) =====
 local silentToggleContainer, silentToggle, silentKnob = UI:createToggle(
     frame,
     "🎯 Silent Aim",
@@ -655,7 +646,6 @@ local versionCorners = Instance.new("UICorner")
 versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
--- ===== КНОПКА ЗАКРЫТИЯ (КРАСНАЯ) =====
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
 closeBtn.Size = UDim2.new(0, 38, 0, 38)
@@ -672,7 +662,7 @@ local closeCorners = Instance.new("UICorner")
 closeCorners.CornerRadius = UDim.new(0, 10)
 closeCorners.Parent = closeBtn
 
--- ===== ПЛАВАЮЩАЯ КНОПКА "M" (ПЕРЕТАСКИВАЕМАЯ) =====
+-- ===== ПЛАВАЮЩАЯ КНОПКА "M" =====
 local mButton = Instance.new("TextButton")
 mButton.Name = "FloatBtn"
 mButton.Size = UDim2.new(0, 60, 0, 60)
@@ -705,7 +695,6 @@ local mGlowCorners = Instance.new("UICorner")
 mGlowCorners.CornerRadius = UDim.new(0, 24)
 mGlowCorners.Parent = mGlow
 
--- ===== ЛОГИКА ЗАКРЫТИЯ =====
 closeBtn.MouseButton1Click:Connect(function()
     Animation:fadeOut(frame, 0.3)
     wait(0.3)
