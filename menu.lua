@@ -5,19 +5,18 @@
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v8.0 - PRODUCTION GRADE
+--  MUSLIM MENU v8.1 - Delta Fixed
 --  by Tormentor412
---  Architecture: MVC + Event-Driven + Glassmorphism UI
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.0...")
+print("🚀 Загрузка Muslim Menu v8.1...")
 
 -- ============================================================
 --  [1] CORE CONFIGURATION
 -- ============================================================
 local CONFIG = {
     NAME = "MUSLIM MENU",
-    VERSION = "v8.0",
+    VERSION = "v8.1",
     DEVELOPER = "Tormentor412",
     GITHUB = "https://github.com/korytnikovayulya-sudo/Kulgems",
     WEBSITE = "https://korytnikovayulya-sudo.github.io/muslim-menu-site/",
@@ -25,7 +24,7 @@ local CONFIG = {
 }
 
 -- ============================================================
---  [2] PREMIUM THEMES (GRADIENT + GLASS)
+--  [2] PREMIUM THEMES
 -- ============================================================
 local THEMES = {
     midnight = {
@@ -36,8 +35,7 @@ local THEMES = {
         header = Color3.fromRGB(16, 18, 24),
         btn = Color3.fromRGB(22, 26, 34),
         hover = Color3.fromRGB(34, 40, 52),
-        text = Color3.fromRGB(220, 230, 240),
-        gradient = {Color3.fromRGB(10, 10, 14), Color3.fromRGB(20, 22, 30)}
+        text = Color3.fromRGB(220, 230, 240)
     },
     emerald = {
         name = "🌿 Emerald",
@@ -47,8 +45,7 @@ local THEMES = {
         header = Color3.fromRGB(14, 30, 20),
         btn = Color3.fromRGB(22, 40, 30),
         hover = Color3.fromRGB(34, 56, 44),
-        text = Color3.fromRGB(220, 240, 230),
-        gradient = {Color3.fromRGB(8, 18, 12), Color3.fromRGB(16, 34, 22)}
+        text = Color3.fromRGB(220, 240, 230)
     },
     ruby = {
         name = "♦ Ruby",
@@ -58,8 +55,7 @@ local THEMES = {
         header = Color3.fromRGB(32, 10, 10),
         btn = Color3.fromRGB(44, 18, 18),
         hover = Color3.fromRGB(60, 28, 28),
-        text = Color3.fromRGB(240, 220, 220),
-        gradient = {Color3.fromRGB(18, 6, 6), Color3.fromRGB(34, 14, 14)}
+        text = Color3.fromRGB(240, 220, 220)
     },
     royal = {
         name = "👑 Royal",
@@ -69,8 +65,7 @@ local THEMES = {
         header = Color3.fromRGB(24, 12, 36),
         btn = Color3.fromRGB(34, 20, 48),
         hover = Color3.fromRGB(48, 32, 64),
-        text = Color3.fromRGB(230, 220, 240),
-        gradient = {Color3.fromRGB(14, 6, 22), Color3.fromRGB(26, 14, 40)}
+        text = Color3.fromRGB(230, 220, 240)
     },
     gold = {
         name = "★ Gold",
@@ -80,8 +75,7 @@ local THEMES = {
         header = Color3.fromRGB(28, 24, 14),
         btn = Color3.fromRGB(40, 34, 20),
         hover = Color3.fromRGB(56, 48, 30),
-        text = Color3.fromRGB(240, 235, 220),
-        gradient = {Color3.fromRGB(16, 14, 8), Color3.fromRGB(30, 26, 16)}
+        text = Color3.fromRGB(240, 235, 220)
     }
 }
 
@@ -92,7 +86,6 @@ local currentTheme = "midnight"
 -- ============================================================
 local player = game:GetService("Players").LocalPlayer
 local tweenService = game:GetService("TweenService")
-local runService = game:GetService("RunService")
 
 -- ============================================================
 --  [4] GUI CREATION
@@ -104,14 +97,14 @@ gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = player:WaitForChild("PlayerGui")
 
 -- ============================================================
---  [5] ANIMATION ENGINE (PRODUCTION GRADE)
+--  [5] ANIMATION ENGINE
 -- ============================================================
 local Animation = {}
 
-function Animation:tween(obj, props, duration, style, direction, repeatCount)
+function Animation:tween(obj, props, duration, style, direction)
     style = style or Enum.EasingStyle.Quad
     direction = direction or Enum.EasingDirection.Out
-    local info = TweenInfo.new(duration or 0.3, style, direction, repeatCount or 0, false, 0)
+    local info = TweenInfo.new(duration or 0.3, style, direction)
     local tween = tweenService:Create(obj, info, props)
     tween:Play()
     return tween
@@ -119,29 +112,25 @@ end
 
 function Animation:fadeIn(obj, duration)
     obj.BackgroundTransparency = 1
-    return self:tween(obj, {BackgroundTransparency = 0}, duration or 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    return self:tween(obj, {BackgroundTransparency = 0}, duration or 0.4)
 end
 
 function Animation:fadeOut(obj, duration)
-    return self:tween(obj, {BackgroundTransparency = 1}, duration or 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-end
-
-function Animation:pulse(obj, duration)
-    return self:tween(obj, {BackgroundTransparency = 0.2}, duration or 0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 2)
+    return self:tween(obj, {BackgroundTransparency = 1}, duration or 0.3)
 end
 
 -- ============================================================
---  [6] GLASSMORPHISM UI COMPONENTS
+--  [6] UI COMPONENTS
 -- ============================================================
 local UI = {}
 
-function UI:createButton(parent, text, pos, size, callback, icon)
+function UI:createButton(parent, text, pos, size, callback)
     local btn = Instance.new("TextButton")
     btn.Size = size or UDim2.new(0.8, 0, 0, 42)
     btn.Position = pos or UDim2.new(0.1, 0, 0, 0)
     btn.BackgroundColor3 = THEMES[currentTheme].btn
     btn.BackgroundTransparency = 0
-    btn.Text = (icon or "") .. " " .. text
+    btn.Text = text
     btn.TextColor3 = THEMES[currentTheme].accent
     btn.TextSize = 16
     btn.Font = Enum.Font.SourceSansBold
@@ -151,28 +140,13 @@ function UI:createButton(parent, text, pos, size, callback, icon)
     corners.CornerRadius = UDim.new(0, 10)
     corners.Parent = btn
     
-    -- Shadow
-    local shadow = Instance.new("Frame")
-    shadow.Size = UDim2.new(1, 4, 1, 4)
-    shadow.Position = UDim2.new(0, -2, 0, 2)
-    shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    shadow.BackgroundTransparency = 0.5
-    shadow.ZIndex = -1
-    shadow.Parent = btn
-    
-    local shadowCorners = Instance.new("UICorner")
-    shadowCorners.CornerRadius = UDim.new(0, 10)
-    shadowCorners.Parent = shadow
-    
     btn.MouseEnter:Connect(function()
         Animation:tween(btn, {BackgroundColor3 = THEMES[currentTheme].hover}, 0.2)
         Animation:tween(btn, {TextSize = 17}, 0.2)
-        Animation:tween(shadow, {BackgroundTransparency = 0.3}, 0.2)
     end)
     btn.MouseLeave:Connect(function()
         Animation:tween(btn, {BackgroundColor3 = THEMES[currentTheme].btn}, 0.2)
         Animation:tween(btn, {TextSize = 16}, 0.2)
-        Animation:tween(shadow, {BackgroundTransparency = 0.5}, 0.2)
     end)
     
     btn.MouseButton1Click:Connect(callback)
@@ -187,20 +161,11 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
     container.BackgroundTransparency = 0
     container.BorderSizePixel = 1
     container.BorderColor3 = THEMES[currentTheme].accent
-    container.BorderTransparency = 0.3
     container.Parent = parent
     
     local corners = Instance.new("UICorner")
     corners.CornerRadius = UDim.new(0, 10)
     corners.Parent = container
-    
-    -- Hover effect
-    container.MouseEnter:Connect(function()
-        Animation:tween(container, {BorderColor3 = THEMES[currentTheme].accent2}, 0.2)
-    end)
-    container.MouseLeave:Connect(function()
-        Animation:tween(container, {BorderColor3 = THEMES[currentTheme].accent}, 0.2)
-    end)
     
     local labelText = Instance.new("TextLabel")
     labelText.Size = UDim2.new(0.6, 0, 1, 0)
@@ -248,7 +213,7 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
 end
 
 -- ============================================================
---  [7] THEME SELECTOR (PRODUCTION GRADE)
+--  [7] THEME SELECTOR
 -- ============================================================
 local function createThemeSelector(parent)
     local container = Instance.new("Frame")
@@ -258,7 +223,6 @@ local function createThemeSelector(parent)
     container.BackgroundTransparency = 0
     container.BorderSizePixel = 1
     container.BorderColor3 = THEMES[currentTheme].accent
-    container.BorderTransparency = 0.3
     container.Parent = parent
     
     local corners = Instance.new("UICorner")
@@ -303,11 +267,6 @@ local function createThemeSelector(parent)
         btnCorners.CornerRadius = UDim.new(0, 8)
         btnCorners.Parent = btn
         
-        -- Glow on hover
-        btn.MouseEnter:Connect(function()
-            Animation:pulse(btn, 0.3)
-        end)
-        
         btn.MouseButton1Click:Connect(function()
             currentTheme = themeName
             updateTheme(themeName)
@@ -317,27 +276,21 @@ local function createThemeSelector(parent)
 end
 
 -- ============================================================
---  [8] UPDATE THEME (PRODUCTION GRADE)
+--  [8] UPDATE THEME
 -- ============================================================
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     if not theme then return end
     
-    -- Основное окно
     frame.BackgroundColor3 = theme.main
     frame.BorderColor3 = theme.accent
     
-    -- Заголовок
     header.BackgroundColor3 = theme.header
     title.TextColor3 = theme.accent
     accentLine.BackgroundColor3 = theme.accent
     versionBadge.BackgroundColor3 = theme.accent
     versionBadge.TextColor3 = theme.accent
     
-    -- Кнопка закрытия
-    closeBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-    
-    -- Обновляем все кнопки
     for _, btn in pairs(frame:GetDescendants()) do
         if btn:IsA("TextButton") then
             if btn.Name ~= "CloseBtn" and btn.Name ~= "FloatBtn" and btn ~= minusBtn and btn ~= plusBtn then
@@ -354,7 +307,6 @@ local function updateTheme(themeName)
         end
     end
     
-    -- Обновляем контейнеры
     for _, container in pairs(frame:GetChildren()) do
         if container:IsA("Frame") and container ~= header and container ~= sliderContainer then
             container.BackgroundColor3 = theme.btn
@@ -362,7 +314,6 @@ local function updateTheme(themeName)
         end
     end
     
-    -- Ползунок
     if sliderContainer then
         sliderContainer.BackgroundColor3 = theme.btn
         sliderContainer.BorderColor3 = theme.accent
@@ -371,14 +322,12 @@ local function updateTheme(themeName)
         if plusBtn then plusBtn.BackgroundColor3 = theme.accent end
     end
     
-    -- ESP
     for _, highlight in pairs(espHighlights) do
         if highlight and highlight.Parent then
             highlight.FillColor = theme.accent
         end
     end
     
-    -- Кнопка M
     if mButton then
         mButton.BackgroundColor3 = theme.main
         mButton.TextColor3 = theme.accent
@@ -387,12 +336,10 @@ local function updateTheme(themeName)
         end
     end
     
-    -- Водяной знак
     if watermark then
         watermark.TextColor3 = theme.accent
     end
     
-    -- Кнопки перезапуска и сайта
     if restartBtn then
         restartBtn.BackgroundColor3 = theme.btn
         restartBtn.TextColor3 = theme.accent
@@ -404,7 +351,7 @@ local function updateTheme(themeName)
 end
 
 -- ============================================================
---  [9] ESP SYSTEM (PRODUCTION GRADE)
+--  [9] ESP SYSTEM
 -- ============================================================
 local espHighlights = {}
 local espState = false
@@ -434,12 +381,11 @@ local function toggleESP(state)
 end
 
 -- ============================================================
---  [10] SILENT AIM (PRODUCTION GRADE)
+--  [10] SILENT AIM
 -- ============================================================
 local silentAimEnabled = false
 local silentAimRadius = 5
 
--- ===== КРУГ С ЭФФЕКТОМ =====
 local circle = Instance.new("Frame")
 circle.Size = UDim2.new(0, 100, 0, 100)
 circle.Position = UDim2.new(0.5, -50, 0.5, -50)
@@ -448,7 +394,6 @@ circle.ZIndex = 999
 circle.Parent = gui
 circle.Visible = false
 
--- Внешняя рамка
 local circleBorder = Instance.new("Frame")
 circleBorder.Size = UDim2.new(1, 0, 1, 0)
 circleBorder.BackgroundTransparency = 1
@@ -460,7 +405,6 @@ local circleCorners = Instance.new("UICorner")
 circleCorners.CornerRadius = UDim.new(1, 0)
 circleCorners.Parent = circleBorder
 
--- Внутренний градиент
 local circleGlow = Instance.new("Frame")
 circleGlow.Size = UDim2.new(0.7, 0, 0.7, 0)
 circleGlow.Position = UDim2.new(0.15, 0, 0.15, 0)
@@ -473,7 +417,6 @@ local circleGlowCorners = Instance.new("UICorner")
 circleGlowCorners.CornerRadius = UDim.new(1, 0)
 circleGlowCorners.Parent = circleGlow
 
--- Цифра радиуса
 local circleText = Instance.new("TextLabel")
 circleText.Size = UDim2.new(0.4, 0, 0.3, 0)
 circleText.Position = UDim2.new(0.3, 0, 0.7, 0)
@@ -484,15 +427,6 @@ circleText.TextSize = 18
 circleText.Font = Enum.Font.SourceSansBold
 circleText.Parent = circle
 
--- Пульсация круга
-local function pulseCircle()
-    while circle.Visible and wait(0.3) do
-        Animation:tween(circleGlow, {BackgroundTransparency = 0.4}, 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-        wait(0.3)
-        Animation:tween(circleGlow, {BackgroundTransparency = 0.7}, 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-    end
-end
-
 local function updateCircleRadius(value)
     silentAimRadius = math.clamp(value, 1, 10)
     local size = 60 + (silentAimRadius - 1) * 10
@@ -501,7 +435,6 @@ local function updateCircleRadius(value)
     circleText.Text = tostring(silentAimRadius)
 end
 
--- ===== ПОЛЗУНОК =====
 local sliderContainer = Instance.new("Frame")
 sliderContainer.Size = UDim2.new(0.8, 0, 0, 50)
 sliderContainer.Position = UDim2.new(0.1, 0, 0.53, 0)
@@ -565,7 +498,6 @@ plusBtn.MouseButton1Click:Connect(function()
     sliderLabel.Text = "Радиус: " .. tostring(silentAimRadius)
 end)
 
--- ===== КНОПКА SILENT AIM =====
 local silentToggleContainer, silentToggle, silentKnob = UI:createToggle(
     frame,
     "🎯 Silent Aim",
@@ -577,13 +509,11 @@ local silentToggleContainer, silentToggle, silentKnob = UI:createToggle(
         sliderContainer.Visible = state
         if state then
             updateCircleRadius(silentAimRadius)
-            spawn(pulseCircle)
         end
         print("🎯 Silent Aim: " .. (state and "ВКЛ" or "ВЫКЛ"))
     end
 )
 
--- ===== ЛОГИКА SILENT AIM =====
 local function silentAimLogic()
     local oldFire = nil
     local hookFunction = function(self, ...)
@@ -643,7 +573,7 @@ hello.TextScaled = true
 hello.Font = Enum.Font.SourceSansBold
 hello.Parent = gui
 
-Animation:tween(hello, {TextTransparency = 1, TextSize = 200}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+Animation:tween(hello, {TextTransparency = 1}, 1.5)
 game:GetService("Debris"):AddItem(hello, 1.5)
 
 wait(1.5)
@@ -667,15 +597,6 @@ local frameCorners = Instance.new("UICorner")
 frameCorners.CornerRadius = UDim.new(0, 20)
 frameCorners.Parent = frame
 
--- Glass overlay
-local glassOverlay = Instance.new("Frame")
-glassOverlay.Size = UDim2.new(1, 0, 1, 0)
-glassOverlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-glassOverlay.BackgroundTransparency = 0.03
-glassOverlay.ZIndex = 0
-glassOverlay.Parent = frame
-
--- ===== HEADER =====
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 56)
 header.BackgroundColor3 = THEMES[currentTheme].header
@@ -745,7 +666,6 @@ closeBtn.MouseButton1Click:Connect(function()
     Animation:fadeIn(mButton, 0.3)
 end)
 
--- ===== FLOATING M BUTTON =====
 local mButton = Instance.new("TextButton")
 mButton.Name = "FloatBtn"
 mButton.Size = UDim2.new(0, 64, 0, 64)
