@@ -5,7 +5,7 @@
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v7.0 - Production Grade
+--  MUSLIM MENU v7.0 - Production Grade (FULL)
 --  by Tormentor412
 --  Architecture: MVC + Event-Driven + Glassmorphism UI
 -- ============================================================
@@ -142,17 +142,14 @@ function UI:createGlassFrame(parent, size, pos, transparency)
     frame.BorderSizePixel = 0
     frame.Parent = parent
     
-    -- Glass blur effect
     local blur = Instance.new("BlurEffect")
     blur.Size = 8
     blur.Parent = frame
     
-    -- Corner radius
     local corners = Instance.new("UICorner")
     corners.CornerRadius = UDim.new(0, 16)
     corners.Parent = frame
     
-    -- Inner glow
     local glow = Instance.new("Frame")
     glow.Size = UDim2.new(1, -4, 1, -4)
     glow.Position = UDim2.new(0, 2, 0, 2)
@@ -186,7 +183,6 @@ function UI:createButton(parent, text, pos, size, callback)
     corners.CornerRadius = UDim.new(0, 10)
     corners.Parent = btn
     
-    -- Hover animation
     btn.MouseEnter:Connect(function()
         Animation:tween(btn, {BackgroundColor3 = THEMES[currentTheme].hover}, 0.2)
         Animation:tween(btn, {TextSize = 17}, 0.2)
@@ -215,7 +211,6 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
     corners.CornerRadius = UDim.new(0, 10)
     corners.Parent = container
     
-    -- Label
     local labelText = Instance.new("TextLabel")
     labelText.Size = UDim2.new(0.6, 0, 1, 0)
     labelText.Position = UDim2.new(0.05, 0, 0, 0)
@@ -227,7 +222,6 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
     labelText.TextXAlignment = Enum.TextXAlignment.Left
     labelText.Parent = container
     
-    -- Toggle
     local toggle = Instance.new("TextButton")
     toggle.Size = UDim2.new(0, 50, 0, 28)
     toggle.Position = UDim2.new(0.82, 0, 0.5, -14)
@@ -240,7 +234,6 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
     toggleCorners.CornerRadius = UDim.new(0, 14)
     toggleCorners.Parent = toggle
     
-    -- Knob
     local knob = Instance.new("Frame")
     knob.Size = UDim2.new(0, 20, 0, 20)
     knob.Position = defaultValue and UDim2.new(0.55, 0, 0.5, -10) or UDim2.new(0.05, 0, 0.5, -10)
@@ -264,7 +257,7 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
 end
 
 -- ============================================================
---  [7] THEME SELECTOR (Color Palette)
+--  [7] THEME SELECTOR
 -- ============================================================
 local function createThemeSelector(parent)
     local container = Instance.new("Frame")
@@ -319,7 +312,6 @@ local function createThemeSelector(parent)
         btnCorners.CornerRadius = UDim.new(0, 8)
         btnCorners.Parent = btn
         
-        -- Selection indicator
         local indicator = Instance.new("Frame")
         indicator.Size = UDim2.new(1, 4, 1, 4)
         indicator.Position = UDim2.new(0, -2, 0, -2)
@@ -339,7 +331,6 @@ local function createThemeSelector(parent)
         btn.MouseButton1Click:Connect(function()
             currentTheme = themeName
             updateTheme(themeName)
-            -- Update indicators
             for _, child in pairs(container:GetChildren()) do
                 if child:IsA("TextButton") and child:FindFirstChild("Frame") then
                     child.Frame.BackgroundTransparency = 1
@@ -356,16 +347,13 @@ end
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     
-    -- Update main frame
     frame.BackgroundColor3 = theme.main
     frame.BorderColor3 = theme.accent
     frame.BorderTransparency = 0.3
     
-    -- Update header
     header.BackgroundColor3 = theme.header
     title.TextColor3 = theme.accent
     
-    -- Update buttons
     for _, btn in pairs(frame:GetDescendants()) do
         if btn:IsA("TextButton") then
             if btn.Name ~= "CloseBtn" and btn.Name ~= "FloatBtn" then
@@ -382,14 +370,12 @@ local function updateTheme(themeName)
         end
     end
     
-    -- Update ESP
     for _, highlight in pairs(espHighlights) do
         if highlight and highlight.Parent then
             highlight.FillColor = theme.accent
         end
     end
     
-    -- Update M button
     mButton.BackgroundColor3 = theme.main
     mButton.TextColor3 = theme.accent
 end
@@ -427,7 +413,6 @@ end
 -- ============================================================
 --  [10] MAIN MENU CONSTRUCTION
 -- ============================================================
--- Welcome screen
 local hello = Instance.new("TextLabel")
 hello.Size = UDim2.new(1, 0, 1, 0)
 hello.BackgroundTransparency = 1
@@ -442,7 +427,6 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 
 wait(1.5)
 
--- Main Frame (Glassmorphism)
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 440, 0, 540)
 frame.Position = UDim2.new(0.5, -220, 0.5, -270)
@@ -460,7 +444,6 @@ local frameCorners = Instance.new("UICorner")
 frameCorners.CornerRadius = UDim.new(0, 20)
 frameCorners.Parent = frame
 
--- Glass overlay
 local glassOverlay = Instance.new("Frame")
 glassOverlay.Size = UDim2.new(1, 0, 1, 0)
 glassOverlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -468,7 +451,6 @@ glassOverlay.BackgroundTransparency = 0.03
 glassOverlay.ZIndex = 0
 glassOverlay.Parent = frame
 
--- Header
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 56)
 header.BackgroundColor3 = THEMES[currentTheme].header
@@ -479,7 +461,6 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- Accent line
 local accentLine = Instance.new("Frame")
 accentLine.Size = UDim2.new(1, 0, 0, 2)
 accentLine.Position = UDim2.new(0, 0, 1, -2)
@@ -487,7 +468,6 @@ accentLine.BackgroundColor3 = THEMES[currentTheme].accent
 accentLine.BackgroundTransparency = 0.3
 accentLine.Parent = header
 
--- Title
 local title = Instance.new("TextLabel")
 title.Name = "Title"
 title.Size = UDim2.new(0.6, 0, 1, 0)
@@ -500,7 +480,6 @@ title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
--- Version badge
 local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
@@ -517,7 +496,6 @@ local versionCorners = Instance.new("UICorner")
 versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
--- Close Button
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
 closeBtn.Size = UDim2.new(0, 38, 0, 38)
@@ -542,7 +520,6 @@ closeBtn.MouseButton1Click:Connect(function()
     Animation:fadeIn(mButton, 0.3)
 end)
 
--- Floating "M" Button
 local mButton = Instance.new("TextButton")
 mButton.Name = "FloatBtn"
 mButton.Size = UDim2.new(0, 64, 0, 64)
@@ -561,7 +538,6 @@ local mButtonCorners = Instance.new("UICorner")
 mButtonCorners.CornerRadius = UDim.new(0, 16)
 mButtonCorners.Parent = mButton
 
--- M button glow
 local mGlow = Instance.new("Frame")
 mGlow.Size = UDim2.new(1, 20, 1, 20)
 mGlow.Position = UDim2.new(0, -10, 0, -10)
@@ -574,4 +550,25 @@ local mGlowCorners = Instance.new("UICorner")
 mGlowCorners.CornerRadius = UDim.new(0, 24)
 mGlowCorners.Parent = mGlow
 
-mButton.MouseButton1Click:Connect(f
+mButton.MouseButton1Click:Connect(function()
+    frame.Visible = true
+    mButton.Visible = false
+    Animation:fadeIn(frame, 0.3)
+end)
+
+-- ============================================================
+--  [11] MENU COMPONENTS
+-- ============================================================
+local espContainer, espToggle, espKnob = UI:createToggle(
+    frame,
+    "◈ ESP (подсветка)",
+    UDim2.new(0.05, 0, 0.14, 0),
+    false,
+    function(state)
+        toggleESP(state)
+    end
+)
+
+createThemeSelector(frame)
+
+loc
