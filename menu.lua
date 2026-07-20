@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v8.4 - ULTIMATE FIX
+--  MUSLIM MENU v8.4.1 - CUSTOM FIX
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.4...")
+print("🚀 Загрузка Muslim Menu v8.4.1...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -42,11 +42,11 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ
+--  ОСНОВНОЕ МЕНЮ (ШИРЕ)
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 400, 0, 520)
-frame.Position = UDim2.new(0.5, -200, 0.5, -260)
+frame.Size = UDim2.new(0, 460, 0, 520)  -- было 400, стало 460
+frame.Position = UDim2.new(0.5, -230, 0.5, -260)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
@@ -71,24 +71,37 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
+-- ⚡ СМАЙЛ ВМЕСТО КВАДРАТА
+local icon = Instance.new("TextLabel")
+icon.Size = UDim2.new(0, 35, 1, 0)
+icon.Position = UDim2.new(0.02, 0, 0, 0)
+icon.BackgroundTransparency = 1
+icon.Text = "⚡"
+icon.TextColor3 = THEMES[currentTheme].accent
+icon.TextSize = 22
+icon.Font = Enum.Font.SourceSansBold
+icon.Parent = header
+
+-- НАЗВАНИЕ МЕНЮ
 local title = Instance.new("TextLabel")
 title.Name = "Title"
-title.Size = UDim2.new(0.6, 0, 1, 0)
-title.Position = UDim2.new(0.05, 0, 0, 0)
+title.Size = UDim2.new(0.55, 0, 1, 0)
+title.Position = UDim2.new(0.10, 0, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "◈ MUSLIM MENU"
+title.Text = "MUSLIM MENU"
 title.TextColor3 = THEMES[currentTheme].accent
 title.TextSize = 20
 title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
+-- ВЕРСИЯ
 local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
-versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
+versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v8.4"
+versionBadge.Text = "v8.4.1"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -99,10 +112,11 @@ local versionCorners = Instance.new("UICorner")
 versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
+-- ===== КРАСНАЯ КНОПКА (БЕЗ КВАДРАТА, ПРОСТО КВАДРАТНАЯ) =====
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
-closeBtn.Size = UDim2.new(0, 38, 0, 38)
-closeBtn.Position = UDim2.new(0.91, 0, 0.5, -19)
+closeBtn.Size = UDim2.new(0, 34, 0, 34)  -- Маленькая квадратная кнопка
+closeBtn.Position = UDim2.new(0.93, 0, 0.5, -17)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
 closeBtn.BackgroundTransparency = 0
 closeBtn.Text = "✕"
@@ -112,7 +126,7 @@ closeBtn.Font = Enum.Font.SourceSansBold
 closeBtn.Parent = header
 
 local closeCorners = Instance.new("UICorner")
-closeCorners.CornerRadius = UDim.new(0, 10)
+closeCorners.CornerRadius = UDim.new(0, 6)  -- чуть скруглённые углы
 closeCorners.Parent = closeBtn
 
 -- ============================================================
@@ -465,6 +479,7 @@ local function updateTheme(themeName)
     frame.BorderColor3 = theme.accent
     header.BackgroundColor3 = theme.header
     title.TextColor3 = theme.accent
+    icon.TextColor3 = theme.accent
     versionBadge.BackgroundColor3 = theme.accent
     versionBadge.TextColor3 = theme.accent
     
@@ -473,7 +488,7 @@ local function updateTheme(themeName)
             child.BackgroundColor3 = theme.btn
             child.TextColor3 = theme.accent
         end
-        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= sliderLabel and child ~= circleText then
+        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= sliderLabel and child ~= circleText and child ~= icon then
             child.TextColor3 = theme.text
         end
     end
@@ -576,21 +591,43 @@ siteBtn.MouseButton1Click:Connect(function()
     print("🌐 Ссылка скопирована!")
 end)
 
+-- ============================================================
+--  ПРОФИЛЬ (НИК + ИКОНКА)
+-- ============================================================
+local profileContainer = Instance.new("Frame")
+profileContainer.Size = UDim2.new(0.5, 0, 0, 30)
+profileContainer.Position = UDim2.new(0.05, 0, 0.93, 0)
+profileContainer.BackgroundTransparency = 1
+profileContainer.Parent = frame
+
+-- Иконка профиля (человечек)
+local profileIcon = Instance.new("TextLabel")
+profileIcon.Size = UDim2.new(0, 25, 1, 0)
+profileIcon.Position = UDim2.new(0, 0, 0, 0)
+profileIcon.BackgroundTransparency = 1
+profileIcon.Text = "👤"
+profileIcon.TextColor3 = THEMES[currentTheme].accent
+profileIcon.TextSize = 18
+profileIcon.Font = Enum.Font.SourceSansBold
+profileIcon.TextXAlignment = Enum.TextXAlignment.Center
+profileIcon.Parent = profileContainer
+
+-- Ник
 local watermark = Instance.new("TextLabel")
 watermark.Name = "Watermark"
-watermark.Size = UDim2.new(0.6, 0, 0, 28)
-watermark.Position = UDim2.new(0.05, 0, 0.93, 0)
+watermark.Size = UDim2.new(0.8, 0, 1, 0)
+watermark.Position = UDim2.new(0.15, 0, 0, 0)
 watermark.BackgroundTransparency = 1
-watermark.Text = "◈ Tormentor412"
+watermark.Text = "Tormentor412"
 watermark.TextColor3 = THEMES[currentTheme].accent
 watermark.TextSize = 14
 watermark.Font = Enum.Font.SourceSansBold
 watermark.TextXAlignment = Enum.TextXAlignment.Left
 watermark.TextTransparency = 0.3
-watermark.Parent = frame
+watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v8.4 - ULTIMATE FIX")
+print("  MUSLIM MENU v8.4.1 - CUSTOM FIX")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
