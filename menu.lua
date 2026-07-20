@@ -5,17 +5,18 @@
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v7.0 - Production Grade
+--  MUSLIM MENU v7.1 - Delta Fix
 --  by Tormentor412
---  Architecture: MVC + Event-Driven + Glassmorphism UI
 -- ============================================================
+
+print("Загрузка Muslim Menu v7.1...")
 
 -- ============================================================
 --  [1] CORE CONFIGURATION
 -- ============================================================
 local CONFIG = {
     NAME = "MUSLIM MENU",
-    VERSION = "v7.0",
+    VERSION = "v7.1",
     DEVELOPER = "Tormentor412",
     GITHUB = "https://github.com/korytnikovayulya-sudo/Kulgems",
     WEBSITE = "https://korytnikovayulya-sudo.github.io/muslim-menu-site/",
@@ -23,68 +24,53 @@ local CONFIG = {
 }
 
 -- ============================================================
---  [2] PREMIUM THEMES (Glassmorphism + Neumorphism)
+--  [2] PREMIUM THEMES
 -- ============================================================
 local THEMES = {
     midnight = {
         name = "Midnight",
         main = Color3.fromRGB(10, 10, 14),
-        glass = Color3.fromRGB(255, 255, 255),
         accent = Color3.fromRGB(100, 180, 255),
-        accent2 = Color3.fromRGB(60, 120, 200),
         header = Color3.fromRGB(16, 18, 24),
         btn = Color3.fromRGB(22, 26, 34),
         hover = Color3.fromRGB(34, 40, 52),
-        text = Color3.fromRGB(220, 230, 240),
-        shadow = Color3.fromRGB(0, 0, 0)
+        text = Color3.fromRGB(220, 230, 240)
     },
     emerald = {
         name = "Emerald",
         main = Color3.fromRGB(8, 18, 12),
-        glass = Color3.fromRGB(255, 255, 255),
         accent = Color3.fromRGB(80, 220, 140),
-        accent2 = Color3.fromRGB(40, 160, 100),
         header = Color3.fromRGB(14, 30, 20),
         btn = Color3.fromRGB(22, 40, 30),
         hover = Color3.fromRGB(34, 56, 44),
-        text = Color3.fromRGB(220, 240, 230),
-        shadow = Color3.fromRGB(0, 0, 0)
+        text = Color3.fromRGB(220, 240, 230)
     },
     ruby = {
         name = "Ruby",
         main = Color3.fromRGB(18, 6, 6),
-        glass = Color3.fromRGB(255, 255, 255),
         accent = Color3.fromRGB(255, 70, 70),
-        accent2 = Color3.fromRGB(200, 40, 40),
         header = Color3.fromRGB(32, 10, 10),
         btn = Color3.fromRGB(44, 18, 18),
         hover = Color3.fromRGB(60, 28, 28),
-        text = Color3.fromRGB(240, 220, 220),
-        shadow = Color3.fromRGB(0, 0, 0)
+        text = Color3.fromRGB(240, 220, 220)
     },
     royal = {
         name = "Royal",
         main = Color3.fromRGB(14, 6, 22),
-        glass = Color3.fromRGB(255, 255, 255),
         accent = Color3.fromRGB(200, 120, 255),
-        accent2 = Color3.fromRGB(150, 80, 220),
         header = Color3.fromRGB(24, 12, 36),
         btn = Color3.fromRGB(34, 20, 48),
         hover = Color3.fromRGB(48, 32, 64),
-        text = Color3.fromRGB(230, 220, 240),
-        shadow = Color3.fromRGB(0, 0, 0)
+        text = Color3.fromRGB(230, 220, 240)
     },
     gold = {
         name = "Gold",
         main = Color3.fromRGB(16, 14, 8),
-        glass = Color3.fromRGB(255, 255, 255),
         accent = Color3.fromRGB(255, 215, 0),
-        accent2 = Color3.fromRGB(200, 160, 0),
         header = Color3.fromRGB(28, 24, 14),
         btn = Color3.fromRGB(40, 34, 20),
         hover = Color3.fromRGB(56, 48, 30),
-        text = Color3.fromRGB(240, 235, 220),
-        shadow = Color3.fromRGB(0, 0, 0)
+        text = Color3.fromRGB(240, 235, 220)
     }
 }
 
@@ -95,7 +81,6 @@ local currentTheme = "midnight"
 -- ============================================================
 local player = game:GetService("Players").LocalPlayer
 local tweenService = game:GetService("TweenService")
-local userInput = game:GetService("UserInputService")
 
 -- ============================================================
 --  [4] GUI CREATION
@@ -129,46 +114,9 @@ function Animation:fadeOut(obj, duration)
 end
 
 -- ============================================================
---  [6] GLASSMORPHISM UI COMPONENTS
+--  [6] UI COMPONENTS
 -- ============================================================
 local UI = {}
-
-function UI:createGlassFrame(parent, size, pos, transparency)
-    local frame = Instance.new("Frame")
-    frame.Size = size
-    frame.Position = pos
-    frame.BackgroundColor3 = THEMES[currentTheme].glass
-    frame.BackgroundTransparency = transparency or 0.15
-    frame.BorderSizePixel = 0
-    frame.Parent = parent
-    
-    -- Glass blur effect
-    local blur = Instance.new("BlurEffect")
-    blur.Size = 8
-    blur.Parent = frame
-    
-    -- Corner radius
-    local corners = Instance.new("UICorner")
-    corners.CornerRadius = UDim.new(0, 16)
-    corners.Parent = frame
-    
-    -- Inner glow
-    local glow = Instance.new("Frame")
-    glow.Size = UDim2.new(1, -4, 1, -4)
-    glow.Position = UDim2.new(0, 2, 0, 2)
-    glow.BackgroundColor3 = THEMES[currentTheme].glass
-    glow.BackgroundTransparency = 0.9
-    glow.BorderSizePixel = 1
-    glow.BorderColor3 = THEMES[currentTheme].accent
-    glow.BorderTransparency = 0.5
-    glow.Parent = frame
-    
-    local glowCorners = Instance.new("UICorner")
-    glowCorners.CornerRadius = UDim.new(0, 14)
-    glowCorners.Parent = glow
-    
-    return frame
-end
 
 function UI:createButton(parent, text, pos, size, callback)
     local btn = Instance.new("TextButton")
@@ -186,7 +134,6 @@ function UI:createButton(parent, text, pos, size, callback)
     corners.CornerRadius = UDim.new(0, 10)
     corners.Parent = btn
     
-    -- Hover animation
     btn.MouseEnter:Connect(function()
         Animation:tween(btn, {BackgroundColor3 = THEMES[currentTheme].hover}, 0.2)
         Animation:tween(btn, {TextSize = 17}, 0.2)
@@ -208,14 +155,12 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
     container.BackgroundTransparency = 0
     container.BorderSizePixel = 1
     container.BorderColor3 = THEMES[currentTheme].accent
-    container.BorderTransparency = 0.3
     container.Parent = parent
     
     local corners = Instance.new("UICorner")
     corners.CornerRadius = UDim.new(0, 10)
     corners.Parent = container
     
-    -- Label
     local labelText = Instance.new("TextLabel")
     labelText.Size = UDim2.new(0.6, 0, 1, 0)
     labelText.Position = UDim2.new(0.05, 0, 0, 0)
@@ -227,7 +172,6 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
     labelText.TextXAlignment = Enum.TextXAlignment.Left
     labelText.Parent = container
     
-    -- Toggle
     local toggle = Instance.new("TextButton")
     toggle.Size = UDim2.new(0, 50, 0, 28)
     toggle.Position = UDim2.new(0.82, 0, 0.5, -14)
@@ -240,7 +184,6 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
     toggleCorners.CornerRadius = UDim.new(0, 14)
     toggleCorners.Parent = toggle
     
-    -- Knob
     local knob = Instance.new("Frame")
     knob.Size = UDim2.new(0, 20, 0, 20)
     knob.Position = defaultValue and UDim2.new(0.55, 0, 0.5, -10) or UDim2.new(0.05, 0, 0.5, -10)
@@ -264,7 +207,7 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
 end
 
 -- ============================================================
---  [7] THEME SELECTOR (Color Palette)
+--  [7] THEME SELECTOR
 -- ============================================================
 local function createThemeSelector(parent)
     local container = Instance.new("Frame")
@@ -274,7 +217,6 @@ local function createThemeSelector(parent)
     container.BackgroundTransparency = 0
     container.BorderSizePixel = 1
     container.BorderColor3 = THEMES[currentTheme].accent
-    container.BorderTransparency = 0.3
     container.Parent = parent
     
     local corners = Instance.new("UICorner")
@@ -339,7 +281,6 @@ local function createThemeSelector(parent)
         btn.MouseButton1Click:Connect(function()
             currentTheme = themeName
             updateTheme(themeName)
-            -- Update indicators
             for _, child in pairs(container:GetChildren()) do
                 if child:IsA("TextButton") and child:FindFirstChild("Frame") then
                     child.Frame.BackgroundTransparency = 1
@@ -356,16 +297,12 @@ end
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     
-    -- Update main frame
     frame.BackgroundColor3 = theme.main
     frame.BorderColor3 = theme.accent
-    frame.BorderTransparency = 0.3
     
-    -- Update header
     header.BackgroundColor3 = theme.header
     title.TextColor3 = theme.accent
     
-    -- Update buttons
     for _, btn in pairs(frame:GetDescendants()) do
         if btn:IsA("TextButton") then
             if btn.Name ~= "CloseBtn" and btn.Name ~= "FloatBtn" then
@@ -382,14 +319,12 @@ local function updateTheme(themeName)
         end
     end
     
-    -- Update ESP
     for _, highlight in pairs(espHighlights) do
         if highlight and highlight.Parent then
             highlight.FillColor = theme.accent
         end
     end
     
-    -- Update M button
     mButton.BackgroundColor3 = theme.main
     mButton.TextColor3 = theme.accent
 end
@@ -427,7 +362,6 @@ end
 -- ============================================================
 --  [10] MAIN MENU CONSTRUCTION
 -- ============================================================
--- Welcome screen
 local hello = Instance.new("TextLabel")
 hello.Size = UDim2.new(1, 0, 1, 0)
 hello.BackgroundTransparency = 1
@@ -442,7 +376,6 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 
 wait(1.5)
 
--- Main Frame (Glassmorphism)
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 440, 0, 540)
 frame.Position = UDim2.new(0.5, -220, 0.5, -270)
@@ -450,7 +383,6 @@ frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
 frame.BorderColor3 = THEMES[currentTheme].accent
-frame.BorderTransparency = 0.3
 frame.Active = true
 frame.Draggable = true
 frame.ClipsDescendants = true
@@ -460,15 +392,6 @@ local frameCorners = Instance.new("UICorner")
 frameCorners.CornerRadius = UDim.new(0, 20)
 frameCorners.Parent = frame
 
--- Glass overlay
-local glassOverlay = Instance.new("Frame")
-glassOverlay.Size = UDim2.new(1, 0, 1, 0)
-glassOverlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-glassOverlay.BackgroundTransparency = 0.03
-glassOverlay.ZIndex = 0
-glassOverlay.Parent = frame
-
--- Header
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 56)
 header.BackgroundColor3 = THEMES[currentTheme].header
@@ -479,7 +402,6 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- Accent line
 local accentLine = Instance.new("Frame")
 accentLine.Size = UDim2.new(1, 0, 0, 2)
 accentLine.Position = UDim2.new(0, 0, 1, -2)
@@ -487,7 +409,6 @@ accentLine.BackgroundColor3 = THEMES[currentTheme].accent
 accentLine.BackgroundTransparency = 0.3
 accentLine.Parent = header
 
--- Title
 local title = Instance.new("TextLabel")
 title.Name = "Title"
 title.Size = UDim2.new(0.6, 0, 1, 0)
@@ -500,7 +421,6 @@ title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
--- Version badge
 local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
@@ -517,7 +437,6 @@ local versionCorners = Instance.new("UICorner")
 versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
--- Close Button
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
 closeBtn.Size = UDim2.new(0, 38, 0, 38)
@@ -542,7 +461,6 @@ closeBtn.MouseButton1Click:Connect(function()
     Animation:fadeIn(mButton, 0.3)
 end)
 
--- Floating "M" Button
 local mButton = Instance.new("TextButton")
 mButton.Name = "FloatBtn"
 mButton.Size = UDim2.new(0, 64, 0, 64)
@@ -561,7 +479,6 @@ local mButtonCorners = Instance.new("UICorner")
 mButtonCorners.CornerRadius = UDim.new(0, 16)
 mButtonCorners.Parent = mButton
 
--- M button glow
 local mGlow = Instance.new("Frame")
 mGlow.Size = UDim2.new(1, 20, 1, 20)
 mGlow.Position = UDim2.new(0, -10, 0, -10)
