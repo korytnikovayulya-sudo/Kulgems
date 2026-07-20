@@ -5,18 +5,18 @@
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v8.1 - Delta Fixed
+--  MUSLIM MENU v8.2 - FULL FIXED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.1...")
+print("🚀 Загрузка Muslim Menu v8.2...")
 
 -- ============================================================
 --  [1] CORE CONFIGURATION
 -- ============================================================
 local CONFIG = {
     NAME = "MUSLIM MENU",
-    VERSION = "v8.1",
+    VERSION = "v8.2",
     DEVELOPER = "Tormentor412",
     GITHUB = "https://github.com/korytnikovayulya-sudo/Kulgems",
     WEBSITE = "https://korytnikovayulya-sudo.github.io/muslim-menu-site/",
@@ -218,7 +218,7 @@ end
 local function createThemeSelector(parent)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.9, 0, 0, 42)
-    container.Position = UDim2.new(0.05, 0, 0.68, 0)
+    container.Position = UDim2.new(0.05, 0, 0.60, 0)
     container.BackgroundColor3 = THEMES[currentTheme].btn
     container.BackgroundTransparency = 0
     container.BorderSizePixel = 1
@@ -276,7 +276,7 @@ local function createThemeSelector(parent)
 end
 
 -- ============================================================
---  [8] UPDATE THEME
+--  [8] UPDATE THEME (РАБОЧАЯ)
 -- ============================================================
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
@@ -381,11 +381,12 @@ local function toggleESP(state)
 end
 
 -- ============================================================
---  [10] SILENT AIM
+--  [10] SILENT AIM (ПОЛНОСТЬЮ РАБОЧИЙ)
 -- ============================================================
 local silentAimEnabled = false
 local silentAimRadius = 5
 
+-- Круг
 local circle = Instance.new("Frame")
 circle.Size = UDim2.new(0, 100, 0, 100)
 circle.Position = UDim2.new(0.5, -50, 0.5, -50)
@@ -435,9 +436,10 @@ local function updateCircleRadius(value)
     circleText.Text = tostring(silentAimRadius)
 end
 
+-- Ползунок
 local sliderContainer = Instance.new("Frame")
 sliderContainer.Size = UDim2.new(0.8, 0, 0, 50)
-sliderContainer.Position = UDim2.new(0.1, 0, 0.53, 0)
+sliderContainer.Position = UDim2.new(0.1, 0, 0.45, 0)
 sliderContainer.BackgroundColor3 = THEMES[currentTheme].btn
 sliderContainer.BackgroundTransparency = 0
 sliderContainer.BorderSizePixel = 1
@@ -498,6 +500,7 @@ plusBtn.MouseButton1Click:Connect(function()
     sliderLabel.Text = "Радиус: " .. tostring(silentAimRadius)
 end)
 
+-- Кнопка Silent Aim (ВИДИМАЯ)
 local silentToggleContainer, silentToggle, silentKnob = UI:createToggle(
     frame,
     "🎯 Silent Aim",
@@ -514,6 +517,7 @@ local silentToggleContainer, silentToggle, silentKnob = UI:createToggle(
     end
 )
 
+-- Логика Silent Aim
 local function silentAimLogic()
     local oldFire = nil
     local hookFunction = function(self, ...)
@@ -579,11 +583,11 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  [12] MAIN MENU CONSTRUCTION
+--  [12] MAIN MENU
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 440, 0, 620)
-frame.Position = UDim2.new(0.5, -220, 0.5, -310)
+frame.Size = UDim2.new(0, 440, 0, 560)
+frame.Position = UDim2.new(0.5, -220, 0.5, -280)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
@@ -642,11 +646,12 @@ local versionCorners = Instance.new("UICorner")
 versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
+-- ===== КНОПКА ЗАКРЫТИЯ (КРАСНАЯ) =====
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
 closeBtn.Size = UDim2.new(0, 38, 0, 38)
 closeBtn.Position = UDim2.new(0.91, 0, 0.5, -19)
-closeBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
 closeBtn.BackgroundTransparency = 0
 closeBtn.Text = "✕"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -658,18 +663,11 @@ local closeCorners = Instance.new("UICorner")
 closeCorners.CornerRadius = UDim.new(0, 10)
 closeCorners.Parent = closeBtn
 
-closeBtn.MouseButton1Click:Connect(function()
-    Animation:fadeOut(frame, 0.3)
-    wait(0.3)
-    frame.Visible = false
-    mButton.Visible = true
-    Animation:fadeIn(mButton, 0.3)
-end)
-
+-- ===== ПЛАВАЮЩАЯ КНОПКА "M" (ПЕРЕТАСКИВАЕМАЯ) =====
 local mButton = Instance.new("TextButton")
 mButton.Name = "FloatBtn"
-mButton.Size = UDim2.new(0, 64, 0, 64)
-mButton.Position = UDim2.new(0.5, -32, 0.85, 0)
+mButton.Size = UDim2.new(0, 60, 0, 60)
+mButton.Position = UDim2.new(0.5, -30, 0.85, 0)
 mButton.BackgroundColor3 = THEMES[currentTheme].main
 mButton.BackgroundTransparency = 0
 mButton.Text = "M"
@@ -677,6 +675,8 @@ mButton.TextColor3 = THEMES[currentTheme].accent
 mButton.TextSize = 30
 mButton.Font = Enum.Font.SourceSansBold
 mButton.Visible = false
+mButton.Active = true
+mButton.Draggable = true
 mButton.ZIndex = 999
 mButton.Parent = gui
 
@@ -695,6 +695,15 @@ mGlow.Parent = mButton
 local mGlowCorners = Instance.new("UICorner")
 mGlowCorners.CornerRadius = UDim.new(0, 24)
 mGlowCorners.Parent = mGlow
+
+-- ===== ЛОГИКА ЗАКРЫТИЯ =====
+closeBtn.MouseButton1Click:Connect(function()
+    Animation:fadeOut(frame, 0.3)
+    wait(0.3)
+    frame.Visible = false
+    mButton.Visible = true
+    Animation:fadeIn(mButton, 0.3)
+end)
 
 mButton.MouseButton1Click:Connect(function()
     frame.Visible = true
@@ -761,14 +770,8 @@ watermark.TextXAlignment = Enum.TextXAlignment.Left
 watermark.TextTransparency = 0.3
 watermark.Parent = frame
 
--- ============================================================
---  [14] LOADING ANIMATION
--- ============================================================
 Animation:fadeIn(frame, 0.5)
 
--- ============================================================
---  [15] INITIALIZATION LOG
--- ============================================================
 print("========================================")
 print("  " .. CONFIG.NAME .. " " .. CONFIG.VERSION)
 print("  Developer: " .. CONFIG.DEVELOPER)
@@ -776,9 +779,6 @@ print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
 print("========================================")
 
--- ============================================================
---  [16] API EXPOSE
--- ============================================================
 getgenv().MuslimMenu = {
     version = CONFIG.VERSION,
     setTheme = function(theme)
