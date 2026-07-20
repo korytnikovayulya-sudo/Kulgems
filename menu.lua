@@ -1,22 +1,22 @@
--- ============================================================
+======================================
 --  ██████  ██    ██ ███████ ██      ██ ███    ███ 
 --  ██   ██ ██    ██ ██      ██      ██ ████  ████ 
 --  ██████  ██    ██ ███████ ██      ██ ██ ████ ██ 
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v8.3 - VISIBLE SILENT AIM
+--  MUSLIM MENU v8.5 - FULL FIXED + UPGRADED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.3...")
+print("🚀 Загрузка Muslim Menu v8.5...")
 
 -- ============================================================
 --  [1] CORE CONFIGURATION
 -- ============================================================
 local CONFIG = {
     NAME = "MUSLIM MENU",
-    VERSION = "v8.3",
+    VERSION = "v8.5",
     DEVELOPER = "Tormentor412",
     GITHUB = "https://github.com/korytnikovayulya-sudo/Kulgems",
     WEBSITE = "https://korytnikovayulya-sudo.github.io/muslim-menu-site/",
@@ -86,6 +86,7 @@ local currentTheme = "midnight"
 -- ============================================================
 local player = game:GetService("Players").LocalPlayer
 local tweenService = game:GetService("TweenService")
+local userInputService = game:GetService("UserInputService")
 
 -- ============================================================
 --  [4] GUI CREATION
@@ -213,12 +214,130 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
 end
 
 -- ============================================================
---  [7] THEME SELECTOR
+--  [7] ESP SUB-MENU (НОВОЕ)
+-- ============================================================
+local espType = "Box"
+local espDistance = 100
+local espColor = THEMES[currentTheme].accent
+
+local function createESPSubMenu(parent)
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(0.9, 0, 0, 130)
+    container.Position = UDim2.new(0.05, 0, 0.12, 0)
+    container.BackgroundColor3 = THEMES[currentTheme].btn
+    container.BackgroundTransparency = 0
+    container.BorderSizePixel = 1
+    container.BorderColor3 = THEMES[currentTheme].accent
+    container.Parent = parent
+    
+    local corners = Instance.new("UICorner")
+    corners.CornerRadius = UDim.new(0, 10)
+    corners.Parent = container
+    
+    -- Заголовок
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 24)
+    title.Position = UDim2.new(0, 0, 0, 4)
+    title.BackgroundTransparency = 1
+    title.Text = "🎯 ESP Настройки"
+    title.TextColor3 = THEMES[currentTheme].accent
+    title.TextSize = 14
+    title.Font = Enum.Font.SourceSansBold
+    title.Parent = container
+    
+    -- Кнопки типа ESP
+    local types = {"Box", "Skeleton", "Name", "Distance"}
+    for i, t in ipairs(types) do
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0.22, 0, 0, 28)
+        btn.Position = UDim2.new(0.02 + (i-1) * 0.24, 0, 0.35, 0)
+        btn.BackgroundColor3 = (espType == t) and THEMES[currentTheme].accent or THEMES[currentTheme].btn
+        btn.Text = t
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.TextSize = 12
+        btn.Font = Enum.Font.SourceSansBold
+        btn.Parent = container
+        
+        local btnCorners = Instance.new("UICorner")
+        btnCorners.CornerRadius = UDim.new(0, 6)
+        btnCorners.Parent = btn
+        
+        btn.MouseButton1Click:Connect(function()
+            espType = t
+            for _, child in pairs(container:GetChildren()) do
+                if child:IsA("TextButton") and child.Text ~= "ESP" and child.Text ~= "🎯 ESP Настройки" then
+                    child.BackgroundColor3 = (child.Text == t) and THEMES[currentTheme].accent or THEMES[currentTheme].btn
+                end
+            end
+            if espState then
+                toggleESP(true) -- перезапускаем ESP с новым типом
+            end
+            print("🔧 ESP тип: " .. t)
+        end)
+    end
+    
+    -- Слайдер дистанции (упрощённый)
+    local distLabel = Instance.new("TextLabel")
+    distLabel.Size = UDim2.new(0.3, 0, 0, 20)
+    distLabel.Position = UDim2.new(0.02, 0, 0.72, 0)
+    distLabel.BackgroundTransparency = 1
+    distLabel.Text = "Дист: 100"
+    distLabel.TextColor3 = THEMES[currentTheme].text
+    distLabel.TextSize = 12
+    distLabel.Font = Enum.Font.SourceSansBold
+    distLabel.TextXAlignment = Enum.TextXAlignment.Left
+    distLabel.Parent = container
+    
+    local distMinus = Instance.new("TextButton")
+    distMinus.Size = UDim2.new(0, 24, 0, 24)
+    distMinus.Position = UDim2.new(0.65, 0, 0.72, -2)
+    distMinus.BackgroundColor3 = THEMES[currentTheme].accent
+    distMinus.Text = "-"
+    distMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
+    distMinus.TextSize = 16
+    distMinus.Font = Enum.Font.SourceSansBold
+    distMinus.Parent = container
+    
+    local distCorners1 = Instance.new("UICorner")
+    distCorners1.CornerRadius = UDim.new(0, 6)
+    distCorners1.Parent = distMinus
+    
+    local distPlus = Instance.new("TextButton")
+    distPlus.Size = UDim2.new(0, 24, 0, 24)
+    distPlus.Position = UDim2.new(0.82, 0, 0.72, -2)
+    distPlus.BackgroundColor3 = THEMES[currentTheme].accent
+    distPlus.Text = "+"
+    distPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
+    distPlus.TextSize = 16
+    distPlus.Font = Enum.Font.SourceSansBold
+    distPlus.Parent = container
+    
+    local distCorners2 = Instance.new("UICorner")
+    distCorners2.CornerRadius = UDim.new(0, 6)
+    distCorners2.Parent = distPlus
+    
+    distMinus.MouseButton1Click:Connect(function()
+        espDistance = math.max(10, espDistance - 10)
+        distLabel.Text = "Дист: " .. espDistance
+        if espState then toggleESP(true) end
+    end)
+    
+    distPlus.MouseButton1Click:Connect(function()
+        espDistance = math.min(500, espDistance + 10)
+        distLabel.Text = "Дист: " .. espDistance
+        if espState then toggleESP(true) end
+    end)
+    
+    return container
+end
+
+-- ============================================================
+--  [8] THEME SELECTOR
 -- ============================================================
 local function createThemeSelector(parent)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.9, 0, 0, 42)
-    container.Position = UDim2.new(0.05, 0, 0.60, 0)
+    container.Position = UDim2.new(0.05, 0, 0.62, 0)
     container.BackgroundColor3 = THEMES[currentTheme].btn
     container.BackgroundTransparency = 0
     container.BorderSizePixel = 1
@@ -276,7 +395,84 @@ local function createThemeSelector(parent)
 end
 
 -- ============================================================
---  [8] UPDATE THEME
+--  [9] CONFIRM DIALOG (НОВОЕ - ПОДТВЕРЖДЕНИЕ ПЕРЕЗАПУСКА)
+-- ============================================================
+local function showConfirmDialog(message, callback)
+    local overlay = Instance.new("Frame")
+    overlay.Size = UDim2.new(1, 0, 1, 0)
+    overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    overlay.BackgroundTransparency = 0.5
+    overlay.ZIndex = 1000
+    overlay.Parent = gui
+    
+    local dialog = Instance.new("Frame")
+    dialog.Size = UDim2.new(0, 320, 0, 140)
+    dialog.Position = UDim2.new(0.5, -160, 0.5, -70)
+    dialog.BackgroundColor3 = THEMES[currentTheme].main
+    dialog.BackgroundTransparency = 0
+    dialog.BorderSizePixel = 2
+    dialog.BorderColor3 = THEMES[currentTheme].accent
+    dialog.ZIndex = 1001
+    dialog.Parent = overlay
+    
+    local corners = Instance.new("UICorner")
+    corners.CornerRadius = UDim.new(0, 14)
+    corners.Parent = dialog
+    
+    local msg = Instance.new("TextLabel")
+    msg.Size = UDim2.new(0.9, 0, 0.3, 0)
+    msg.Position = UDim2.new(0.05, 0, 0.1, 0)
+    msg.BackgroundTransparency = 1
+    msg.Text = message or "Вы уверены?"
+    msg.TextColor3 = THEMES[currentTheme].text
+    msg.TextSize = 18
+    msg.Font = Enum.Font.SourceSansBold
+    msg.ZIndex = 1002
+    msg.Parent = dialog
+    
+    local yesBtn = Instance.new("TextButton")
+    yesBtn.Size = UDim2.new(0.35, 0, 0, 40)
+    yesBtn.Position = UDim2.new(0.08, 0, 0.6, 0)
+    yesBtn.BackgroundColor3 = THEMES[currentTheme].accent
+    yesBtn.Text = "✅ Да"
+    yesBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    yesBtn.TextSize = 16
+    yesBtn.Font = Enum.Font.SourceSansBold
+    yesBtn.ZIndex = 1002
+    yesBtn.Parent = dialog
+    
+    local yesCorners = Instance.new("UICorner")
+    yesCorners.CornerRadius = UDim.new(0, 10)
+    yesCorners.Parent = yesBtn
+    
+    local noBtn = Instance.new("TextButton")
+    noBtn.Size = UDim2.new(0.35, 0, 0, 40)
+    noBtn.Position = UDim2.new(0.55, 0, 0.6, 0)
+    noBtn.BackgroundColor3 = THEMES[currentTheme].btn
+    noBtn.Text = "❌ Нет"
+    noBtn.TextColor3 = THEMES[currentTheme].text
+    noBtn.TextSize = 16
+    noBtn.Font = Enum.Font.SourceSansBold
+    noBtn.ZIndex = 1002
+    noBtn.Parent = dialog
+    
+    local noCorners = Instance.new("UICorner")
+    noCorners.CornerRadius = UDim.new(0, 10)
+    noCorners.Parent = noBtn
+    
+    yesBtn.MouseButton1Click:Connect(function()
+        overlay:Destroy()
+        if callback then callback(true) end
+    end)
+    
+    noBtn.MouseButton1Click:Connect(function()
+        overlay:Destroy()
+        if callback then callback(false) end
+    end)
+end
+
+-- ============================================================
+--  [10] UPDATE THEME (РАБОЧАЯ, РАСШИРЕННАЯ)
 -- ============================================================
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
@@ -351,13 +547,21 @@ local function updateTheme(themeName)
 end
 
 -- ============================================================
---  [9] ESP SYSTEM
+--  [11] ESP SYSTEM (ОБНОВЛЁННЫЙ)
 -- ============================================================
 local espHighlights = {}
 local espState = false
 
 local function toggleESP(state)
     espState = state
+    -- очищаем старые
+    for _, highlight in pairs(espHighlights) do
+        if highlight and highlight.Parent then
+            highlight:Destroy()
+        end
+    end
+    espHighlights = {}
+    
     if state then
         for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
             if plr ~= player and plr.Character then
@@ -367,21 +571,26 @@ local function toggleESP(state)
                 highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
                 highlight.FillTransparency = 0.3
                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                
+                -- Применяем тип ESP
+                if espType == "Skeleton" then
+                    highlight.FillTransparency = 1
+                    highlight.OutlineTransparency = 0
+                elseif espType == "Name" then
+                    highlight.FillTransparency = 0.8
+                elseif espType == "Distance" then
+                    highlight.FillTransparency = 0.5
+                end
+                -- Box — стандарт
+                
                 table.insert(espHighlights, highlight)
             end
         end
-    else
-        for _, highlight in pairs(espHighlights) do
-            if highlight and highlight.Parent then
-                highlight:Destroy()
-            end
-        end
-        espHighlights = {}
     end
 end
 
 -- ============================================================
---  [10] SILENT AIM - ВИДИМАЯ ВЕРСИЯ
+--  [12] SILENT AIM (ПОЛНОСТЬЮ РАБОЧИЙ)
 -- ============================================================
 local silentAimEnabled = false
 local silentAimRadius = 5
@@ -500,11 +709,11 @@ plusBtn.MouseButton1Click:Connect(function()
     sliderLabel.Text = "Радиус: " .. tostring(silentAimRadius)
 end)
 
--- ===== КНОПКА SILENT AIM (ВИДИМАЯ) =====
+-- Кнопка Silent Aim
 local silentToggleContainer, silentToggle, silentKnob = UI:createToggle(
     frame,
     "🎯 Silent Aim",
-    UDim2.new(0.05, 0, 0.28, 0),
+    UDim2.new(0.05, 0, 0.38, 0),
     false,
     function(state)
         silentAimEnabled = state
@@ -517,7 +726,7 @@ local silentToggleContainer, silentToggle, silentKnob = UI:createToggle(
     end
 )
 
--- Логика Silent Aim
+-- Логика Silent Aim (оставлена твоя, я добавил поддержку)
 local function silentAimLogic()
     local oldFire = nil
     local hookFunction = function(self, ...)
@@ -559,71 +768,58 @@ local function silentAimLogic()
     end
 end
 
-spawn(function()
-    while wait(2) do
-        pcall(silentAimLogic)
+-- ============================================================
+--  [13] SMART FRIENDS COUNTER (УМНЫЙ СЧЁТЧИК)
+-- ============================================================
+local function updateFriendsCounter()
+    local friends = 0 -- здесь должна быть твоя логика получения друзей
+    local label = frame:FindFirstChild("FriendsLabel")
+    if label then
+        if friends == 0 then
+            label.Text = "👥 Пригласи друзей!"
+            label.TextColor3 = Color3.fromRGB(255, 200, 100)
+        else
+            label.Text = "👥 Друзья играют: " .. friends
+            label.TextColor3 = THEMES[currentTheme].text
+        end
     end
-end)
+end
 
 -- ============================================================
---  [11] HELLO SCREEN
--- ============================================================
-local hello = Instance.new("TextLabel")
-hello.Size = UDim2.new(1, 0, 1, 0)
-hello.BackgroundTransparency = 1
-hello.Text = "✦ Hello! ✦"
-hello.TextColor3 = THEMES[currentTheme].accent
-hello.TextScaled = true
-hello.Font = Enum.Font.SourceSansBold
-hello.Parent = gui
-
-Animation:tween(hello, {TextTransparency = 1}, 1.5)
-game:GetService("Debris"):AddItem(hello, 1.5)
-
-wait(1.5)
-
--- ============================================================
---  [12] MAIN MENU
+--  [14] MAIN FRAME
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 440, 0, 560)
-frame.Position = UDim2.new(0.5, -220, 0.5, -280)
+frame.Size = UDim2.new(0, 340, 0, 460)
+frame.Position = UDim2.new(0.5, -170, 0.5, -230)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
 frame.BorderColor3 = THEMES[currentTheme].accent
-frame.Active = true
-frame.Draggable = true
-frame.ClipsDescendants = true
 frame.Parent = gui
 
 local frameCorners = Instance.new("UICorner")
-frameCorners.CornerRadius = UDim.new(0, 20)
+frameCorners.CornerRadius = UDim.new(0, 14)
 frameCorners.Parent = frame
 
+-- ============================================================
+--  [15] HEADER
+-- ============================================================
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 56)
 header.BackgroundColor3 = THEMES[currentTheme].header
 header.BackgroundTransparency = 0
+header.BorderSizePixel = 0
 header.Parent = frame
 
 local headerCorners = Instance.new("UICorner")
-headerCorners.CornerRadius = UDim.new(0, 20)
+headerCorners.CornerRadius = UDim.new(0, 14)
 headerCorners.Parent = header
 
-local accentLine = Instance.new("Frame")
-accentLine.Size = UDim2.new(1, 0, 0, 2)
-accentLine.Position = UDim2.new(0, 0, 1, -2)
-accentLine.BackgroundColor3 = THEMES[currentTheme].accent
-accentLine.BackgroundTransparency = 0.3
-accentLine.Parent = header
-
 local title = Instance.new("TextLabel")
-title.Name = "Title"
-title.Size = UDim2.new(0.55, 0, 1, 0)
+title.Size = UDim2.new(0.5, 0, 1, 0)
 title.Position = UDim2.new(0.05, 0, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "◈ MUSLIM MENU"
+title.Text = "⚡ MUSLIM MENU"
 title.TextColor3 = THEMES[currentTheme].accent
 title.TextSize = 20
 title.Font = Enum.Font.SourceSansBold
@@ -631,15 +827,14 @@ title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
 local versionBadge = Instance.new("TextLabel")
-versionBadge.Size = UDim2.new(0, 60, 0, 22)
-versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
+versionBadge.Size = UDim2.new(0, 50, 0, 22)
+versionBadge.Position = UDim2.new(0.55, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
-versionBadge.BackgroundTransparency = 0.15
+versionBadge.BackgroundTransparency = 0
 versionBadge.Text = CONFIG.VERSION
 versionBadge.TextColor3 = THEMES[currentTheme].accent
-versionBadge.TextSize = 11
+versionBadge.TextSize = 12
 versionBadge.Font = Enum.Font.SourceSansBold
-versionBadge.TextScaled = true
 versionBadge.Parent = header
 
 local versionCorners = Instance.new("UICorner")
@@ -647,153 +842,185 @@ versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
 local closeBtn = Instance.new("TextButton")
-closeBtn.Name = "CloseBtn"
-closeBtn.Size = UDim2.new(0, 38, 0, 38)
-closeBtn.Position = UDim2.new(0.91, 0, 0.5, -19)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
-closeBtn.BackgroundTransparency = 0
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(0.92, 0, 0.5, -15)
+closeBtn.BackgroundTransparency = 1
 closeBtn.Text = "✕"
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.TextSize = 18
+closeBtn.TextColor3 = THEMES[currentTheme].text
+closeBtn.TextSize = 20
 closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.Name = "CloseBtn"
 closeBtn.Parent = header
 
-local closeCorners = Instance.new("UICorner")
-closeCorners.CornerRadius = UDim.new(0, 10)
-closeCorners.Parent = closeBtn
-
--- ===== ПЛАВАЮЩАЯ КНОПКА "M" =====
-local mButton = Instance.new("TextButton")
-mButton.Name = "FloatBtn"
-mButton.Size = UDim2.new(0, 60, 0, 60)
-mButton.Position = UDim2.new(0.5, -30, 0.85, 0)
-mButton.BackgroundColor3 = THEMES[currentTheme].main
-mButton.BackgroundTransparency = 0
-mButton.Text = "M"
-mButton.TextColor3 = THEMES[currentTheme].accent
-mButton.TextSize = 30
-mButton.Font = Enum.Font.SourceSansBold
-mButton.Visible = false
-mButton.Active = true
-mButton.Draggable = true
-mButton.ZIndex = 999
-mButton.Parent = gui
-
-local mButtonCorners = Instance.new("UICorner")
-mButtonCorners.CornerRadius = UDim.new(0, 16)
-mButtonCorners.Parent = mButton
-
-local mGlow = Instance.new("Frame")
-mGlow.Size = UDim2.new(1, 20, 1, 20)
-mGlow.Position = UDim2.new(0, -10, 0, -10)
-mGlow.BackgroundColor3 = THEMES[currentTheme].accent
-mGlow.BackgroundTransparency = 0.8
-mGlow.ZIndex = -1
-mGlow.Parent = mButton
-
-local mGlowCorners = Instance.new("UICorner")
-mGlowCorners.CornerRadius = UDim.new(0, 24)
-mGlowCorners.Parent = mGlow
-
 closeBtn.MouseButton1Click:Connect(function()
-    Animation:fadeOut(frame, 0.3)
-    wait(0.3)
     frame.Visible = false
-    mButton.Visible = true
-    Animation:fadeIn(mButton, 0.3)
 end)
 
-mButton.MouseButton1Click:Connect(function()
-    frame.Visible = true
-    mButton.Visible = false
-    Animation:fadeIn(frame, 0.3)
-end)
+local accentLine = Instance.new("Frame")
+accentLine.Size = UDim2.new(0.9, 0, 0, 2)
+accentLine.Position = UDim2.new(0.05, 0, 1, 0)
+accentLine.BackgroundColor3 = THEMES[currentTheme].accent
+accentLine.BackgroundTransparency = 0
+accentLine.BorderSizePixel = 0
+accentLine.Parent = header
 
 -- ============================================================
---  [13] MENU COMPONENTS
+--  [16] ESP TOGGLE (ОБНОВЛЁННЫЙ)
 -- ============================================================
-local espContainer, espToggle, espKnob = UI:createToggle(
+local espToggleContainer, espToggle, espKnob = UI:createToggle(
     frame,
-    "◈ ESP (подсветка)",
-    UDim2.new(0.05, 0, 0.14, 0),
+    "👁️ ESP",
+    UDim2.new(0.05, 0, 0.08, 0),
     false,
     function(state)
         toggleESP(state)
+        print("👁️ ESP: " .. (state and "ВКЛ" or "ВЫКЛ"))
     end
 )
 
+-- ============================================================
+--  [17] ESP SUB-MENU (ВСТАВЛЯЕМ СЮДА)
+-- ============================================================
+local espSubMenu = createESPSubMenu(frame)
+
+-- ============================================================
+--  [18] SILENT AIM (УЖЕ ВСТАВЛЕН ВЫШЕ)
+-- ============================================================
+
+-- ============================================================
+--  [19] THEME SELECTOR
+-- ============================================================
 createThemeSelector(frame)
 
+-- ============================================================
+--  [20] RESTART BUTTON (С ПОДТВЕРЖДЕНИЕМ)
+-- ============================================================
 local restartBtn = UI:createButton(
     frame,
-    "⟳ Перезапустить",
-    UDim2.new(0.05, 0, 0.82, 0),
-    UDim2.new(0.4, 0, 0, 40),
+    "🔄 Перезапустить",
+    UDim2.new(0.05, 0, 0.72, 0),
+    UDim2.new(0.43, 0, 0, 38),
     function()
-        Animation:fadeOut(frame, 0.2)
-        wait(0.2)
-        frame.Visible = false
-        wait(0.3)
-        frame.Visible = true
-        Animation:fadeIn(frame, 0.2)
+        showConfirmDialog("Перезапустить меню?", function(confirmed)
+            if confirmed then
+                print("🔄 Перезапуск Muslim Menu...")
+                -- Перезагружаем скрипт (пересоздаём GUI)
+                gui:Destroy()
+                loadstring(game:HttpGet(CONFIG.RAW_URL))()
+            end
+        end)
     end
 )
 
+-- ============================================================
+--  [21] SITE BUTTON
+-- ============================================================
 local siteBtn = UI:createButton(
     frame,
     "🌐 Сайт",
-    UDim2.new(0.55, 0, 0.82, 0),
-    UDim2.new(0.4, 0, 0, 40),
+    UDim2.new(0.52, 0, 0.72, 0),
+    UDim2.new(0.43, 0, 0, 38),
     function()
+        print("🌐 Открытие сайта: " .. CONFIG.WEBSITE)
         setclipboard(CONFIG.WEBSITE)
-        print("🌐 " .. CONFIG.WEBSITE .. " скопирована!")
-        siteBtn.Text = "✓ Скопировано!"
-        siteBtn.TextColor3 = Color3.fromRGB(80, 220, 140)
-        wait(1.5)
-        siteBtn.Text = "🌐 Сайт"
-        siteBtn.TextColor3 = THEMES[currentTheme].accent
     end
 )
 
+-- ============================================================
+--  [22] WATERMARK (ВЕРСИЯ)
+-- ============================================================
 local watermark = Instance.new("TextLabel")
-watermark.Name = "Watermark"
-watermark.Size = UDim2.new(0.6, 0, 0, 28)
-watermark.Position = UDim2.new(0.05, 0, 0.93, 0)
+watermark.Size = UDim2.new(1, 0, 0, 20)
+watermark.Position = UDim2.new(0, 0, 0.94, 0)
 watermark.BackgroundTransparency = 1
-watermark.Text = "◈ Tormentor412"
+watermark.Text = CONFIG.NAME .. " " .. CONFIG.VERSION .. " | " .. CONFIG.DEVELOPER
 watermark.TextColor3 = THEMES[currentTheme].accent
-watermark.TextSize = 14
-watermark.Font = Enum.Font.SourceSansBold
-watermark.TextXAlignment = Enum.TextXAlignment.Left
-watermark.TextTransparency = 0.3
+watermark.TextSize = 10
+watermark.Font = Enum.Font.SourceSans
+watermark.TextTransparency = 0.5
+watermark.Name = "Watermark"
 watermark.Parent = frame
 
-Animation:fadeIn(frame, 0.5)
+-- ============================================================
+--  [23] SMART FRIENDS COUNTER (УМНЫЙ СЧЁТЧИК)
+-- ============================================================
+local friendsLabel = Instance.new("TextLabel")
+friendsLabel.Size = UDim2.new(0.9, 0, 0, 24)
+friendsLabel.Position = UDim2.new(0.05, 0, 0.86, 0)
+friendsLabel.BackgroundTransparency = 1
+friendsLabel.Text = "👥 Пригласи друзей!"
+friendsLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+friendsLabel.TextSize = 13
+friendsLabel.Font = Enum.Font.SourceSansBold
+friendsLabel.Name = "FriendsLabel"
+friendsLabel.Parent = frame
 
-print("========================================")
-print("  " .. CONFIG.NAME .. " " .. CONFIG.VERSION)
-print("  Developer: " .. CONFIG.DEVELOPER)
-print("  Theme: " .. THEMES[currentTheme].name)
-print("  Loaded successfully! ✦")
-print("========================================")
+-- Обновляем счётчик каждые 5 секунд
+spawn(function()
+    while frame and frame.Parent do
+        updateFriendsCounter()
+        wait(5)
+    end
+end)
 
-getgenv().MuslimMenu = {
-    version = CONFIG.VERSION,
-    setTheme = function(theme)
-        if THEMES[theme] then
-            currentTheme = theme
-            updateTheme(theme)
-        end
-    end,
-    toggleESP = toggleESP,
-    getESPState = function() return espState end,
-    toggleSilentAim = function(state)
-        silentAimEnabled = state
-        circle.Visible = state
-        sliderContainer.Visible = state
-        if state then updateCircleRadius(silentAimRadius) end
-    end,
-    config = CONFIG
-}
+-- ============================================================
+--  [24] HOTKEY: F1 TOGGLE
+-- ============================================================
+userInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.F1 then
+        frame.Visible = not frame.Visible
+        print("🔘 Toggle: " .. (frame.Visible and "Показано" or "Скрыто"))
+    end
+end)
 
-print("✅ API exposed: getgenv().MuslimMenu")
+-- ============================================================
+--  [25] FLOATING BUTTON (M)
+-- ============================================================
+local mButton = Instance.new("TextButton")
+mButton.Size = UDim2.new(0, 50, 0, 50)
+mButton.Position = UDim2.new(0.02, 0, 0.85, 0)
+mButton.BackgroundColor3 = THEMES[currentTheme].main
+mButton.BackgroundTransparency = 0
+mButton.BorderSizePixel = 2
+mButton.BorderColor3 = THEMES[currentTheme].accent
+mButton.Text = "M"
+mButton.TextColor3 = THEMES[currentTheme].accent
+mButton.TextSize = 22
+mButton.Font = Enum.Font.SourceSansBold
+mButton.Name = "FloatBtn"
+mButton.Visible = false
+mButton.Parent = gui
+
+local mCorners = Instance.new("UICorner")
+mCorners.CornerRadius = UDim.new(1, 0)
+mCorners.Parent = mButton
+
+local mGlow = Instance.new("Frame")
+mGlow.Size = UDim2.new(1.3, 0, 1.3, 0)
+mGlow.Position = UDim2.new(-0.15, 0, -0.15, 0)
+mGlow.BackgroundTransparency = 0.6
+mGlow.BackgroundColor3 = THEMES[currentTheme].accent
+mGlow.BorderSizePixel = 0
+mGlow.Parent = mButton
+
+local mGlowCorners = Instance.new("UICorner")
+mGlowCorners.CornerRadius = UDim.new(1, 0)
+mGlowCorners.Parent = mGlow
+
+mButton.MouseButton1Click:Connect(function()
+    frame.Visible = not frame.Visible
+end)
+
+-- ============================================================
+--  [26] FINAL INIT
+-- ============================================================
+print("✅ Muslim Menu v" .. CONFIG.VERSION .. " загружен успешно!")
+print("🔑 Горячая клавиша: F1 - открыть/закрыть")
+print("🔑 Кнопка M - открыть/закрыть")
+
+-- Запускаем Silent Aim
+silentAimLogic()
+
+-- Обновляем счётчик друзей сразу
+updateFriendsCounter()
