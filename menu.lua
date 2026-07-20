@@ -5,18 +5,18 @@
 --  ██   ██ ██    ██      ██ ██      ██ ██  ██  ██ 
 --  ██████   ██████  ███████ ███████ ██ ██      ██ 
 -- ============================================================
---  MUSLIM MENU v7.1 - Delta Fix
+--  MUSLIM MENU v7.2 - Working Themes + Silent Aim
 --  by Tormentor412
 -- ============================================================
 
-print("Загрузка Muslim Menu v7.1...")
+print("Загрузка Muslim Menu v7.2...")
 
 -- ============================================================
 --  [1] CORE CONFIGURATION
 -- ============================================================
 local CONFIG = {
     NAME = "MUSLIM MENU",
-    VERSION = "v7.1",
+    VERSION = "v7.2",
     DEVELOPER = "Tormentor412",
     GITHUB = "https://github.com/korytnikovayulya-sudo/Kulgems",
     WEBSITE = "https://korytnikovayulya-sudo.github.io/muslim-menu-site/",
@@ -207,7 +207,7 @@ function UI:createToggle(parent, label, pos, defaultValue, callback)
 end
 
 -- ============================================================
---  [7] THEME SELECTOR
+--  [7] THEME SELECTOR (РАБОЧАЯ ВЕРСИЯ)
 -- ============================================================
 local function createThemeSelector(parent)
     local container = Instance.new("Frame")
@@ -261,48 +261,31 @@ local function createThemeSelector(parent)
         btnCorners.CornerRadius = UDim.new(0, 8)
         btnCorners.Parent = btn
         
-        -- Selection indicator
-        local indicator = Instance.new("Frame")
-        indicator.Size = UDim2.new(1, 4, 1, 4)
-        indicator.Position = UDim2.new(0, -2, 0, -2)
-        indicator.BackgroundTransparency = 1
-        indicator.BorderSizePixel = 2
-        indicator.BorderColor3 = THEMES[currentTheme].accent
-        indicator.Parent = btn
-        
-        local indicatorCorners = Instance.new("UICorner")
-        indicatorCorners.CornerRadius = UDim.new(0, 10)
-        indicatorCorners.Parent = indicator
-        
-        if themeName == currentTheme then
-            indicator.BackgroundTransparency = 0.5
-        end
-        
         btn.MouseButton1Click:Connect(function()
             currentTheme = themeName
             updateTheme(themeName)
-            for _, child in pairs(container:GetChildren()) do
-                if child:IsA("TextButton") and child:FindFirstChild("Frame") then
-                    child.Frame.BackgroundTransparency = 1
-                end
-            end
-            indicator.BackgroundTransparency = 0.5
         end)
     end
 end
 
 -- ============================================================
---  [8] UPDATE FUNCTIONS
+--  [8] UPDATE THEME FUNCTION (ПОЛНОСТЬЮ РАБОЧАЯ)
 -- ============================================================
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     
+    -- Основное окно
     frame.BackgroundColor3 = theme.main
     frame.BorderColor3 = theme.accent
     
+    -- Заголовок
     header.BackgroundColor3 = theme.header
     title.TextColor3 = theme.accent
+    accentLine.BackgroundColor3 = theme.accent
+    versionBadge.BackgroundColor3 = theme.accent
+    versionBadge.TextColor3 = theme.accent
     
+    -- Обновляем все кнопки в меню
     for _, btn in pairs(frame:GetDescendants()) do
         if btn:IsA("TextButton") then
             if btn.Name ~= "CloseBtn" and btn.Name ~= "FloatBtn" then
@@ -319,14 +302,43 @@ local function updateTheme(themeName)
         end
     end
     
+    -- Обновляем контейнеры (кнопки и переключатели)
+    for _, container in pairs(frame:GetChildren()) do
+        if container:IsA("Frame") and container ~= header then
+            container.BackgroundColor3 = theme.btn
+            container.BorderColor3 = theme.accent
+            -- Обновляем текст в контейнере
+            for _, child in pairs(container:GetChildren()) do
+                if child:IsA("TextLabel") then
+                    child.TextColor3 = theme.text
+                end
+            end
+        end
+    end
+    
+    -- Обновляем ESP
     for _, highlight in pairs(espHighlights) do
         if highlight and highlight.Parent then
             highlight.FillColor = theme.accent
         end
     end
     
+    -- Обновляем плавающую кнопку M
     mButton.BackgroundColor3 = theme.main
     mButton.TextColor3 = theme.accent
+    
+    -- Обновляем водяной знак
+    watermark.TextColor3 = theme.accent
+    
+    -- Обновляем кнопки "Перезапустить" и "Сайт"
+    if restartBtn then
+        restartBtn.BackgroundColor3 = theme.btn
+        restartBtn.TextColor3 = theme.accent
+    end
+    if siteBtn then
+        siteBtn.BackgroundColor3 = theme.btn
+        siteBtn.TextColor3 = theme.accent
+    end
 end
 
 -- ============================================================
@@ -377,8 +389,8 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 440, 0, 540)
-frame.Position = UDim2.new(0.5, -220, 0.5, -270)
+frame.Size = UDim2.new(0, 440, 0, 580)
+frame.Position = UDim2.new(0.5, -220, 0.5, -290)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
@@ -557,12 +569,182 @@ watermark.TextTransparency = 0.3
 watermark.Parent = frame
 
 -- ============================================================
---  [12] LOADING ANIMATION
+--  [12] SILENT AIM
+-- ============================================================
+local silentAimEnabled = false
+local silentAimRadius = 5
+
+local circle = Instance.new("Frame")
+circle.Size = UDim2.new(0, 120, 0, 120)
+circle.Position = UDim2.new(0.5, -60, 0.5, -60)
+circle.BackgroundTransparency = 1
+circle.ZIndex = 999
+circle.Parent = gui
+circle.Visible = false
+
+local circleBorder = Instance.new("Frame")
+circleBorder.Size = UDim2.new(1, 0, 1, 0)
+circleBorder.BackgroundTransparency = 1
+circleBorder.BorderSizePixel = 2
+circleBorder.BorderColor3 = Color3.fromRGB(255, 50, 50)
+circleBorder.Parent = circle
+
+local circleCorners = Instance.new("UICorner")
+circleCorners.CornerRadius = UDim.new(1, 0)
+circleCorners.Parent = circleBorder
+
+local circleText = Instance.new("TextLabel")
+circleText.Size = UDim2.new(1, 0, 1, 0)
+circleText.BackgroundTransparency = 1
+circleText.Text = "5"
+circleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+circleText.TextSize = 24
+circleText.Font = Enum.Font.SourceSansBold
+circleText.Parent = circle
+
+local function updateCircleRadius(value)
+    silentAimRadius = math.clamp(value, 1, 10)
+    local size = 60 + (silentAimRadius - 1) * 12
+    circle.Size = UDim2.new(0, size, 0, size)
+    circle.Position = UDim2.new(0.5, -size/2, 0.5, -size/2)
+    circleText.Text = tostring(silentAimRadius)
+end
+
+local sliderContainer = Instance.new("Frame")
+sliderContainer.Size = UDim2.new(0.8, 0, 0, 50)
+sliderContainer.Position = UDim2.new(0.1, 0, 0.55, 0)
+sliderContainer.BackgroundColor3 = THEMES[currentTheme].btn
+sliderContainer.BackgroundTransparency = 0
+sliderContainer.BorderSizePixel = 1
+sliderContainer.BorderColor3 = THEMES[currentTheme].accent
+sliderContainer.Visible = false
+sliderContainer.Parent = frame
+
+local sliderCorners = Instance.new("UICorner")
+sliderCorners.CornerRadius = UDim.new(0, 10)
+sliderCorners.Parent = sliderContainer
+
+local sliderLabel = Instance.new("TextLabel")
+sliderLabel.Size = UDim2.new(0.4, 0, 1, 0)
+sliderLabel.Position = UDim2.new(0.05, 0, 0, 0)
+sliderLabel.BackgroundTransparency = 1
+sliderLabel.Text = "Радиус: 5"
+sliderLabel.TextColor3 = THEMES[currentTheme].text
+sliderLabel.TextSize = 14
+sliderLabel.Font = Enum.Font.SourceSansBold
+sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+sliderLabel.Parent = sliderContainer
+
+local minusBtn = Instance.new("TextButton")
+minusBtn.Size = UDim2.new(0, 30, 0, 30)
+minusBtn.Position = UDim2.new(0.55, 0, 0.5, -15)
+minusBtn.BackgroundColor3 = THEMES[currentTheme].accent
+minusBtn.Text = "-"
+minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minusBtn.TextSize = 20
+minusBtn.Font = Enum.Font.SourceSansBold
+minusBtn.Parent = sliderContainer
+
+local minusCorners = Instance.new("UICorner")
+minusCorners.CornerRadius = UDim.new(0, 8)
+minusCorners.Parent = minusBtn
+
+local plusBtn = Instance.new("TextButton")
+plusBtn.Size = UDim2.new(0, 30, 0, 30)
+plusBtn.Position = UDim2.new(0.75, 0, 0.5, -15)
+plusBtn.BackgroundColor3 = THEMES[currentTheme].accent
+plusBtn.Text = "+"
+plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+plusBtn.TextSize = 20
+plusBtn.Font = Enum.Font.SourceSansBold
+plusBtn.Parent = sliderContainer
+
+local plusCorners = Instance.new("UICorner")
+plusCorners.CornerRadius = UDim.new(0, 8)
+plusCorners.Parent = plusBtn
+
+minusBtn.MouseButton1Click:Connect(function()
+    updateCircleRadius(silentAimRadius - 1)
+    sliderLabel.Text = "Радиус: " .. tostring(silentAimRadius)
+end)
+
+plusBtn.MouseButton1Click:Connect(function()
+    updateCircleRadius(silentAimRadius + 1)
+    sliderLabel.Text = "Радиус: " .. tostring(silentAimRadius)
+end)
+
+local silentToggleContainer, silentToggle, silentKnob = UI:createToggle(
+    frame,
+    "🎯 Silent Aim",
+    UDim2.new(0.05, 0, 0.30, 0),
+    false,
+    function(state)
+        silentAimEnabled = state
+        circle.Visible = state
+        sliderContainer.Visible = state
+        if state then
+            updateCircleRadius(silentAimRadius)
+        end
+        print("🎯 Silent Aim: " .. (state and "ВКЛ" or "ВЫКЛ"))
+    end
+)
+
+local function silentAimLogic()
+    local oldFire = nil
+    local hookFunction = function(self, ...)
+        local args = {...}
+        if silentAimEnabled then
+            local target = nil
+            local minDist = math.huge
+            local playerPos = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            if playerPos then
+                for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+                    if plr ~= player and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                        local dist = (plr.Character.HumanoidRootPart.Position - playerPos.Position).Magnitude
+                        if dist < minDist and dist < silentAimRadius * 20 then
+                            minDist = dist
+                            target = plr
+                        end
+                    end
+                end
+            end
+            if target then
+                for i, arg in pairs(args) do
+                    if type(arg) == "Instance" and arg:IsA("Player") then
+                        args[i] = target
+                    end
+                end
+            end
+        end
+        return oldFire(self, unpack(args))
+    end
+
+    for _, child in pairs(game:GetDescendants()) do
+        if child:IsA("RemoteEvent") and (child.Name:lower():find("attack") or child.Name:lower():find("damage") or child.Name:lower():find("fire")) then
+            if not child._hooked then
+                child._hooked = true
+                oldFire = child.FireServer
+                child.FireServer = hookFunction
+            end
+        end
+    end
+end
+
+spawn(function()
+    while wait(2) do
+        pcall(silentAimLogic)
+    end
+end)
+
+print("✅ Silent Aim загружен!")
+
+-- ============================================================
+--  [13] LOADING ANIMATION
 -- ============================================================
 Animation:fadeIn(frame, 0.5)
 
 -- ============================================================
---  [13] INITIALIZATION LOG
+--  [14] INITIALIZATION LOG
 -- ============================================================
 print("========================================")
 print("  " .. CONFIG.NAME .. " " .. CONFIG.VERSION)
@@ -572,7 +754,7 @@ print("  Loaded successfully! ✦")
 print("========================================")
 
 -- ============================================================
---  [14] API EXPOSE
+--  [15] API EXPOSE
 -- ============================================================
 getgenv().MuslimMenu = {
     version = CONFIG.VERSION,
@@ -584,6 +766,12 @@ getgenv().MuslimMenu = {
     end,
     toggleESP = toggleESP,
     getESPState = function() return espState end,
+    toggleSilentAim = function(state)
+        silentAimEnabled = state
+        circle.Visible = state
+        sliderContainer.Visible = state
+        if state then updateCircleRadius(silentAimRadius) end
+    end,
     config = CONFIG
 }
 
