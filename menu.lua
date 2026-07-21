@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v8.9 - MM2 PERFECT ESP
+--  MUSLIM MENU v9.0 - ESP THROUGH WALLS
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.9 (MM2 PERFECT ESP)...")
+print("🚀 Загрузка Muslim Menu v9.0 (ESP THROUGH WALLS)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v8.9"
+versionBadge.Text = "v9.0"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,7 +219,7 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP ПО KNIFE И GUN (100% РАБОТАЕТ В MM2)
+--  ESP СКВОЗЬ СТЕНЫ
 -- ============================================================
 local espHighlights = {}
 
@@ -232,6 +232,22 @@ local function clearESP()
     espHighlights = {}
 end
 
+local function createWallESP(plr, color)
+    if not plr or not plr.Character or not plr.Character:FindFirstChild("HumanoidRootPart") then
+        return nil
+    end
+    
+    local highlight = Instance.new("Highlight")
+    highlight.Parent = plr.Character
+    highlight.FillColor = color
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.2
+    -- ГЛАВНОЕ: видимость сквозь стены
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    
+    return highlight
+end
+
 local function updateESP()
     clearESP()
     
@@ -239,7 +255,7 @@ local function updateESP()
         if plr ~= player and plr.Character then
             local weaponType = "innocent"
             
-            -- Ищем ТОЛЬКО Knife и Gun в инвентаре
+            -- Ищем Knife и Gun
             for _, tool in pairs(plr.Character:GetChildren()) do
                 if tool:IsA("Tool") then
                     local toolName = tool.Name
@@ -253,30 +269,16 @@ local function updateESP()
                 end
             end
             
-            -- Включаем подсветку в зависимости от роли
+            local highlight = nil
             if espMurderState and weaponType == "murderer" then
-                local highlight = Instance.new("Highlight")
-                highlight.Parent = plr.Character
-                highlight.FillColor = Color3.fromRGB(255, 0, 0)
-                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                highlight.FillTransparency = 0.3
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                table.insert(espHighlights, highlight)
+                highlight = createWallESP(plr, Color3.fromRGB(255, 0, 0))
             elseif espSheriffState and weaponType == "sheriff" then
-                local highlight = Instance.new("Highlight")
-                highlight.Parent = plr.Character
-                highlight.FillColor = Color3.fromRGB(0, 100, 255)
-                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                highlight.FillTransparency = 0.3
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                table.insert(espHighlights, highlight)
+                highlight = createWallESP(plr, Color3.fromRGB(0, 100, 255))
             elseif espInnocentState and weaponType == "innocent" then
-                local highlight = Instance.new("Highlight")
-                highlight.Parent = plr.Character
-                highlight.FillColor = Color3.fromRGB(0, 255, 0)
-                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                highlight.FillTransparency = 0.3
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                highlight = createWallESP(plr, Color3.fromRGB(0, 255, 0))
+            end
+            
+            if highlight then
                 table.insert(espHighlights, highlight)
             end
         end
@@ -539,7 +541,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v8.9 - MM2 PERFECT ESP")
+print("  MUSLIM MENU v9.0 - ESP THROUGH WALLS")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
