@@ -1,5 +1,5 @@
 -- ============================================================
---  MUSLIM MENU v14.4 - FULLY WORKING (LANGUAGE INSTANT)
+--  MUSLIM MENU v14.4 - FINAL (LANGUAGE INSTANT, NO SAVE)
 --  by Tormentor412
 -- ============================================================
 
@@ -27,7 +27,7 @@ local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
 local themeDisplay = {"MIDNIGHT", "EMERALD", "RUBY", "ROYAL", "GOLD"}
 
 -- ============================================================
---  ЯЗЫКИ (ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ)
+--  ЯЗЫКИ (ПО УМОЛЧАНИЮ РУССКИЙ)
 -- ============================================================
 local LANG = {
     ru = {
@@ -40,7 +40,6 @@ local LANG = {
         settings = "⚙️ НАСТРОЙКИ",
         theme = "🎨 Тема:",
         lang = "🌍 Язык:",
-        save = "💾 Сохранить",
         watermark = "MUSLIM MENU v14.4 | TORMENTOR412"
     },
     en = {
@@ -53,16 +52,15 @@ local LANG = {
         settings = "⚙️ SETTINGS",
         theme = "🎨 Theme:",
         lang = "🌍 Language:",
-        save = "💾 Save",
         watermark = "MUSLIM MENU v14.4 | TORMENTOR412"
     }
 }
 
 -- ============================================================
---  НАСТРОЙКИ (ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ)
+--  НАСТРОЙКИ (ПО УМОЛЧАНИЮ РУССКИЙ)
 -- ============================================================
 local currentTheme = "midnight"
-local currentLang = "en"          -- ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ
+local currentLang = "ru"          -- ПО УМОЛЧАНИЮ РУССКИЙ
 
 -- ============================================================
 --  ФУНКЦИЯ ПРИМЕНЕНИЯ ВСЕХ НАСТРОЕК (БЕЗ ПРОЗРАЧНОСТИ)
@@ -102,9 +100,6 @@ local function applyAllSettings()
     themeLabel.TextColor3 = theme.text
     langLabel.Text = lang.lang
     langLabel.TextColor3 = theme.text
-    saveBtn.Text = lang.save
-    saveBtn.TextColor3 = theme.text
-    saveBtn.BackgroundColor3 = theme.accent
     
     -- ВОДЯНОЙ ЗНАК
     watermark.Text = lang.watermark
@@ -150,9 +145,6 @@ local function applyAllSettings()
             themeValue.Text = themeIcons[i] .. " " .. themeDisplay[i]
         end
     end
-    
-    -- ЗНАЧЕНИЕ ЯЗЫКА (отображаем текущий язык)
-    langValue.Text = currentLang == "ru" and "🇷🇺 Русский" or "🇬🇧 English"
 end
 
 -- ============================================================
@@ -314,7 +306,7 @@ infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
 -- ============================================================
---  SETTINGS (БЕЗ ПРОЗРАЧНОСТИ)
+--  SETTINGS (БЕЗ ПРОЗРАЧНОСТИ И БЕЗ КНОПКИ СОХРАНИТЬ)
 -- ============================================================
 local settingsContent = Instance.new("Frame")
 settingsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -392,7 +384,7 @@ for i, name in ipairs(themeNames) do
     end)
 end
 
--- ЯЗЫК (МГНОВЕННОЕ ПРИМЕНЕНИЕ + ПОДСВЕТКА)
+-- ЯЗЫК (МГНОВЕННОЕ ПРИМЕНЕНИЕ С ПОДСВЕТКОЙ)
 local langLabel = Instance.new("TextLabel")
 langLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 langLabel.Position = UDim2.new(0.05, 0, 0.22, 0)
@@ -432,17 +424,6 @@ langEn.TextSize = 14
 langEn.Font = Enum.Font.SourceSansBold
 langEn.Parent = langContainer
 
-local langValue = Instance.new("TextLabel")
-langValue.Size = UDim2.new(0.2, 0, 0.06, 0)
-langValue.Position = UDim2.new(0.7, 0, 0.22, 0)
-langValue.BackgroundTransparency = 1
-langValue.Text = "🇬🇧 English"
-langValue.TextColor3 = Color3.fromRGB(100, 180, 255)
-langValue.TextSize = 14
-langValue.Font = Enum.Font.SourceSansBold
-langValue.TextXAlignment = Enum.TextXAlignment.Right
-langValue.Parent = settingsContent
-
 -- МГНОВЕННОЕ ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА С ПОДСВЕТКОЙ
 langRu.MouseButton1Click:Connect(function()
     currentLang = "ru"
@@ -454,27 +435,6 @@ langEn.MouseButton1Click:Connect(function()
     currentLang = "en"
     applyAllSettings()
     print("🌍 Язык: English")
-end)
-
--- КНОПКА СОХРАНИТЬ (теперь просто дублирует применение, можно оставить)
-local saveBtn = Instance.new("TextButton")
-saveBtn.Size = UDim2.new(0.25, 0, 0.07, 0)
-saveBtn.Position = UDim2.new(0.35, 0, 0.35, 0)
-saveBtn.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
-saveBtn.BackgroundTransparency = 0.15
-saveBtn.Text = "💾 Сохранить"
-saveBtn.TextColor3 = Color3.fromRGB(220, 230, 240)
-saveBtn.TextSize = 18
-saveBtn.Font = Enum.Font.SourceSansBold
-saveBtn.Parent = settingsContent
-
-local saveCorners = Instance.new("UICorner")
-saveCorners.CornerRadius = UDim.new(0, 10)
-saveCorners.Parent = saveBtn
-
-saveBtn.MouseButton1Click:Connect(function()
-    applyAllSettings()
-    print("✅ Настройки применены!")
 end)
 
 -- ============================================================
@@ -523,4 +483,4 @@ applyAllSettings()
 
 print("✅ Muslim Menu v14.4 загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
-print("🌍 Язык по умолчанию: Английский")
+print("🌍 Язык по умолчанию: Русский")
