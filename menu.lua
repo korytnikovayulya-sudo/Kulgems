@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v14.1 - SETTINGS WORKING
+--  MUSLIM MENU v14.4 - SETTINGS FIXED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v14.1...")
+print("🚀 Загрузка Muslim Menu v14.4...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -12,7 +12,7 @@ gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
 -- ============================================================
---  ТЕМЫ
+--  [1] ТЕМЫ
 -- ============================================================
 local THEMES = {
     midnight = { main = Color3.fromRGB(10, 10, 14), accent = Color3.fromRGB(100, 180, 255), header = Color3.fromRGB(16, 18, 24), btn = Color3.fromRGB(22, 26, 34), hover = Color3.fromRGB(34, 40, 52), text = Color3.fromRGB(220, 230, 240) },
@@ -25,12 +25,12 @@ local THEMES = {
 local currentTheme = "midnight"
 local currentTransparency = 0.05
 local currentLang = "ru"
-local tempTheme = currentTheme
-local tempTransparency = currentTransparency
-local tempLang = currentLang
+local tempTheme = "midnight"
+local tempTransparency = 0
+local tempLang = "ru"
 
 -- ============================================================
---  ЯЗЫКИ
+--  [2] ЯЗЫКИ
 -- ============================================================
 local LANG = {
     ru = {
@@ -47,7 +47,7 @@ local LANG = {
         lang_ru = "Русский",
         lang_en = "Английский",
         save_btn = "💾 Сохранить",
-        watermark = "MUSLIM MENU v14.1 | TORMENTOR412"
+        watermark = "MUSLIM MENU v14.4 | TORMENTOR412"
     },
     en = {
         title = "MUSLIM MENU",
@@ -63,12 +63,90 @@ local LANG = {
         lang_ru = "Russian",
         lang_en = "English",
         save_btn = "💾 Save",
-        watermark = "MUSLIM MENU v14.1 | TORMENTOR412"
+        watermark = "MUSLIM MENU v14.4 | TORMENTOR412"
     }
 }
 
 -- ============================================================
---  ПРИВЕТСТВИЕ
+--  [3] ФУНКЦИИ ОБНОВЛЕНИЯ
+-- ============================================================
+local function updateTheme(themeName)
+    local theme = THEMES[themeName]
+    if not theme then return end
+    
+    frame.BackgroundColor3 = theme.main
+    frame.BackgroundTransparency = currentTransparency
+    frame.BorderColor3 = theme.accent
+    
+    header.BackgroundColor3 = theme.header
+    title.TextColor3 = theme.accent
+    crosshairCircle.BorderColor3 = theme.accent
+    lineH.BackgroundColor3 = theme.accent
+    lineV.BackgroundColor3 = theme.accent
+    dot.BackgroundColor3 = theme.accent
+    versionBadge.BackgroundColor3 = theme.accent
+    versionBadge.BackgroundTransparency = 0.15
+    versionBadge.TextColor3 = theme.accent
+    
+    for _, child in pairs(frame:GetDescendants()) do
+        if child:IsA("TextButton") and child.Name ~= "CloseBtn" and child.Name ~= "FloatBtn" then
+            child.BackgroundColor3 = theme.btn
+            child.BackgroundTransparency = 0.1
+            child.TextColor3 = theme.accent
+        end
+        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" then
+            child.TextColor3 = theme.text
+        end
+    end
+    
+    if mButton then
+        mButton.BackgroundColor3 = theme.main
+        mButton.BackgroundTransparency = 0.05
+        mButton.TextColor3 = theme.accent
+    end
+end
+
+local function updateLanguage(langCode)
+    local lang = LANG[langCode]
+    if not lang then return end
+    
+    title.Text = lang.title
+    infoTitle.Text = lang.info_title
+    infoHello.Text = lang.info_hello
+    infoRate.Text = lang.info_rate
+    infoNick.Text = lang.info_nick
+    infoFooter.Text = lang.info_footer
+    settingsTitle.Text = lang.settings_title
+    themeLabel.Text = lang.theme_label
+    transLabel.Text = lang.transparency_label
+    langLabel.Text = lang.lang_label
+    saveBtn.Text = lang.save_btn
+    watermark.Text = lang.watermark
+end
+
+local function updateContent()
+    -- ПОКАЗЫВАЕМ ТОЛЬКО АКТИВНУЮ ВКЛАДКУ
+    infoContent.Visible = (activeTab == "INFO")
+    settingsContent.Visible = (activeTab == "SETTINGS")
+    
+    -- ОБНОВЛЯЕМ ЦВЕТА КНОПОК ВКЛАДОК
+    for _, btn in pairs(tabContainer:GetChildren()) do
+        if btn:IsA("TextButton") then
+            if btn.Text == activeTab then
+                btn.BackgroundColor3 = THEMES[currentTheme].accent
+                btn.BackgroundTransparency = 0.15
+                btn.TextColor3 = THEMES[currentTheme].main
+            else
+                btn.BackgroundColor3 = THEMES[currentTheme].btn
+                btn.BackgroundTransparency = 0.15
+                btn.TextColor3 = THEMES[currentTheme].text
+            end
+        end
+    end
+end
+
+-- ============================================================
+--  [4] ПРИВЕТСТВИЕ
 -- ============================================================
 local hello = Instance.new("TextLabel")
 hello.Size = UDim2.new(1, 0, 1, 0)
@@ -85,7 +163,7 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ
+--  [5] ОСНОВНОЕ МЕНЮ
 -- ============================================================
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 700, 0, 450)
@@ -104,7 +182,7 @@ corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
 -- ============================================================
---  ЗАГОЛОВОК
+--  [6] ЗАГОЛОВОК
 -- ============================================================
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 50)
@@ -194,7 +272,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.85, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v14.1"
+versionBadge.Text = "v14.4"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -253,7 +331,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКИ
+--  [7] ВКЛАДКИ (ЗДЕСЬ ВАЖНО!)
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -270,6 +348,7 @@ contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
+-- === КНОПКИ ВКЛАДОК ===
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -289,6 +368,7 @@ local function createTabButton(name, yPos)
     btn.MouseButton1Click:Connect(function()
         activeTab = name
         updateContent()
+        print("🔄 Вкладка: " .. name)
     end)
     
     return btn
@@ -298,7 +378,7 @@ createTabButton("INFO", 0)
 createTabButton("SETTINGS", 45)
 
 -- ============================================================
---  КОНТЕНТ INFO
+--  [8] КОНТЕНТ INFO
 -- ============================================================
 local infoContent = Instance.new("Frame")
 infoContent.Size = UDim2.new(1, 0, 1, 0)
@@ -363,12 +443,12 @@ infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
 -- ============================================================
---  КОНТЕНТ SETTINGS
+--  [9] КОНТЕНТ SETTINGS
 -- ============================================================
 local settingsContent = Instance.new("Frame")
 settingsContent.Size = UDim2.new(1, 0, 1, 0)
 settingsContent.BackgroundTransparency = 1
-settingsContent.Visible = false
+settingsContent.Visible = false  -- Скрыта по умолчанию
 settingsContent.Parent = contentContainer
 
 local settingsTitle = Instance.new("TextLabel")
@@ -381,7 +461,7 @@ settingsTitle.TextSize = 24
 settingsTitle.Font = Enum.Font.SourceSansBold
 settingsTitle.Parent = settingsContent
 
--- === ТЕМЫ ===
+-- ТЕМЫ
 local themeLabel = Instance.new("TextLabel")
 themeLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 themeLabel.Position = UDim2.new(0.1, 0, 0.12, 0)
@@ -432,7 +512,7 @@ for i, themeName in ipairs(themeNamesSettings) do
     end)
 end
 
--- === ПРОЗРАЧНОСТЬ ===
+-- ПРОЗРАЧНОСТЬ
 local transLabel = Instance.new("TextLabel")
 transLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 transLabel.Position = UDim2.new(0.1, 0, 0.22, 0)
@@ -484,7 +564,6 @@ knobCorners.CornerRadius = UDim.new(1, 0)
 knobCorners.Parent = transKnob
 
 local dragging = false
-local tempTransparency = 0
 
 transKnob.MouseButton1Down:Connect(function()
     dragging = true
@@ -508,7 +587,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
     transValue.Text = math.round(val * 100) .. "%"
 end)
 
--- === ЯЗЫК ===
+-- ЯЗЫК
 local langLabel = Instance.new("TextLabel")
 langLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 langLabel.Position = UDim2.new(0.1, 0, 0.32, 0)
@@ -540,7 +619,7 @@ langBtn.MouseButton1Click:Connect(function()
     langBtn.Text = tempLang == "ru" and LANG[tempLang].lang_ru or LANG[tempLang].lang_en
 end)
 
--- === КНОПКА СОХРАНИТЬ ===
+-- КНОПКА СОХРАНИТЬ
 local saveBtn = Instance.new("TextButton")
 saveBtn.Size = UDim2.new(0.3, 0, 0.07, 0)
 saveBtn.Position = UDim2.new(0.35, 0, 0.45, 0)
@@ -557,18 +636,15 @@ saveCorners.CornerRadius = UDim.new(0, 10)
 saveCorners.Parent = saveBtn
 
 saveBtn.MouseButton1Click:Connect(function()
-    -- Применяем тему
     currentTheme = tempTheme
     updateTheme(currentTheme)
     
-    -- Применяем прозрачность
     currentTransparency = tempTransparency * 0.95
     frame.BackgroundTransparency = currentTransparency
     if mButton then
         mButton.BackgroundTransparency = currentTransparency
     end
     
-    -- Применяем язык
     if tempLang ~= currentLang then
         currentLang = tempLang
         updateLanguage(currentLang)
@@ -582,81 +658,7 @@ saveBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ФУНКЦИИ ОБНОВЛЕНИЯ
--- ============================================================
-local function updateTheme(themeName)
-    local theme = THEMES[themeName]
-    if not theme then return end
-    
-    frame.BackgroundColor3 = theme.main
-    frame.BorderColor3 = theme.accent
-    
-    header.BackgroundColor3 = theme.header
-    title.TextColor3 = theme.accent
-    crosshairCircle.BorderColor3 = theme.accent
-    lineH.BackgroundColor3 = theme.accent
-    lineV.BackgroundColor3 = theme.accent
-    dot.BackgroundColor3 = theme.accent
-    versionBadge.BackgroundColor3 = theme.accent
-    versionBadge.TextColor3 = theme.accent
-    
-    for _, child in pairs(frame:GetDescendants()) do
-        if child:IsA("TextButton") and child.Name ~= "CloseBtn" and child.Name ~= "FloatBtn" then
-            child.BackgroundColor3 = theme.btn
-            child.TextColor3 = theme.accent
-        end
-        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" then
-            child.TextColor3 = theme.text
-        end
-    end
-    
-    if mButton then
-        mButton.BackgroundColor3 = theme.main
-        mButton.TextColor3 = theme.accent
-    end
-end
-
-local function updateLanguage(langCode)
-    title.Text = LANG[langCode].title
-    infoTitle.Text = LANG[langCode].info_title
-    infoHello.Text = LANG[langCode].info_hello
-    infoRate.Text = LANG[langCode].info_rate
-    infoNick.Text = LANG[langCode].info_nick
-    infoFooter.Text = LANG[langCode].info_footer
-    settingsTitle.Text = LANG[langCode].settings_title
-    themeLabel.Text = LANG[langCode].theme_label
-    transLabel.Text = LANG[langCode].transparency_label
-    langLabel.Text = LANG[langCode].lang_label
-    saveBtn.Text = LANG[langCode].save_btn
-    watermark.Text = LANG[langCode].watermark
-end
-
--- ============================================================
---  ОБНОВЛЕНИЕ КОНТЕНТА
--- ============================================================
-local function updateContent()
-    infoContent.Visible = (activeTab == "INFO")
-    settingsContent.Visible = (activeTab == "SETTINGS")
-    
-    for _, btn in pairs(tabContainer:GetChildren()) do
-        if btn:IsA("TextButton") then
-            if btn.Text == activeTab then
-                btn.BackgroundColor3 = THEMES[currentTheme].accent
-                btn.BackgroundTransparency = 0.15
-                btn.TextColor3 = THEMES[currentTheme].main
-            else
-                btn.BackgroundColor3 = THEMES[currentTheme].btn
-                btn.BackgroundTransparency = 0.15
-                btn.TextColor3 = THEMES[currentTheme].text
-            end
-        end
-    end
-end
-
-updateContent()
-
--- ============================================================
---  ВОДЯНОЙ ЗНАК
+--  [10] ВОДЯНОЙ ЗНАК
 -- ============================================================
 local watermark = Instance.new("TextLabel")
 watermark.Name = "Watermark"
@@ -671,7 +673,7 @@ watermark.TextTransparency = 0.5
 watermark.Parent = frame
 
 -- ============================================================
---  ХОТКЕЙ F1
+--  [11] ХОТКЕЙ F1
 -- ============================================================
 game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
@@ -687,6 +689,10 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ Muslim Menu v14.1 загружен успешно!")
+-- ============================================================
+--  [12] ИНИЦИАЛИЗАЦИЯ
+-- ============================================================
+updateContent()
+print("✅ Muslim Menu v14.4 загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("🔑 M - открыть/закрыть (когда меню скрыто)")
