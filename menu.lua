@@ -12,7 +12,7 @@ gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
 -- ============================================================
---  [1] ТЕМЫ
+--  ТЕМЫ
 -- ============================================================
 local THEMES = {
     midnight = { main = Color3.fromRGB(10, 10, 14), accent = Color3.fromRGB(100, 180, 255), header = Color3.fromRGB(16, 18, 24), btn = Color3.fromRGB(22, 26, 34), text = Color3.fromRGB(220, 230, 240) },
@@ -26,18 +26,8 @@ local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
 local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
 local themeDisplay = {"MIDNIGHT", "EMERALD", "RUBY", "ROYAL", "GOLD"}
 
--- ТЕКУЩИЕ НАСТРОЙКИ
-local currentTheme = "midnight"
-local currentTransparency = 0.05  -- 5% (почти матовое)
-local currentLang = "ru"
-
--- ВРЕМЕННЫЕ НАСТРОЙКИ
-local tempTheme = "midnight"
-local tempTransparency = 0.05
-local tempLang = "ru"
-
 -- ============================================================
---  [2] ЯЗЫКИ
+--  ЯЗЫКИ
 -- ============================================================
 local LANG = {
     ru = {
@@ -71,23 +61,30 @@ local LANG = {
 }
 
 -- ============================================================
---  [3] ФУНКЦИЯ ОБНОВЛЕНИЯ ВСЕГО UI
+--  НАСТРОЙКИ
 -- ============================================================
-local function updateUI()
+local currentTheme = "midnight"
+local currentTransparency = 0.05
+local currentLang = "ru"
+
+-- ============================================================
+--  ФУНКЦИЯ ПРИМЕНЕНИЯ ВСЕХ НАСТРОЕК
+-- ============================================================
+local function applyAllSettings()
     local theme = THEMES[currentTheme]
     local lang = LANG[currentLang]
     
-    -- ===== ОСНОВНОЕ МЕНЮ =====
+    -- МЕНЮ
     frame.BackgroundColor3 = theme.main
-    frame.BackgroundTransparency = currentTransparency  -- 👈 ПРОЗРАЧНОСТЬ
+    frame.BackgroundTransparency = currentTransparency
     frame.BorderColor3 = theme.accent
     
-    -- ===== ЗАГОЛОВОК =====
+    -- ЗАГОЛОВОК
     header.BackgroundColor3 = theme.header
     title.Text = lang.title
     title.TextColor3 = theme.accent
     
-    -- ===== INFO =====
+    -- INFO
     infoTitle.Text = lang.info
     infoTitle.TextColor3 = theme.accent
     infoHello.Text = lang.info_hello
@@ -100,7 +97,7 @@ local function updateUI()
     infoFooter.TextColor3 = theme.text
     lineInfo.BackgroundColor3 = theme.accent
     
-    -- ===== SETTINGS =====
+    -- SETTINGS
     settingsTitle.Text = lang.settings
     settingsTitle.TextColor3 = theme.accent
     settingsBorder.BorderColor3 = theme.accent
@@ -115,77 +112,72 @@ local function updateUI()
     saveBtn.TextColor3 = theme.text
     saveBtn.BackgroundColor3 = theme.accent
     
-    -- ===== ВОДЯНОЙ ЗНАК =====
+    -- ВОДЯНОЙ ЗНАК
     watermark.Text = lang.watermark
     watermark.TextColor3 = theme.accent
     
-    -- ===== КНОПКИ ВКЛАДОК =====
-    if infoContent.Visible then
-        infoBtn.BackgroundColor3 = theme.accent
-        infoBtn.TextColor3 = theme.main
-        settingsBtn.BackgroundColor3 = theme.btn
-        settingsBtn.TextColor3 = theme.text
-    else
-        settingsBtn.BackgroundColor3 = theme.accent
-        settingsBtn.TextColor3 = theme.main
-        infoBtn.BackgroundColor3 = theme.btn
-        infoBtn.TextColor3 = theme.text
-    end
-    
-    -- ОБНОВЛЯЕМ ПОЛЗУНОК
+    -- ПОЛЗУНОК
     transSlider.BorderColor3 = theme.accent
     transFill.BackgroundColor3 = theme.accent
     transKnob.BackgroundColor3 = theme.accent
     
-    -- ОБНОВЛЯЕМ КНОПКИ ТЕМ
-    for i, child in pairs(themeContainer:GetChildren()) do
-        if child:IsA("TextButton") then
-            local themeName = themeNames[i]
-            if themeName then
-                child.BackgroundColor3 = THEMES[themeName].accent
+    -- КНОПКИ ТЕМ
+    for i, btn in pairs(themeContainer:GetChildren()) do
+        if btn:IsA("TextButton") then
+            local name = themeNames[i]
+            if name then
+                btn.BackgroundColor3 = THEMES[name].accent
             end
         end
     end
     
-    -- ОБНОВЛЯЕМ ЗНАЧЕНИЯ
-    updateValues()
-end
-
-local function updateValues()
-    -- ТЕМА
+    -- ЯЗЫКОВЫЕ КНОПКИ
+    langRu.BackgroundColor3 = theme.btn
+    langEn.BackgroundColor3 = theme.btn
+    if currentLang == "ru" then
+        langRu.BackgroundColor3 = theme.accent
+    else
+        langEn.BackgroundColor3 = theme.accent
+    end
+    
+    -- КНОПКИ ВКЛАДОК
+    infoBtn.BackgroundColor3 = theme.btn
+    settingsBtn.BackgroundColor3 = theme.btn
+    if infoContent.Visible then
+        infoBtn.BackgroundColor3 = theme.accent
+        infoBtn.TextColor3 = theme.main
+        settingsBtn.TextColor3 = theme.text
+    else
+        settingsBtn.BackgroundColor3 = theme.accent
+        settingsBtn.TextColor3 = theme.main
+        infoBtn.TextColor3 = theme.text
+    end
+    
+    -- ЗНАЧЕНИЯ
     for i, name in ipairs(themeNames) do
         if name == currentTheme then
             themeValue.Text = themeIcons[i] .. " " .. themeDisplay[i]
         end
     end
     
-    -- ПРОЗРАЧНОСТЬ
     local percent = math.round(currentTransparency * 100)
     transValue.Text = percent .. "%"
     transFill.Size = UDim2.new(currentTransparency, 0, 1, 0)
     transKnob.Position = UDim2.new(currentTransparency, -8, 0.5, -8)
     
-    -- ЯЗЫК
     langValue.Text = currentLang == "ru" and "🇷🇺 Русский" or "🇬🇧 English"
-    if currentLang == "ru" then
-        langRu.BackgroundColor3 = THEMES[currentTheme].accent
-        langEn.BackgroundColor3 = THEMES[currentTheme].btn
-    else
-        langEn.BackgroundColor3 = THEMES[currentTheme].accent
-        langRu.BackgroundColor3 = THEMES[currentTheme].btn
-    end
 end
 
 -- ============================================================
---  [4] ОСНОВНОЕ МЕНЮ
+--  ОСНОВНОЕ МЕНЮ
 -- ============================================================
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 700, 0, 450)
 frame.Position = UDim2.new(0.5, -350, 0.5, -225)
-frame.BackgroundColor3 = THEMES.midnight.main
+frame.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
 frame.BackgroundTransparency = 0.05
 frame.BorderSizePixel = 2
-frame.BorderColor3 = THEMES.midnight.accent
+frame.BorderColor3 = Color3.fromRGB(100, 180, 255)
 frame.Active = true
 frame.Draggable = true
 frame.ClipsDescendants = true
@@ -196,11 +188,11 @@ corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
 -- ============================================================
---  [5] ЗАГОЛОВОК
+--  ЗАГОЛОВОК
 -- ============================================================
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 50)
-header.BackgroundColor3 = THEMES.midnight.header
+header.BackgroundColor3 = Color3.fromRGB(16, 18, 24)
 header.BackgroundTransparency = 0.15
 header.Parent = frame
 
@@ -209,7 +201,7 @@ title.Size = UDim2.new(0.5, 0, 1, 0)
 title.Position = UDim2.new(0.05, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "MUSLIM MENU v14.4"
-title.TextColor3 = THEMES.midnight.accent
+title.TextColor3 = Color3.fromRGB(100, 180, 255)
 title.TextSize = 20
 title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -231,12 +223,12 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  [6] ВКЛАДКИ
+--  ВКЛАДКИ
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
 tabContainer.Position = UDim2.new(0, 0, 0, 50)
-tabContainer.BackgroundColor3 = THEMES.midnight.btn
+tabContainer.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
 tabContainer.BackgroundTransparency = 0.15
 tabContainer.Parent = frame
 
@@ -250,10 +242,10 @@ contentContainer.Parent = frame
 local infoBtn = Instance.new("TextButton")
 infoBtn.Size = UDim2.new(1, 0, 0, 40)
 infoBtn.Position = UDim2.new(0, 0, 0, 0)
-infoBtn.BackgroundColor3 = THEMES.midnight.accent
+infoBtn.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 infoBtn.BackgroundTransparency = 0.15
 infoBtn.Text = "INFO"
-infoBtn.TextColor3 = THEMES.midnight.main
+infoBtn.TextColor3 = Color3.fromRGB(10, 10, 14)
 infoBtn.TextSize = 14
 infoBtn.Font = Enum.Font.SourceSansBold
 infoBtn.Parent = tabContainer
@@ -261,16 +253,16 @@ infoBtn.Parent = tabContainer
 local settingsBtn = Instance.new("TextButton")
 settingsBtn.Size = UDim2.new(1, 0, 0, 40)
 settingsBtn.Position = UDim2.new(0, 0, 0, 45)
-settingsBtn.BackgroundColor3 = THEMES.midnight.btn
+settingsBtn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
 settingsBtn.BackgroundTransparency = 0.15
 settingsBtn.Text = "SETTINGS"
-settingsBtn.TextColor3 = THEMES.midnight.text
+settingsBtn.TextColor3 = Color3.fromRGB(220, 230, 240)
 settingsBtn.TextSize = 14
 settingsBtn.Font = Enum.Font.SourceSansBold
 settingsBtn.Parent = tabContainer
 
 -- ============================================================
---  [7] INFO
+--  INFO
 -- ============================================================
 local infoContent = Instance.new("Frame")
 infoContent.Size = UDim2.new(1, 0, 1, 0)
@@ -282,7 +274,7 @@ infoTitle.Size = UDim2.new(1, 0, 0.15, 0)
 infoTitle.Position = UDim2.new(0, 0, 0.05, 0)
 infoTitle.BackgroundTransparency = 1
 infoTitle.Text = "📋 ИНФОРМАЦИЯ"
-infoTitle.TextColor3 = THEMES.midnight.accent
+infoTitle.TextColor3 = Color3.fromRGB(100, 180, 255)
 infoTitle.TextSize = 28
 infoTitle.Font = Enum.Font.SourceSansBold
 infoTitle.Parent = infoContent
@@ -292,7 +284,7 @@ infoHello.Size = UDim2.new(1, 0, 0.15, 0)
 infoHello.Position = UDim2.new(0, 0, 0.2, 0)
 infoHello.BackgroundTransparency = 1
 infoHello.Text = "Привет! Это мой первый скрипт!"
-infoHello.TextColor3 = THEMES.midnight.text
+infoHello.TextColor3 = Color3.fromRGB(220, 230, 240)
 infoHello.TextSize = 22
 infoHello.Font = Enum.Font.SourceSansBold
 infoHello.Parent = infoContent
@@ -302,7 +294,7 @@ infoRate.Size = UDim2.new(1, 0, 0.15, 0)
 infoRate.Position = UDim2.new(0, 0, 0.4, 0)
 infoRate.BackgroundTransparency = 1
 infoRate.Text = "Если не сложно, оцените его. 🌟"
-infoRate.TextColor3 = THEMES.midnight.text
+infoRate.TextColor3 = Color3.fromRGB(220, 230, 240)
 infoRate.TextSize = 18
 infoRate.Font = Enum.Font.SourceSansBold
 infoRate.Parent = infoContent
@@ -312,7 +304,7 @@ infoNick.Size = UDim2.new(1, 0, 0.15, 0)
 infoNick.Position = UDim2.new(0, 0, 0.6, 0)
 infoNick.BackgroundTransparency = 1
 infoNick.Text = "👤 Мой Roblox: TORMENTOR412"
-infoNick.TextColor3 = THEMES.midnight.accent
+infoNick.TextColor3 = Color3.fromRGB(100, 180, 255)
 infoNick.TextSize = 20
 infoNick.Font = Enum.Font.SourceSansBold
 infoNick.Parent = infoContent
@@ -320,7 +312,7 @@ infoNick.Parent = infoContent
 local lineInfo = Instance.new("Frame")
 lineInfo.Size = UDim2.new(0.9, 0, 0.002, 0)
 lineInfo.Position = UDim2.new(0.05, 0, 0.8, 0)
-lineInfo.BackgroundColor3 = THEMES.midnight.accent
+lineInfo.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 lineInfo.BackgroundTransparency = 0.5
 lineInfo.Parent = infoContent
 
@@ -329,13 +321,13 @@ infoFooter.Size = UDim2.new(1, 0, 0.1, 0)
 infoFooter.Position = UDim2.new(0, 0, 0.85, 0)
 infoFooter.BackgroundTransparency = 1
 infoFooter.Text = "❤️ Спасибо за использование!"
-infoFooter.TextColor3 = THEMES.midnight.text
+infoFooter.TextColor3 = Color3.fromRGB(220, 230, 240)
 infoFooter.TextSize = 16
 infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
 -- ============================================================
---  [8] SETTINGS
+--  SETTINGS
 -- ============================================================
 local settingsContent = Instance.new("Frame")
 settingsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -347,7 +339,7 @@ local settingsBorder = Instance.new("Frame")
 settingsBorder.Size = UDim2.new(1, 0, 1, 0)
 settingsBorder.BackgroundTransparency = 1
 settingsBorder.BorderSizePixel = 2
-settingsBorder.BorderColor3 = THEMES.midnight.accent
+settingsBorder.BorderColor3 = Color3.fromRGB(100, 180, 255)
 settingsBorder.Parent = settingsContent
 
 local settingsTitle = Instance.new("TextLabel")
@@ -355,7 +347,7 @@ settingsTitle.Size = UDim2.new(1, 0, 0.08, 0)
 settingsTitle.Position = UDim2.new(0, 0, 0.02, 0)
 settingsTitle.BackgroundTransparency = 1
 settingsTitle.Text = "⚙️ НАСТРОЙКИ"
-settingsTitle.TextColor3 = THEMES.midnight.accent
+settingsTitle.TextColor3 = Color3.fromRGB(100, 180, 255)
 settingsTitle.TextSize = 24
 settingsTitle.Font = Enum.Font.SourceSansBold
 settingsTitle.Parent = settingsContent
@@ -366,7 +358,7 @@ themeLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 themeLabel.Position = UDim2.new(0.05, 0, 0.12, 0)
 themeLabel.BackgroundTransparency = 1
 themeLabel.Text = "🎨 Тема:"
-themeLabel.TextColor3 = THEMES.midnight.text
+themeLabel.TextColor3 = Color3.fromRGB(220, 230, 240)
 themeLabel.TextSize = 16
 themeLabel.Font = Enum.Font.SourceSansBold
 themeLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -383,7 +375,7 @@ themeValue.Size = UDim2.new(0.4, 0, 1, 0)
 themeValue.Position = UDim2.new(0.6, 0, 0, 0)
 themeValue.BackgroundTransparency = 1
 themeValue.Text = "🌙 MIDNIGHT"
-themeValue.TextColor3 = THEMES.midnight.accent
+themeValue.TextColor3 = Color3.fromRGB(100, 180, 255)
 themeValue.TextSize = 14
 themeValue.Font = Enum.Font.SourceSansBold
 themeValue.TextXAlignment = Enum.TextXAlignment.Right
@@ -406,9 +398,10 @@ for i, name in ipairs(themeNames) do
     btnCorners.Parent = btn
     
     btn.MouseButton1Click:Connect(function()
-        tempTheme = name
+        currentTheme = name  -- 👈 СРАЗУ МЕНЯЕМ, БЕЗ СОХРАНЕНИЯ
         themeValue.Text = themeIcons[i] .. " " .. themeDisplay[i]
-        print("🎨 Выбрана тема: " .. name)
+        applyAllSettings()
+        print("🎨 Тема: " .. name)
     end)
 end
 
@@ -418,7 +411,7 @@ transLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 transLabel.Position = UDim2.new(0.05, 0, 0.22, 0)
 transLabel.BackgroundTransparency = 1
 transLabel.Text = "🔲 Прозрачность:"
-transLabel.TextColor3 = THEMES.midnight.text
+transLabel.TextColor3 = Color3.fromRGB(220, 230, 240)
 transLabel.TextSize = 16
 transLabel.Font = Enum.Font.SourceSansBold
 transLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -429,7 +422,7 @@ transValue.Size = UDim2.new(0.15, 0, 0.06, 0)
 transValue.Position = UDim2.new(0.8, 0, 0.22, 0)
 transValue.BackgroundTransparency = 1
 transValue.Text = "5%"
-transValue.TextColor3 = THEMES.midnight.accent
+transValue.TextColor3 = Color3.fromRGB(100, 180, 255)
 transValue.TextSize = 16
 transValue.Font = Enum.Font.SourceSansBold
 transValue.TextXAlignment = Enum.TextXAlignment.Right
@@ -438,15 +431,15 @@ transValue.Parent = settingsContent
 local transSlider = Instance.new("Frame")
 transSlider.Size = UDim2.new(0.45, 0, 0.035, 0)
 transSlider.Position = UDim2.new(0.35, 0, 0.235, 0)
-transSlider.BackgroundColor3 = THEMES.midnight.btn
+transSlider.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
 transSlider.BackgroundTransparency = 0.1
 transSlider.BorderSizePixel = 1
-transSlider.BorderColor3 = THEMES.midnight.accent
+transSlider.BorderColor3 = Color3.fromRGB(100, 180, 255)
 transSlider.Parent = settingsContent
 
 local transFill = Instance.new("Frame")
 transFill.Size = UDim2.new(0.05, 0, 1, 0)
-transFill.BackgroundColor3 = THEMES.midnight.accent
+transFill.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 transFill.BackgroundTransparency = 0.5
 transFill.BorderSizePixel = 0
 transFill.Parent = transSlider
@@ -454,7 +447,7 @@ transFill.Parent = transSlider
 local transKnob = Instance.new("TextButton")
 transKnob.Size = UDim2.new(0, 16, 0, 16)
 transKnob.Position = UDim2.new(0.05, -8, 0.5, -8)
-transKnob.BackgroundColor3 = THEMES.midnight.accent
+transKnob.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 transKnob.BackgroundTransparency = 0
 transKnob.Text = ""
 transKnob.Parent = transSlider
@@ -481,10 +474,11 @@ game:GetService("RunService").RenderStepped:Connect(function()
     if not mouse then return end
     local relX = (mouse.X - transSlider.AbsolutePosition.X) / transSlider.AbsoluteSize.X
     local val = math.clamp(relX, 0, 1)
-    tempTransparency = val
+    currentTransparency = val  -- 👈 СРАЗУ МЕНЯЕМ, БЕЗ СОХРАНЕНИЯ
     transFill.Size = UDim2.new(val, 0, 1, 0)
     transKnob.Position = UDim2.new(val, -8, 0.5, -8)
     transValue.Text = math.round(val * 100) .. "%"
+    applyAllSettings()  -- 👈 ПРИМЕНЯЕМ СРАЗУ
 end)
 
 -- ЯЗЫК
@@ -493,7 +487,7 @@ langLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 langLabel.Position = UDim2.new(0.05, 0, 0.32, 0)
 langLabel.BackgroundTransparency = 1
 langLabel.Text = "🌍 Язык:"
-langLabel.TextColor3 = THEMES.midnight.text
+langLabel.TextColor3 = Color3.fromRGB(220, 230, 240)
 langLabel.TextSize = 16
 langLabel.Font = Enum.Font.SourceSansBold
 langLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -508,10 +502,10 @@ langContainer.Parent = settingsContent
 local langRu = Instance.new("TextButton")
 langRu.Size = UDim2.new(0.45, 0, 1, 0)
 langRu.Position = UDim2.new(0, 0, 0, 0)
-langRu.BackgroundColor3 = THEMES.midnight.accent
+langRu.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 langRu.BackgroundTransparency = 0.1
 langRu.Text = "🇷🇺 Рус"
-langRu.TextColor3 = THEMES.midnight.text
+langRu.TextColor3 = Color3.fromRGB(220, 230, 240)
 langRu.TextSize = 14
 langRu.Font = Enum.Font.SourceSansBold
 langRu.Parent = langContainer
@@ -519,10 +513,10 @@ langRu.Parent = langContainer
 local langEn = Instance.new("TextButton")
 langEn.Size = UDim2.new(0.45, 0, 1, 0)
 langEn.Position = UDim2.new(0.55, 0, 0, 0)
-langEn.BackgroundColor3 = THEMES.midnight.btn
+langEn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
 langEn.BackgroundTransparency = 0.1
 langEn.Text = "🇬🇧 Eng"
-langEn.TextColor3 = THEMES.midnight.text
+langEn.TextColor3 = Color3.fromRGB(220, 230, 240)
 langEn.TextSize = 14
 langEn.Font = Enum.Font.SourceSansBold
 langEn.Parent = langContainer
@@ -532,36 +526,38 @@ langValue.Size = UDim2.new(0.2, 0, 0.06, 0)
 langValue.Position = UDim2.new(0.7, 0, 0.32, 0)
 langValue.BackgroundTransparency = 1
 langValue.Text = "🇷🇺 Русский"
-langValue.TextColor3 = THEMES.midnight.accent
+langValue.TextColor3 = Color3.fromRGB(100, 180, 255)
 langValue.TextSize = 14
 langValue.Font = Enum.Font.SourceSansBold
 langValue.TextXAlignment = Enum.TextXAlignment.Right
 langValue.Parent = settingsContent
 
 langRu.MouseButton1Click:Connect(function()
-    tempLang = "ru"
+    currentLang = "ru"  -- 👈 СРАЗУ МЕНЯЕМ
     langValue.Text = "🇷🇺 Русский"
-    langRu.BackgroundColor3 = THEMES[currentTheme].accent
-    langEn.BackgroundColor3 = THEMES[currentTheme].btn
-    print("🌍 Выбран русский")
+    langRu.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+    langEn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
+    applyAllSettings()
+    print("🌍 Язык: Русский")
 end)
 
 langEn.MouseButton1Click:Connect(function()
-    tempLang = "en"
+    currentLang = "en"  -- 👈 СРАЗУ МЕНЯЕМ
     langValue.Text = "🇬🇧 English"
-    langEn.BackgroundColor3 = THEMES[currentTheme].accent
-    langRu.BackgroundColor3 = THEMES[currentTheme].btn
-    print("🌍 Выбран английский")
+    langEn.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+    langRu.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
+    applyAllSettings()
+    print("🌍 Язык: English")
 end)
 
--- КНОПКА СОХРАНИТЬ
+-- КНОПКА СОХРАНИТЬ (теперь просто показывает что настройки применены)
 local saveBtn = Instance.new("TextButton")
 saveBtn.Size = UDim2.new(0.25, 0, 0.07, 0)
 saveBtn.Position = UDim2.new(0.35, 0, 0.45, 0)
-saveBtn.BackgroundColor3 = THEMES.midnight.accent
+saveBtn.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 saveBtn.BackgroundTransparency = 0.15
 saveBtn.Text = "💾 Сохранить"
-saveBtn.TextColor3 = THEMES.midnight.text
+saveBtn.TextColor3 = Color3.fromRGB(220, 230, 240)
 saveBtn.TextSize = 18
 saveBtn.Font = Enum.Font.SourceSansBold
 saveBtn.Parent = settingsContent
@@ -571,13 +567,7 @@ saveCorners.CornerRadius = UDim.new(0, 10)
 saveCorners.Parent = saveBtn
 
 saveBtn.MouseButton1Click:Connect(function()
-    currentTheme = tempTheme
-    currentTransparency = tempTransparency
-    currentLang = tempLang
-    
-    updateUI()
-    updateValues()
-    
+    applyAllSettings()
     print("✅ Настройки сохранены!")
     print("🎨 Тема: " .. currentTheme)
     print("🔲 Прозрачность: " .. math.round(currentTransparency * 100) .. "%")
@@ -585,36 +575,36 @@ saveBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  [9] ВОДЯНОЙ ЗНАК
+--  ВОДЯНОЙ ЗНАК
 -- ============================================================
 local watermark = Instance.new("TextLabel")
 watermark.Size = UDim2.new(1, 0, 0, 20)
 watermark.Position = UDim2.new(0, 0, 0.97, 0)
 watermark.BackgroundTransparency = 1
 watermark.Text = "MUSLIM MENU v14.4 | TORMENTOR412"
-watermark.TextColor3 = THEMES.midnight.accent
+watermark.TextColor3 = Color3.fromRGB(100, 180, 255)
 watermark.TextSize = 10
 watermark.Font = Enum.Font.SourceSans
 watermark.TextTransparency = 0.5
 watermark.Parent = frame
 
 -- ============================================================
---  [10] ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+--  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
 -- ============================================================
 infoBtn.MouseButton1Click:Connect(function()
     infoContent.Visible = true
     settingsContent.Visible = false
-    updateUI()
+    applyAllSettings()
 end)
 
 settingsBtn.MouseButton1Click:Connect(function()
     infoContent.Visible = false
     settingsContent.Visible = true
-    updateUI()
+    applyAllSettings()
 end)
 
 -- ============================================================
---  [11] ХОТКЕЙ F1
+--  ХОТКЕЙ F1
 -- ============================================================
 game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
@@ -624,10 +614,9 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
 end)
 
 -- ============================================================
---  [12] ИНИЦИАЛИЗАЦИЯ
+--  ЗАПУСК
 -- ============================================================
-updateUI()
-updateValues()
+applyAllSettings()
 
 print("✅ Muslim Menu v14.4 загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
