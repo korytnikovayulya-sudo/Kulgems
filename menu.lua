@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v13.3 - FULLY WORKING
+--  MUSLIM MENU v13.4 - FINAL FIXED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v13.3...")
+print("🚀 Загрузка Muslim Menu v13.4...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -61,7 +61,7 @@ corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
 -- ============================================================
---  ЗАГОЛОВОК (С ТЕМАМИ)
+--  ЗАГОЛОВОК
 -- ============================================================
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 50)
@@ -95,7 +95,7 @@ title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
--- ТЕМЫ (В ЗАГОЛОВКЕ)
+-- ТЕМЫ
 local themeContainer = Instance.new("Frame")
 themeContainer.Size = UDim2.new(0.35, 0, 1, 0)
 themeContainer.Position = UDim2.new(0.4, 0, 0, 0)
@@ -177,7 +177,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.85, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.3
-versionBadge.Text = "v13.3"
+versionBadge.Text = "v13.4"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -238,7 +238,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКИ (INFO, ESP, COMBAT)
+--  ВКЛАДКИ
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -249,14 +249,12 @@ tabContainer.BorderSizePixel = 0
 tabContainer.Parent = frame
 
 local activeTab = "INFO"
-
 local contentContainer = Instance.new("Frame")
 contentContainer.Size = UDim2.new(1, -100, 1, -50)
 contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- ===== КНОПКИ ВКЛАДОК =====
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -281,7 +279,6 @@ local function createTabButton(name, yPos)
     return btn
 end
 
--- СОЗДАЁМ ТРИ ВКЛАДКИ
 local tab1 = createTabButton("INFO", 0)
 local tab2 = createTabButton("ESP", 45)
 local tab3 = createTabButton("COMBAT", 90)
@@ -367,7 +364,7 @@ combatContent.Visible = false
 combatContent.Parent = contentContainer
 
 -- ============================================================
---  ФУНКЦИЯ КНОПОК-ПЕРЕКЛЮЧАТЕЛЕЙ
+--  ФУНКЦИЯ СОЗДАНИЯ КНОПОК
 -- ============================================================
 local function createToggleInContainer(parent, label, pos, callback)
     local container = Instance.new("Frame")
@@ -427,7 +424,7 @@ local function createToggleInContainer(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP
+--  ESP (УБИЙЦА, ШЕРИФ, НЕВИННЫЕ)
 -- ============================================================
 local ESP_MURDER = false
 local ESP_SHERIFF = false
@@ -872,7 +869,7 @@ local function toggleShootMode(state)
 end
 
 -- ============================================================
---  ОБНОВЛЕНИЕ ВКЛАДОК (ГЛАВНАЯ ФУНКЦИЯ!)
+--  ОБНОВЛЕНИЕ ВКЛАДОК
 -- ============================================================
 local function updateContent()
     infoContent.Visible = (activeTab == "INFO")
@@ -880,11 +877,10 @@ local function updateContent()
     combatContent.Visible = (activeTab == "COMBAT")
 end
 
--- ВЫЗЫВАЕМ ОБНОВЛЕНИЕ ПРИ СТАРТЕ
 updateContent()
 
 print("========================================")
-print("  MUSLIM MENU v13.3 - FULLY WORKING")
+print("  MUSLIM MENU v13.4 - FINAL FIXED")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
