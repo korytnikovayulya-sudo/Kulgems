@@ -1,5 +1,5 @@
 -- ============================================================
---  MUSLIM MENU v14.4 - FULLY WORKING (FIXED)
+--  MUSLIM MENU v14.4 - FULLY WORKING (LANGUAGE INSTANT)
 --  by Tormentor412
 -- ============================================================
 
@@ -59,11 +59,10 @@ local LANG = {
 }
 
 -- ============================================================
---  НАСТРОЙКИ (ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ, БЕЗ ПРОЗРАЧНОСТИ)
+--  НАСТРОЙКИ (ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ)
 -- ============================================================
 local currentTheme = "midnight"
 local currentLang = "en"          -- ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ
-local tempLang = "en"             -- ВРЕМЕННЫЙ ВЫБОР ЯЗЫКА
 
 -- ============================================================
 --  ФУНКЦИЯ ПРИМЕНЕНИЯ ВСЕХ НАСТРОЕК (БЕЗ ПРОЗРАЧНОСТИ)
@@ -121,13 +120,15 @@ local function applyAllSettings()
         end
     end
     
-    -- ЯЗЫКОВЫЕ КНОПКИ (подсветка только после сохранения)
+    -- ЯЗЫКОВЫЕ КНОПКИ (подсветка активной)
     langRu.BackgroundColor3 = theme.btn
     langEn.BackgroundColor3 = theme.btn
     if currentLang == "ru" then
         langRu.BackgroundColor3 = theme.accent
+        langRu.TextColor3 = theme.main
     else
         langEn.BackgroundColor3 = theme.accent
+        langEn.TextColor3 = theme.main
     end
     
     -- КНОПКИ ВКЛАДОК
@@ -150,7 +151,7 @@ local function applyAllSettings()
         end
     end
     
-    -- ЗНАЧЕНИЕ ЯЗЫКА (отображаем текущий выбранный язык)
+    -- ЗНАЧЕНИЕ ЯЗЫКА (отображаем текущий язык)
     langValue.Text = currentLang == "ru" and "🇷🇺 Русский" or "🇬🇧 English"
 end
 
@@ -391,7 +392,7 @@ for i, name in ipairs(themeNames) do
     end)
 end
 
--- ЯЗЫК (без подсветки при выборе)
+-- ЯЗЫК (МГНОВЕННОЕ ПРИМЕНЕНИЕ + ПОДСВЕТКА)
 local langLabel = Instance.new("TextLabel")
 langLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 langLabel.Position = UDim2.new(0.05, 0, 0.22, 0)
@@ -412,7 +413,7 @@ langContainer.Parent = settingsContent
 local langRu = Instance.new("TextButton")
 langRu.Size = UDim2.new(0.45, 0, 1, 0)
 langRu.Position = UDim2.new(0, 0, 0, 0)
-langRu.BackgroundColor3 = Color3.fromRGB(22, 26, 34)  -- нейтральный
+langRu.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
 langRu.BackgroundTransparency = 0.1
 langRu.Text = "🇷🇺 Рус"
 langRu.TextColor3 = Color3.fromRGB(220, 230, 240)
@@ -423,7 +424,7 @@ langRu.Parent = langContainer
 local langEn = Instance.new("TextButton")
 langEn.Size = UDim2.new(0.45, 0, 1, 0)
 langEn.Position = UDim2.new(0.55, 0, 0, 0)
-langEn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)  -- нейтральный
+langEn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
 langEn.BackgroundTransparency = 0.1
 langEn.Text = "🇬🇧 Eng"
 langEn.TextColor3 = Color3.fromRGB(220, 230, 240)
@@ -442,20 +443,20 @@ langValue.Font = Enum.Font.SourceSansBold
 langValue.TextXAlignment = Enum.TextXAlignment.Right
 langValue.Parent = settingsContent
 
--- ВЫБОР ЯЗЫКА (БЕЗ ПОДСВЕТКИ И ПРИМЕНЕНИЯ)
+-- МГНОВЕННОЕ ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА С ПОДСВЕТКОЙ
 langRu.MouseButton1Click:Connect(function()
-    tempLang = "ru"
-    langValue.Text = "🇷🇺 Русский"
-    print("🌍 Выбран русский (нажми Сохранить)")
+    currentLang = "ru"
+    applyAllSettings()
+    print("🌍 Язык: Русский")
 end)
 
 langEn.MouseButton1Click:Connect(function()
-    tempLang = "en"
-    langValue.Text = "🇬🇧 English"
-    print("🌍 Выбран английский (нажми Сохранить)")
+    currentLang = "en"
+    applyAllSettings()
+    print("🌍 Язык: English")
 end)
 
--- КНОПКА СОХРАНИТЬ (применяет язык)
+-- КНОПКА СОХРАНИТЬ (теперь просто дублирует применение, можно оставить)
 local saveBtn = Instance.new("TextButton")
 saveBtn.Size = UDim2.new(0.25, 0, 0.07, 0)
 saveBtn.Position = UDim2.new(0.35, 0, 0.35, 0)
@@ -472,9 +473,8 @@ saveCorners.CornerRadius = UDim.new(0, 10)
 saveCorners.Parent = saveBtn
 
 saveBtn.MouseButton1Click:Connect(function()
-    currentLang = tempLang
     applyAllSettings()
-    print("✅ Язык сохранён: " .. (currentLang == "ru" and "Русский" or "English"))
+    print("✅ Настройки применены!")
 end)
 
 -- ============================================================
