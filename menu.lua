@@ -124,33 +124,6 @@ local function updateLanguage(langCode)
     watermark.Text = lang.watermark
 end
 
-local function updateContent()
-    -- ПОКАЗЫВАЕМ ТОЛЬКО АКТИВНУЮ ВКЛАДКУ
-    if infoContent then
-        infoContent.Visible = (activeTab == "INFO")
-    end
-    if settingsContent then
-        settingsContent.Visible = (activeTab == "SETTINGS")
-    end
-    
-    -- ОБНОВЛЯЕМ ЦВЕТА КНОПОК ВКЛАДОК
-    if tabContainer then
-        for _, btn in pairs(tabContainer:GetChildren()) do
-            if btn:IsA("TextButton") then
-                if btn.Text == activeTab then
-                    btn.BackgroundColor3 = THEMES[currentTheme].accent
-                    btn.BackgroundTransparency = 0.15
-                    btn.TextColor3 = THEMES[currentTheme].main
-                else
-                    btn.BackgroundColor3 = THEMES[currentTheme].btn
-                    btn.BackgroundTransparency = 0.15
-                    btn.TextColor3 = THEMES[currentTheme].text
-                end
-            end
-        end
-    end
-end
-
 -- ============================================================
 --  [4] ПРИВЕТСТВИЕ
 -- ============================================================
@@ -375,28 +348,28 @@ local function createTabButton(name, yPos)
         activeTab = name
         print("🔄 Вкладка: " .. name)
         
-        -- ПРЯМОЕ ПЕРЕКЛЮЧЕНИЕ С ПРОВЕРКОЙ
+        -- ПРЯМОЕ ПЕРЕКЛЮЧЕНИЕ
         if name == "INFO" then
-            if infoContent then infoContent.Visible = true end
-            if settingsContent then settingsContent.Visible = false end
+            infoContent.Visible = true
+            settingsContent.Visible = false
+            infoContent.Visible = true  -- ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ
         elseif name == "SETTINGS" then
-            if infoContent then infoContent.Visible = false end
-            if settingsContent then settingsContent.Visible = true end
+            infoContent.Visible = false
+            settingsContent.Visible = true
+            settingsContent.Visible = true  -- ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ
         end
         
-        -- ЦВЕТА КНОПОК
-        if tabContainer then
-            for _, b in pairs(tabContainer:GetChildren()) do
-                if b:IsA("TextButton") then
-                    if b.Text == name then
-                        b.BackgroundColor3 = THEMES[currentTheme].accent
-                        b.BackgroundTransparency = 0.15
-                        b.TextColor3 = THEMES[currentTheme].main
-                    else
-                        b.BackgroundColor3 = THEMES[currentTheme].btn
-                        b.BackgroundTransparency = 0.15
-                        b.TextColor3 = THEMES[currentTheme].text
-                    end
+        -- ОБНОВЛЯЕМ ЦВЕТА КНОПОК
+        for _, b in pairs(tabContainer:GetChildren()) do
+            if b:IsA("TextButton") then
+                if b.Text == name then
+                    b.BackgroundColor3 = THEMES[currentTheme].accent
+                    b.BackgroundTransparency = 0.15
+                    b.TextColor3 = THEMES[currentTheme].main
+                else
+                    b.BackgroundColor3 = THEMES[currentTheme].btn
+                    b.BackgroundTransparency = 0.15
+                    b.TextColor3 = THEMES[currentTheme].text
                 end
             end
         end
@@ -474,18 +447,13 @@ infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
 -- ============================================================
---  [9] КОНТЕНТ SETTINGS (ПОЛНОСТЬЮ ПЕРЕПИСАНО)
+--  [9] КОНТЕНТ SETTINGS
 -- ============================================================
 local settingsContent = Instance.new("Frame")
 settingsContent.Size = UDim2.new(1, 0, 1, 0)
 settingsContent.BackgroundTransparency = 1
 settingsContent.Visible = false
 settingsContent.Parent = contentContainer
-
--- ПРОВЕРКА: УБЕЖДАЕМСЯ, ЧТО settingsContent СУЩЕСТВУЕТ
-if not settingsContent then
-    error("❌ settingsContent не создан!")
-end
 
 local settingsTitle = Instance.new("TextLabel")
 settingsTitle.Size = UDim2.new(0.8, 0, 0.08, 0)
@@ -729,22 +697,20 @@ end)
 --  [12] ИНИЦИАЛИЗАЦИЯ
 -- ============================================================
 -- ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ INFO ПРИ СТАРТЕ
-if infoContent then infoContent.Visible = true end
-if settingsContent then settingsContent.Visible = false end
+infoContent.Visible = true
+settingsContent.Visible = false
 
--- НАСТРАИВАЕМ ЦВЕТА КНОПОК ВРУЧНУЮ
-if tabContainer then
-    for _, btn in pairs(tabContainer:GetChildren()) do
-        if btn:IsA("TextButton") then
-            if btn.Text == "INFO" then
-                btn.BackgroundColor3 = THEMES[currentTheme].accent
-                btn.BackgroundTransparency = 0.15
-                btn.TextColor3 = THEMES[currentTheme].main
-            else
-                btn.BackgroundColor3 = THEMES[currentTheme].btn
-                btn.BackgroundTransparency = 0.15
-                btn.TextColor3 = THEMES[currentTheme].text
-            end
+-- НАСТРАИВАЕМ ЦВЕТА КНОПОК
+for _, btn in pairs(tabContainer:GetChildren()) do
+    if btn:IsA("TextButton") then
+        if btn.Text == "INFO" then
+            btn.BackgroundColor3 = THEMES[currentTheme].accent
+            btn.BackgroundTransparency = 0.15
+            btn.TextColor3 = THEMES[currentTheme].main
+        else
+            btn.BackgroundColor3 = THEMES[currentTheme].btn
+            btn.BackgroundTransparency = 0.15
+            btn.TextColor3 = THEMES[currentTheme].text
         end
     end
 end
