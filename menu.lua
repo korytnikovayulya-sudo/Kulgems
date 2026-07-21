@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - С ВЕРСИЕЙ VD
+--  WERTIUM HUB - С ESP
 -- ============================================================
 
 print("🚀 Загрузка...")
@@ -53,7 +53,7 @@ stroke.Parent = frame
 
 -- ЗАГОЛОВОК
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 90)             -- ВЫШЕ, ЧТОБЫ ВМЕСТИТЬ "VD"
+header.Size = UDim2.new(1, 0, 0, 90)
 header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)
 header.BackgroundTransparency = 0.15
 header.Parent = frame
@@ -158,7 +158,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
     crosshairR.Rotation = math.deg(-angle2)
 end)
 
--- НАЗВАНИЕ (WERTIUM HUB)
+-- НАЗВАНИЕ
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(0.5, 0, 0.6, 0)
 title.Position = UDim2.new(0.25, 0, 0, 0)
@@ -170,7 +170,7 @@ title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = header
 
--- ВЕРСИЯ "VD" ПОД НАЗВАНИЕМ
+-- ВЕРСИЯ VD
 local version = Instance.new("TextLabel")
 version.Size = UDim2.new(0.5, 0, 0.25, 0)
 version.Position = UDim2.new(0.25, 0, 0.6, 0)
@@ -198,7 +198,218 @@ closeBtn.MouseButton1Click:Connect(function()
     frame.Visible = false
 end)
 
--- ВОДЯНОЙ ЗНАК
+-- ============================================================
+--  ПАНЕЛЬ УПРАВЛЕНИЯ (ESP)
+-- ============================================================
+local controlPanel = Instance.new("Frame")
+controlPanel.Size = UDim2.new(1, 0, 0, 60)
+controlPanel.Position = UDim2.new(0, 0, 0, 90)
+controlPanel.BackgroundTransparency = 1
+controlPanel.Parent = frame
+
+local espBtn = Instance.new("TextButton")
+espBtn.Size = UDim2.new(0, 160, 0, 40)
+espBtn.Position = UDim2.new(0.5, -80, 0.5, -20)
+espBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+espBtn.BackgroundTransparency = 0.3
+espBtn.Text = "ESP: Вкл"
+espBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+espBtn.TextSize = 20
+espBtn.Font = Enum.Font.SourceSansBold
+espBtn.Parent = controlPanel
+
+local espCorners = Instance.new("UICorner")
+espCorners.CornerRadius = UDim.new(0, 10)
+espCorners.Parent = espBtn
+
+-- ============================================================
+--  ЛОГИКА ESP
+-- ============================================================
+local espEnabled = false
+local espBillboards = {}  -- таблица { [Player] = BillboardGui }
+
+local function getRole(player)
+    -- Определяем роль по наличию оружия
+    if not player or not player.Character then return "innocent" end
+    local backpack = player:FindFirstChild("Backpack")
+    if backpack then
+        for _, tool in pairs(backpack:GetChildren()) do
+            if tool:IsA("Tool") then
+                local name = tool.Name:lower()
+                if name:find("knife") or name:find("dagger") then
+                    return "murderer"
+                elseif name:find("gun") or name:find("pistol") or name:find("revolver") then
+                    return "sheriff"
+                end
+            end
+        end
+    end
+    -- Проверяем также в руках (Character)
+    local char = player.Character
+    if char then
+        for _, tool in pairs(char:GetChildren()) do
+            if tool:IsA("Tool") then
+                local name = tool.Name:lower()
+                if name:find("knife") or name:find("dagger") then
+                    return "murderer"
+                elseif name:find("gun") or name:find("pistol") or name:find("revolver") then
+                    return "sheriff"
+                end
+            end
+        end
+    end
+    return "innocent"
+end
+
+local function createBillboard(player)
+    if player == game.Players.LocalPlayer then return end  -- не показываем себе
+    if espBillboards[player] then return end
+
+    local role = getRole(player)
+    local text = ""
+    local color = Color3.fromRGB(0, 255, 0) -- зелёный по умолчанию
+    if role == "murderer" then
+        text = "MURDERER"
+        color = Color3.fromRGB(255, 0, 0)
+    elseif role == "sheriff" then
+        text = "SHERIFF"
+        color = Color3.fromRGB(0, 150, 255)
+    else
+        text = "INNOCENT"
+        color = Color3.fromRGB(0, 255, 0)
+    end
+
+    local billboard = Instance.new("BillboardGui")
+    billboard.Size = UDim2.new(0, 200, 0, 40)
+    billboard.Adornee = player.Character and player.Character:FindFirstChild("Head")
+    if not billboard.Adornee then
+        billboard:Destroy()
+        return
+    end
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.Parent = gui
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = color
+    label.TextSize = 18
+    label.Font = Enum.Font.SourceSansBold
+    label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    label.TextStrokeTransparency = 0.3
+    label.Parent = billboard
+
+    espBillboards[player] = billboard
+end
+
+local function removeBillboard(player)
+    if espBillboards[player] then
+        espBillboards[player]:Destroy()
+        espBillboards[player] = nil
+    end
+end
+
+local function clearAllBillboards()
+    for _, bill in pairs(espBillboards) do
+        bill:Destroy()
+    end
+    espBillboards = {}
+end
+
+local function updateAllESP()
+    -- Удаляем все биллборды и создаём заново
+    clearAllBillboards()
+    for _, p in pairs(game.Players:GetPlayers()) do
+        createBillboard(p)
+    end
+end
+
+-- Подписываемся на изменения игроков
+game.Players.PlayerAdded:Connect(function(p)
+    if espEnabled then
+        p.CharacterAdded:Connect(function()
+            wait(0.5)
+            if espEnabled then
+                removeBillboard(p)
+                createBillboard(p)
+            end
+        end)
+        p.CharacterRemoving:Connect(function()
+            removeBillboard(p)
+        end)
+        -- Создаём при добавлении
+        wait(0.5)
+        if espEnabled then
+            createBillboard(p)
+        end
+    end
+end)
+
+game.Players.PlayerRemoving:Connect(function(p)
+    removeBillboard(p)
+end)
+
+-- Таймер обновления ролей (каждые 3 секунды)
+local function espLoop()
+    while espEnabled do
+        -- Обновляем все биллборды (пересоздаём, т.к. роли могут меняться)
+        -- Оптимизация: можно обновлять только текст и цвет, но для простоты пересоздаём
+        if espEnabled then
+            for p, bill in pairs(espBillboards) do
+                if p and p.Character and p.Character:FindFirstChild("Head") then
+                    local role = getRole(p)
+                    local text = ""
+                    local color = Color3.fromRGB(0, 255, 0)
+                    if role == "murderer" then
+                        text = "MURDERER"
+                        color = Color3.fromRGB(255, 0, 0)
+                    elseif role == "sheriff" then
+                        text = "SHERIFF"
+                        color = Color3.fromRGB(0, 150, 255)
+                    else
+                        text = "INNOCENT"
+                        color = Color3.fromRGB(0, 255, 0)
+                    end
+                    local label = bill:FindFirstChild("TextLabel")
+                    if label then
+                        label.Text = text
+                        label.TextColor3 = color
+                    end
+                else
+                    removeBillboard(p)
+                end
+            end
+            -- Проверяем новых игроков, которых ещё нет в таблице
+            for _, p in pairs(game.Players:GetPlayers()) do
+                if p ~= player and not espBillboards[p] and p.Character and p.Character:FindFirstChild("Head") then
+                    createBillboard(p)
+                end
+            end
+        end
+        wait(3)
+    end
+end
+
+-- Функция включения/выключения ESP
+local function toggleESP()
+    espEnabled = not espEnabled
+    if espEnabled then
+        espBtn.Text = "ESP: Выкл"
+        updateAllESP()
+        -- Запускаем цикл обновления
+        spawn(espLoop)
+    else
+        espBtn.Text = "ESP: Вкл"
+        clearAllBillboards()
+    end
+end
+
+espBtn.MouseButton1Click:Connect(toggleESP)
+
+-- ============================================================
+--  ВОДЯНОЙ ЗНАК
+-- ============================================================
 local watermark = Instance.new("TextLabel")
 watermark.Size = UDim2.new(1, 0, 0, 25)
 watermark.Position = UDim2.new(0, 0, 0.95, 0)
@@ -218,5 +429,5 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ Меню с версией VD загружено!")
+print("✅ Меню с ESP загружено!")
 print("🔑 F1 - открыть/закрыть")
