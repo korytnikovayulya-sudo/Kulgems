@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v12.9 - TWO TABS WORKING
+--  MUSLIM MENU v13.0 - INFO + ESP + COMBAT
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v12.9...")
+print("🚀 Загрузка Muslim Menu v13.0...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.3
-versionBadge.Text = "v12.9"
+versionBadge.Text = "v13.0"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -159,7 +159,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКИ (ТЕПЕРЬ ДВЕ!)
+--  ВКЛАДКИ (INFO, ESP, COMBAT)
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -169,14 +169,14 @@ tabContainer.BackgroundTransparency = 0.3
 tabContainer.BorderSizePixel = 0
 tabContainer.Parent = frame
 
-local activeTab = "ESP"
+local activeTab = "INFO"
 local contentContainer = Instance.new("Frame")
 contentContainer.Size = UDim2.new(1, -100, 1, -50)
 contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- ===== КНОПКИ ВКЛАДОК (ДВЕ ШТУКИ) =====
+-- ===== КНОПКИ ВКЛАДОК =====
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -201,12 +201,99 @@ local function createTabButton(name, yPos)
     return btn
 end
 
--- СОЗДАЁМ ДВЕ ВКЛАДКИ
-local tab1 = createTabButton("ESP", 0)      -- Первая кнопка
-local tab2 = createTabButton("Бой", 45)     -- Вторая кнопка (ТЕПЕРЬ ЕСТЬ!)
+-- ТРИ ВКЛАДКИ
+local tabInfo = createTabButton("INFO", 0)
+local tabESP = createTabButton("ESP", 45)
+local tabCombat = createTabButton("COMBAT", 90)
 
 -- ============================================================
 --  КОНТЕНТ ВКЛАДОК
+-- ============================================================
+-- === INFO ===
+local infoContent = Instance.new("Frame")
+infoContent.Size = UDim2.new(1, 0, 1, 0)
+infoContent.BackgroundTransparency = 1
+infoContent.Parent = contentContainer
+
+-- Заголовок INFO
+local infoTitle = Instance.new("TextLabel")
+infoTitle.Size = UDim2.new(0.8, 0, 0.15, 0)
+infoTitle.Position = UDim2.new(0.1, 0, 0.05, 0)
+infoTitle.BackgroundTransparency = 1
+infoTitle.Text = "📋 INFO"
+infoTitle.TextColor3 = THEMES[currentTheme].accent
+infoTitle.TextSize = 28
+infoTitle.Font = Enum.Font.SourceSansBold
+infoTitle.Parent = infoContent
+
+-- Приветствие
+local infoHello = Instance.new("TextLabel")
+infoHello.Size = UDim2.new(0.8, 0, 0.15, 0)
+infoHello.Position = UDim2.new(0.1, 0, 0.2, 0)
+infoHello.BackgroundTransparency = 1
+infoHello.Text = "Hello! It's my first script!"
+infoHello.TextColor3 = THEMES[currentTheme].text
+infoHello.TextSize = 22
+infoHello.Font = Enum.Font.SourceSansBold
+infoHello.Parent = infoContent
+
+-- Просьба оценить
+local infoRate = Instance.new("TextLabel")
+infoRate.Size = UDim2.new(0.8, 0, 0.15, 0)
+infoRate.Position = UDim2.new(0.1, 0, 0.4, 0)
+infoRate.BackgroundTransparency = 1
+infoRate.Text = "If it's not too much trouble, please rate it. 🌟"
+infoRate.TextColor3 = THEMES[currentTheme].text
+infoRate.TextSize = 18
+infoRate.Font = Enum.Font.SourceSansBold
+infoRate.Parent = infoContent
+
+-- Ник
+local infoNick = Instance.new("TextLabel")
+infoNick.Size = UDim2.new(0.8, 0, 0.15, 0)
+infoNick.Position = UDim2.new(0.1, 0, 0.6, 0)
+infoNick.BackgroundTransparency = 1
+infoNick.Text = "👤 My Roblox: TORMENTOR412"
+infoNick.TextColor3 = THEMES[currentTheme].accent
+infoNick.TextSize = 20
+infoNick.Font = Enum.Font.SourceSansBold
+infoNick.Parent = infoContent
+
+-- Разделительная линия
+local line = Instance.new("Frame")
+line.Size = UDim2.new(0.8, 0, 0.002, 0)
+line.Position = UDim2.new(0.1, 0, 0.8, 0)
+line.BackgroundColor3 = THEMES[currentTheme].accent
+line.BackgroundTransparency = 0.5
+line.Parent = infoContent
+
+-- ---
+local infoFooter = Instance.new("TextLabel")
+infoFooter.Size = UDim2.new(0.8, 0, 0.1, 0)
+infoFooter.Position = UDim2.new(0.1, 0, 0.85, 0)
+infoFooter.BackgroundTransparency = 1
+infoFooter.Text = "❤️ Thanks for using!"
+infoFooter.TextColor3 = THEMES[currentTheme].text
+infoFooter.TextSize = 16
+infoFooter.Font = Enum.Font.SourceSansBold
+infoFooter.Parent = infoContent
+
+-- === ESP ===
+local espContent = Instance.new("Frame")
+espContent.Size = UDim2.new(1, 0, 1, 0)
+espContent.BackgroundTransparency = 1
+espContent.Visible = false
+espContent.Parent = contentContainer
+
+-- === COMBAT ===
+local combatContent = Instance.new("Frame")
+combatContent.Size = UDim2.new(1, 0, 1, 0)
+combatContent.BackgroundTransparency = 1
+combatContent.Visible = false
+combatContent.Parent = contentContainer
+
+-- ============================================================
+--  ФУНКЦИЯ СОЗДАНИЯ КНОПОК-ПЕРЕКЛЮЧАТЕЛЕЙ
 -- ============================================================
 local function createToggleInContainer(parent, label, pos, callback)
     local container = Instance.new("Frame")
@@ -264,19 +351,6 @@ local function createToggleInContainer(parent, label, pos, callback)
         if callback then callback(state) end
     end)
 end
-
--- === КОНТЕНТ ESP ===
-local espContent = Instance.new("Frame")
-espContent.Size = UDim2.new(1, 0, 1, 0)
-espContent.BackgroundTransparency = 1
-espContent.Parent = contentContainer
-
--- === КОНТЕНТ БОЙ ===
-local combatContent = Instance.new("Frame")
-combatContent.Size = UDim2.new(1, 0, 1, 0)
-combatContent.BackgroundTransparency = 1
-combatContent.Visible = false
-combatContent.Parent = contentContainer
 
 -- ============================================================
 --  ESP (ФУНКЦИИ)
@@ -382,7 +456,7 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
     createESPForPlayer(plr)
 end)
 
--- Кнопки ESP
+-- Кнопки ESP в вкладке ESP
 createToggleInContainer(espContent, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.05, 0), function(state)
     ESP_MURDER = state
     updateAllESP()
@@ -399,7 +473,7 @@ createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25
 end)
 
 -- ============================================================
---  SHOOT MURDERER (В БОЙ)
+--  SHOOT MURDERER (COMBAT)
 -- ============================================================
 local shootMode = false
 local shootFrame = nil
@@ -727,10 +801,16 @@ end
 --  ОБНОВЛЕНИЕ ВКЛАДОК
 -- ============================================================
 local function updateContent()
-    if activeTab == "ESP" then
+    if activeTab == "INFO" then
+        infoContent.Visible = true
+        espContent.Visible = false
+        combatContent.Visible = false
+    elseif activeTab == "ESP" then
+        infoContent.Visible = false
         espContent.Visible = true
         combatContent.Visible = false
-    elseif activeTab == "Бой" then
+    elseif activeTab == "COMBAT" then
+        infoContent.Visible = false
         espContent.Visible = false
         combatContent.Visible = true
     end
@@ -778,7 +858,7 @@ local function updateTheme(themeName)
             child.BackgroundTransparency = 0.2
             child.TextColor3 = theme.accent
         end
-        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= icon then
+        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= icon and child ~= infoTitle then
             child.TextColor3 = theme.text
         end
     end
@@ -822,7 +902,7 @@ for i, themeName in ipairs(themeNames) do
 end
 
 print("========================================")
-print("  MUSLIM MENU v12.9 - TWO TABS WORKING")
+print("  MUSLIM MENU v13.0 - INFO + ESP + COMBAT")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
