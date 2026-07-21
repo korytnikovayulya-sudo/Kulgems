@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB v14.4 - FINAL (LANGUAGE INSTANT, NO SAVE)
+--  WERTIUM HUB - FINAL (NO TABS, WIDE MENU)
 --  by Tormentor412
 -- ============================================================
 
@@ -50,39 +50,27 @@ local themeDisplay = {"MIDNIGHT", "EMERALD", "RUBY", "ROYAL", "GOLD"}
 -- ============================================================
 local LANG = {
     ru = {
-        title = "Wertium hub",
-        info = "📋 ИНФОРМАЦИЯ",
-        info_hello = "Привет! Это мой первый скрипт!",
-        info_rate = "Если не сложно, оцените его. 🌟",
-        info_nick = "👤 Мой Roblox: TORMENTOR412",
-        info_footer = "❤️ Спасибо за использование!",
-        settings = "⚙️ НАСТРОЙКИ",
-        theme = "🎨 Тема:",
-        lang = "🌍 Язык:",
-        watermark = "Wertium hub | TORMENTOR412"
+        title = "WERTIUM HUB",
+        theme_label = "🎨 Тема:",
+        lang_label = "🌍 Язык:",
+        watermark = "WERTIUM HUB | TORMENTOR412"
     },
     en = {
-        title = "Wertium hub",
-        info = "📋 INFO",
-        info_hello = "Hello! It's my first script!",
-        info_rate = "If it's not too much trouble, please rate it. 🌟",
-        info_nick = "👤 My Roblox: TORMENTOR412",
-        info_footer = "❤️ Thanks for using!",
-        settings = "⚙️ SETTINGS",
-        theme = "🎨 Theme:",
-        lang = "🌍 Language:",
-        watermark = "Wertium hub | TORMENTOR412"
+        title = "WERTIUM HUB",
+        theme_label = "🎨 Theme:",
+        lang_label = "🌍 Language:",
+        watermark = "WERTIUM HUB | TORMENTOR412"
     }
 }
 
 -- ============================================================
---  НАСТРОЙКИ (ПО УМОЛЧАНИЮ РУССКИЙ)
+--  НАСТРОЙКИ
 -- ============================================================
 local currentTheme = "midnight"
 local currentLang = "ru"
 
 -- ============================================================
---  ФУНКЦИЯ ПРИМЕНЕНИЯ ВСЕХ НАСТРОЕК
+--  ФУНКЦИЯ ПРИМЕНЕНИЯ НАСТРОЕК
 -- ============================================================
 local function applyAllSettings()
     local theme = THEMES[currentTheme]
@@ -95,25 +83,20 @@ local function applyAllSettings()
     title.Text = lang.title
     title.TextColor3 = theme.accent
     
-    infoTitle.Text = lang.info
-    infoTitle.TextColor3 = theme.accent
-    infoHello.Text = lang.info_hello
-    infoHello.TextColor3 = theme.text
-    infoRate.Text = lang.info_rate
-    infoRate.TextColor3 = theme.text
-    infoNick.Text = lang.info_nick
-    infoNick.TextColor3 = theme.accent
-    infoFooter.Text = lang.info_footer
-    infoFooter.TextColor3 = theme.text
-    lineInfo.BackgroundColor3 = theme.accent
+    -- Обновляем цвет прицелов
+    crosshairCircle.BorderColor3 = theme.accent
+    lineH.BackgroundColor3 = theme.accent
+    lineV.BackgroundColor3 = theme.accent
+    dot.BackgroundColor3 = theme.accent
+    -- для правого прицела
+    crosshairCircle2.BorderColor3 = theme.accent
+    lineH2.BackgroundColor3 = theme.accent
+    lineV2.BackgroundColor3 = theme.accent
+    dot2.BackgroundColor3 = theme.accent
     
-    settingsTitle.Text = lang.settings
-    settingsTitle.TextColor3 = theme.accent
-    settingsBorder.BorderColor3 = theme.accent
-    
-    themeLabel.Text = lang.theme
+    themeLabel.Text = lang.theme_label
     themeLabel.TextColor3 = theme.text
-    langLabel.Text = lang.lang
+    langLabel.Text = lang.lang_label
     langLabel.TextColor3 = theme.text
     
     watermark.Text = lang.watermark
@@ -140,33 +123,21 @@ local function applyAllSettings()
         langEn.TextColor3 = theme.main
     end
     
-    -- КНОПКИ ВКЛАДОК
-    infoBtn.BackgroundColor3 = theme.btn
-    settingsBtn.BackgroundColor3 = theme.btn
-    if infoContent.Visible then
-        infoBtn.BackgroundColor3 = theme.accent
-        infoBtn.TextColor3 = theme.main
-        settingsBtn.TextColor3 = theme.text
-    else
-        settingsBtn.BackgroundColor3 = theme.accent
-        settingsBtn.TextColor3 = theme.main
-        infoBtn.TextColor3 = theme.text
-    end
-    
     -- ЗНАЧЕНИЕ ТЕМЫ
     for i, name in ipairs(themeNames) do
         if name == currentTheme then
             themeValue.Text = themeIcons[i] .. " " .. themeDisplay[i]
+            themeValue.TextColor3 = theme.accent
         end
     end
 end
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ
+--  ОСНОВНОЕ МЕНЮ (ШИРОКОЕ, БЕЗ ВКЛАДОК)
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 700, 0, 450)
-frame.Position = UDim2.new(0.5, -350, 0.5, -225)
+frame.Size = UDim2.new(0, 800, 0, 500)
+frame.Position = UDim2.new(0.5, -400, 0.5, -250)
 frame.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
 frame.BackgroundTransparency = 0.05
 frame.BorderSizePixel = 2
@@ -176,12 +147,12 @@ frame.Draggable = true
 frame.ClipsDescendants = true
 frame.Parent = gui
 
--- СКРУГЛЕНИЕ УГЛОВ (мягкие углы)
+-- МЯГКИЕ УГЛЫ
 local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
--- БЕЛАЯ ПОДСВЕТКА (свечение)
+-- БЕЛАЯ ПОДСВЕТКА
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 2
 stroke.Color = Color3.fromRGB(255, 255, 255)
@@ -190,10 +161,10 @@ stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = frame
 
 -- ============================================================
---  ЗАГОЛОВОК
+--  ЗАГОЛОВОК С ДВУМЯ ПРИЦЕЛАМИ
 -- ============================================================
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 50)
+header.Size = UDim2.new(1, 0, 0, 70)
 header.BackgroundColor3 = Color3.fromRGB(16, 18, 24)
 header.BackgroundTransparency = 0.15
 header.Parent = frame
@@ -202,10 +173,10 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- АНИМИРОВАННЫЙ ПРИЦЕЛ (слева от названия)
+-- ЛЕВЫЙ ПРИЦЕЛ
 local crosshairContainer = Instance.new("Frame")
-crosshairContainer.Size = UDim2.new(0, 35, 1, 0)
-crosshairContainer.Position = UDim2.new(0.01, 0, 0, 0)
+crosshairContainer.Size = UDim2.new(0, 50, 1, 0)
+crosshairContainer.Position = UDim2.new(0.02, 0, 0, 0)
 crosshairContainer.BackgroundTransparency = 1
 crosshairContainer.Parent = header
 
@@ -216,7 +187,6 @@ crosshairCircle.BackgroundTransparency = 1
 crosshairCircle.BorderSizePixel = 2
 crosshairCircle.BorderColor3 = Color3.fromRGB(100, 180, 255)
 crosshairCircle.Parent = crosshairContainer
-
 local circleCorners = Instance.new("UICorner")
 circleCorners.CornerRadius = UDim.new(1, 0)
 circleCorners.Parent = crosshairCircle
@@ -244,14 +214,59 @@ dot.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 dot.BackgroundTransparency = 0.2
 dot.BorderSizePixel = 0
 dot.Parent = crosshairContainer
-
 local dotCorners = Instance.new("UICorner")
 dotCorners.CornerRadius = UDim.new(1, 0)
 dotCorners.Parent = dot
 
+-- ПРАВЫЙ ПРИЦЕЛ
+local crosshairContainer2 = Instance.new("Frame")
+crosshairContainer2.Size = UDim2.new(0, 50, 1, 0)
+crosshairContainer2.Position = UDim2.new(0.88, 0, 0, 0)
+crosshairContainer2.BackgroundTransparency = 1
+crosshairContainer2.Parent = header
+
+local crosshairCircle2 = Instance.new("Frame")
+crosshairCircle2.Size = UDim2.new(1, 0, 0.8, 0)
+crosshairCircle2.Position = UDim2.new(0, 0, 0.1, 0)
+crosshairCircle2.BackgroundTransparency = 1
+crosshairCircle2.BorderSizePixel = 2
+crosshairCircle2.BorderColor3 = Color3.fromRGB(100, 180, 255)
+crosshairCircle2.Parent = crosshairContainer2
+local circleCorners2 = Instance.new("UICorner")
+circleCorners2.CornerRadius = UDim.new(1, 0)
+circleCorners2.Parent = crosshairCircle2
+
+local lineH2 = Instance.new("Frame")
+lineH2.Size = UDim2.new(0.8, 0, 0.08, 0)
+lineH2.Position = UDim2.new(0.1, 0, 0.46, 0)
+lineH2.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+lineH2.BackgroundTransparency = 0.3
+lineH2.BorderSizePixel = 0
+lineH2.Parent = crosshairContainer2
+
+local lineV2 = Instance.new("Frame")
+lineV2.Size = UDim2.new(0.08, 0, 0.8, 0)
+lineV2.Position = UDim2.new(0.46, 0, 0.1, 0)
+lineV2.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+lineV2.BackgroundTransparency = 0.3
+lineV2.BorderSizePixel = 0
+lineV2.Parent = crosshairContainer2
+
+local dot2 = Instance.new("Frame")
+dot2.Size = UDim2.new(0.15, 0, 0.15, 0)
+dot2.Position = UDim2.new(0.425, 0, 0.425, 0)
+dot2.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+dot2.BackgroundTransparency = 0.2
+dot2.BorderSizePixel = 0
+dot2.Parent = crosshairContainer2
+local dotCorners2 = Instance.new("UICorner")
+dotCorners2.CornerRadius = UDim.new(1, 0)
+dotCorners2.Parent = dot2
+
+-- АНИМАЦИЯ ПРИЦЕЛОВ
 local angle = 0
 local animConnection = game:GetService("RunService").RenderStepped:Connect(function()
-    if not crosshairContainer or not crosshairContainer.Parent then
+    if not crosshairContainer or not crosshairContainer2 then
         if animConnection then
             animConnection:Disconnect()
             animConnection = nil
@@ -260,29 +275,31 @@ local animConnection = game:GetService("RunService").RenderStepped:Connect(funct
     end
     angle = angle + 0.03
     crosshairContainer.Rotation = math.deg(angle)
+    crosshairContainer2.Rotation = math.deg(-angle) -- противоположное вращение для симметрии
 end)
 
--- НАЗВАНИЕ
+-- НАЗВАНИЕ ПО ЦЕНТРУ
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(0.5, 0, 1, 0)
-title.Position = UDim2.new(0.09, 0, 0, 0)
+title.Size = UDim2.new(0.6, 0, 1, 0)
+title.Position = UDim2.new(0.2, 0, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "Wertium hub"
+title.Text = "WERTIUM HUB"
 title.TextColor3 = Color3.fromRGB(100, 180, 255)
-title.TextSize = 20
-title.Font = Enum.Font.SourceSansBold
-title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextSize = 34
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Center
+title.TextYAlignment = Enum.TextYAlignment.Center
 title.Parent = header
 
 -- КНОПКА ЗАКРЫТИЯ
 local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 32, 0, 32)
-closeBtn.Position = UDim2.new(0.94, 0, 0.5, -16)
+closeBtn.Size = UDim2.new(0, 35, 0, 35)
+closeBtn.Position = UDim2.new(0.95, 0, 0.5, -17)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
-closeBtn.BackgroundTransparency = 0.05
+closeBtn.BackgroundTransparency = 0.1
 closeBtn.Text = "✕"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.TextSize = 18
+closeBtn.TextSize = 20
 closeBtn.Font = Enum.Font.SourceSansBold
 closeBtn.Parent = header
 
@@ -291,173 +308,52 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКИ
+--  НАСТРОЙКИ (ТЕМА И ЯЗЫК) - РАСПОЛОЖЕНЫ НИЖЕ
 -- ============================================================
-local tabContainer = Instance.new("Frame")
-tabContainer.Size = UDim2.new(0, 100, 1, -50)
-tabContainer.Position = UDim2.new(0, 0, 0, 50)
-tabContainer.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
-tabContainer.BackgroundTransparency = 0.15
-tabContainer.Parent = frame
-
-local contentContainer = Instance.new("Frame")
-contentContainer.Size = UDim2.new(1, -110, 1, -60)
-contentContainer.Position = UDim2.new(0, 105, 0, 55)
-contentContainer.BackgroundTransparency = 1
-contentContainer.Parent = frame
-
--- КНОПКИ ВКЛАДОК
-local infoBtn = Instance.new("TextButton")
-infoBtn.Size = UDim2.new(1, 0, 0, 40)
-infoBtn.Position = UDim2.new(0, 0, 0, 0)
-infoBtn.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
-infoBtn.BackgroundTransparency = 0.15
-infoBtn.Text = "INFO"
-infoBtn.TextColor3 = Color3.fromRGB(10, 10, 14)
-infoBtn.TextSize = 14
-infoBtn.Font = Enum.Font.SourceSansBold
-infoBtn.Parent = tabContainer
-
-local settingsBtn = Instance.new("TextButton")
-settingsBtn.Size = UDim2.new(1, 0, 0, 40)
-settingsBtn.Position = UDim2.new(0, 0, 0, 45)
-settingsBtn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
-settingsBtn.BackgroundTransparency = 0.15
-settingsBtn.Text = "SETTINGS"
-settingsBtn.TextColor3 = Color3.fromRGB(220, 230, 240)
-settingsBtn.TextSize = 14
-settingsBtn.Font = Enum.Font.SourceSansBold
-settingsBtn.Parent = tabContainer
-
--- ============================================================
---  INFO
--- ============================================================
-local infoContent = Instance.new("Frame")
-infoContent.Size = UDim2.new(1, 0, 1, 0)
-infoContent.BackgroundTransparency = 1
-infoContent.Parent = contentContainer
-
-local infoTitle = Instance.new("TextLabel")
-infoTitle.Size = UDim2.new(1, 0, 0.15, 0)
-infoTitle.Position = UDim2.new(0, 0, 0.05, 0)
-infoTitle.BackgroundTransparency = 1
-infoTitle.Text = "📋 ИНФОРМАЦИЯ"
-infoTitle.TextColor3 = Color3.fromRGB(100, 180, 255)
-infoTitle.TextSize = 28
-infoTitle.Font = Enum.Font.SourceSansBold
-infoTitle.Parent = infoContent
-
-local infoHello = Instance.new("TextLabel")
-infoHello.Size = UDim2.new(1, 0, 0.15, 0)
-infoHello.Position = UDim2.new(0, 0, 0.2, 0)
-infoHello.BackgroundTransparency = 1
-infoHello.Text = "Привет! Это мой первый скрипт!"
-infoHello.TextColor3 = Color3.fromRGB(220, 230, 240)
-infoHello.TextSize = 22
-infoHello.Font = Enum.Font.SourceSansBold
-infoHello.Parent = infoContent
-
-local infoRate = Instance.new("TextLabel")
-infoRate.Size = UDim2.new(1, 0, 0.15, 0)
-infoRate.Position = UDim2.new(0, 0, 0.4, 0)
-infoRate.BackgroundTransparency = 1
-infoRate.Text = "Если не сложно, оцените его. 🌟"
-infoRate.TextColor3 = Color3.fromRGB(220, 230, 240)
-infoRate.TextSize = 18
-infoRate.Font = Enum.Font.SourceSansBold
-infoRate.Parent = infoContent
-
-local infoNick = Instance.new("TextLabel")
-infoNick.Size = UDim2.new(1, 0, 0.15, 0)
-infoNick.Position = UDim2.new(0, 0, 0.6, 0)
-infoNick.BackgroundTransparency = 1
-infoNick.Text = "👤 Мой Roblox: TORMENTOR412"
-infoNick.TextColor3 = Color3.fromRGB(100, 180, 255)
-infoNick.TextSize = 20
-infoNick.Font = Enum.Font.SourceSansBold
-infoNick.Parent = infoContent
-
-local lineInfo = Instance.new("Frame")
-lineInfo.Size = UDim2.new(0.9, 0, 0.002, 0)
-lineInfo.Position = UDim2.new(0.05, 0, 0.8, 0)
-lineInfo.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
-lineInfo.BackgroundTransparency = 0.5
-lineInfo.Parent = infoContent
-
-local infoFooter = Instance.new("TextLabel")
-infoFooter.Size = UDim2.new(1, 0, 0.1, 0)
-infoFooter.Position = UDim2.new(0, 0, 0.85, 0)
-infoFooter.BackgroundTransparency = 1
-infoFooter.Text = "❤️ Спасибо за использование!"
-infoFooter.TextColor3 = Color3.fromRGB(220, 230, 240)
-infoFooter.TextSize = 16
-infoFooter.Font = Enum.Font.SourceSansBold
-infoFooter.Parent = infoContent
-
--- ============================================================
---  SETTINGS (БЕЗ ПРОЗРАЧНОСТИ И БЕЗ КНОПКИ СОХРАНИТЬ)
--- ============================================================
-local settingsContent = Instance.new("Frame")
-settingsContent.Size = UDim2.new(1, 0, 1, 0)
-settingsContent.BackgroundTransparency = 1
-settingsContent.Visible = false
-settingsContent.Parent = contentContainer
-
-local settingsBorder = Instance.new("Frame")
-settingsBorder.Size = UDim2.new(1, 0, 1, 0)
-settingsBorder.BackgroundTransparency = 1
-settingsBorder.BorderSizePixel = 2
-settingsBorder.BorderColor3 = Color3.fromRGB(100, 180, 255)
-settingsBorder.Parent = settingsContent
-
-local settingsTitle = Instance.new("TextLabel")
-settingsTitle.Size = UDim2.new(1, 0, 0.08, 0)
-settingsTitle.Position = UDim2.new(0, 0, 0.02, 0)
-settingsTitle.BackgroundTransparency = 1
-settingsTitle.Text = "⚙️ НАСТРОЙКИ"
-settingsTitle.TextColor3 = Color3.fromRGB(100, 180, 255)
-settingsTitle.TextSize = 24
-settingsTitle.Font = Enum.Font.SourceSansBold
-settingsTitle.Parent = settingsContent
+local settingsArea = Instance.new("Frame")
+settingsArea.Size = UDim2.new(1, 0, 0, 200)
+settingsArea.Position = UDim2.new(0, 0, 0, 70)
+settingsArea.BackgroundTransparency = 1
+settingsArea.Parent = frame
 
 -- ТЕМА
 local themeLabel = Instance.new("TextLabel")
-themeLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
-themeLabel.Position = UDim2.new(0.05, 0, 0.12, 0)
+themeLabel.Size = UDim2.new(0.2, 0, 0.08, 0)
+themeLabel.Position = UDim2.new(0.05, 0, 0.05, 0)
 themeLabel.BackgroundTransparency = 1
 themeLabel.Text = "🎨 Тема:"
 themeLabel.TextColor3 = Color3.fromRGB(220, 230, 240)
-themeLabel.TextSize = 16
+themeLabel.TextSize = 18
 themeLabel.Font = Enum.Font.SourceSansBold
 themeLabel.TextXAlignment = Enum.TextXAlignment.Left
-themeLabel.Parent = settingsContent
+themeLabel.Parent = settingsArea
 
 local themeContainer = Instance.new("Frame")
-themeContainer.Size = UDim2.new(0.6, 0, 0.06, 0)
-themeContainer.Position = UDim2.new(0.35, 0, 0.12, 0)
+themeContainer.Size = UDim2.new(0.6, 0, 0.08, 0)
+themeContainer.Position = UDim2.new(0.25, 0, 0.05, 0)
 themeContainer.BackgroundTransparency = 1
-themeContainer.Parent = settingsContent
+themeContainer.Parent = settingsArea
 
 local themeValue = Instance.new("TextLabel")
-themeValue.Size = UDim2.new(0.4, 0, 1, 0)
-themeValue.Position = UDim2.new(0.6, 0, 0, 0)
+themeValue.Size = UDim2.new(0.3, 0, 1, 0)
+themeValue.Position = UDim2.new(0.7, 0, 0, 0)
 themeValue.BackgroundTransparency = 1
 themeValue.Text = "🌙 MIDNIGHT"
 themeValue.TextColor3 = Color3.fromRGB(100, 180, 255)
-themeValue.TextSize = 14
+themeValue.TextSize = 16
 themeValue.Font = Enum.Font.SourceSansBold
 themeValue.TextXAlignment = Enum.TextXAlignment.Right
 themeValue.Parent = themeContainer
 
 for i, name in ipairs(themeNames) do
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 30, 0, 30)
-    btn.Position = UDim2.new(0.05 + (i-1) * 0.16, 0, 0, 0)
+    btn.Size = UDim2.new(0, 35, 0, 35)
+    btn.Position = UDim2.new(0.05 + (i-1) * 0.14, 0, 0, 0)
     btn.BackgroundColor3 = THEMES[name].accent
     btn.BackgroundTransparency = 0
     btn.Text = themeIcons[i]
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 14
+    btn.TextSize = 16
     btn.Font = Enum.Font.SourceSansBold
     btn.Parent = themeContainer
     
@@ -475,21 +371,21 @@ end
 
 -- ЯЗЫК
 local langLabel = Instance.new("TextLabel")
-langLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
-langLabel.Position = UDim2.new(0.05, 0, 0.22, 0)
+langLabel.Size = UDim2.new(0.2, 0, 0.08, 0)
+langLabel.Position = UDim2.new(0.05, 0, 0.2, 0)
 langLabel.BackgroundTransparency = 1
 langLabel.Text = "🌍 Язык:"
 langLabel.TextColor3 = Color3.fromRGB(220, 230, 240)
-langLabel.TextSize = 16
+langLabel.TextSize = 18
 langLabel.Font = Enum.Font.SourceSansBold
 langLabel.TextXAlignment = Enum.TextXAlignment.Left
-langLabel.Parent = settingsContent
+langLabel.Parent = settingsArea
 
 local langContainer = Instance.new("Frame")
-langContainer.Size = UDim2.new(0.3, 0, 0.06, 0)
-langContainer.Position = UDim2.new(0.35, 0, 0.22, 0)
+langContainer.Size = UDim2.new(0.3, 0, 0.08, 0)
+langContainer.Position = UDim2.new(0.25, 0, 0.2, 0)
 langContainer.BackgroundTransparency = 1
-langContainer.Parent = settingsContent
+langContainer.Parent = settingsArea
 
 local langRu = Instance.new("TextButton")
 langRu.Size = UDim2.new(0.45, 0, 1, 0)
@@ -498,7 +394,7 @@ langRu.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
 langRu.BackgroundTransparency = 0.1
 langRu.Text = "🇷🇺 Рус"
 langRu.TextColor3 = Color3.fromRGB(220, 230, 240)
-langRu.TextSize = 14
+langRu.TextSize = 16
 langRu.Font = Enum.Font.SourceSansBold
 langRu.Parent = langContainer
 
@@ -509,7 +405,7 @@ langEn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
 langEn.BackgroundTransparency = 0.1
 langEn.Text = "🇬🇧 Eng"
 langEn.TextColor3 = Color3.fromRGB(220, 230, 240)
-langEn.TextSize = 14
+langEn.TextSize = 16
 langEn.Font = Enum.Font.SourceSansBold
 langEn.Parent = langContainer
 
@@ -529,30 +425,15 @@ end)
 --  ВОДЯНОЙ ЗНАК
 -- ============================================================
 local watermark = Instance.new("TextLabel")
-watermark.Size = UDim2.new(1, 0, 0, 20)
-watermark.Position = UDim2.new(0, 0, 0.97, 0)
+watermark.Size = UDim2.new(1, 0, 0, 25)
+watermark.Position = UDim2.new(0, 0, 0.95, 0)
 watermark.BackgroundTransparency = 1
-watermark.Text = "Wertium hub | TORMENTOR412"
+watermark.Text = "WERTIUM HUB | TORMENTOR412"
 watermark.TextColor3 = Color3.fromRGB(100, 180, 255)
-watermark.TextSize = 10
+watermark.TextSize = 12
 watermark.Font = Enum.Font.SourceSans
 watermark.TextTransparency = 0.5
 watermark.Parent = frame
-
--- ============================================================
---  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
--- ============================================================
-infoBtn.MouseButton1Click:Connect(function()
-    infoContent.Visible = true
-    settingsContent.Visible = false
-    applyAllSettings()
-end)
-
-settingsBtn.MouseButton1Click:Connect(function()
-    infoContent.Visible = false
-    settingsContent.Visible = true
-    applyAllSettings()
-end)
 
 -- ============================================================
 --  ХОТКЕЙ F1
