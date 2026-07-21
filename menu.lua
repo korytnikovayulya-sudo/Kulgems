@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v8.7 - MM2 ESP FINAL
+--  MUSLIM MENU v8.9 - MM2 PERFECT ESP
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.7 (MM2 FINAL)...")
+print("🚀 Загрузка Muslim Menu v8.9 (MM2 PERFECT ESP)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v8.7"
+versionBadge.Text = "v8.9"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,7 +219,7 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP ПО ОРУЖИЮ (100% РАБОТАЕТ В MM2)
+--  ESP ПО KNIFE И GUN (100% РАБОТАЕТ В MM2)
 -- ============================================================
 local espHighlights = {}
 
@@ -237,18 +237,18 @@ local function updateESP()
     
     for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
         if plr ~= player and plr.Character then
-            local hasWeapon = false
             local weaponType = "innocent"
             
-            -- Проверяем оружие у игрока
+            -- Ищем ТОЛЬКО Knife и Gun в инвентаре
             for _, tool in pairs(plr.Character:GetChildren()) do
                 if tool:IsA("Tool") then
-                    hasWeapon = true
-                    local toolName = tool.Name:lower()
-                    if toolName:find("knife") or toolName:find("dagger") or toolName:find("murder") then
+                    local toolName = tool.Name
+                    if toolName == "Knife" then
                         weaponType = "murderer"
-                    elseif toolName:find("gun") or toolName:find("pistol") or toolName:find("sheriff") then
+                        print("🔴 Убийца найден: " .. plr.Name .. " (Knife)")
+                    elseif toolName == "Gun" then
                         weaponType = "sheriff"
+                        print("🔵 Шериф найден: " .. plr.Name .. " (Gun)")
                     end
                 end
             end
@@ -262,7 +262,6 @@ local function updateESP()
                 highlight.FillTransparency = 0.3
                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                 table.insert(espHighlights, highlight)
-                print("🔴 Убийца найден: " .. plr.Name)
             elseif espSheriffState and weaponType == "sheriff" then
                 local highlight = Instance.new("Highlight")
                 highlight.Parent = plr.Character
@@ -271,7 +270,6 @@ local function updateESP()
                 highlight.FillTransparency = 0.3
                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                 table.insert(espHighlights, highlight)
-                print("🔵 Шериф найден: " .. plr.Name)
             elseif espInnocentState and weaponType == "innocent" then
                 local highlight = Instance.new("Highlight")
                 highlight.Parent = plr.Character
@@ -503,7 +501,7 @@ siteCorners.CornerRadius = UDim.new(0, 10)
 siteCorners.Parent = siteBtn
 
 siteBtn.MouseButton1Click:Connect(function()
-    setclipboard(CONFIG.WEBSITE)
+    setclipboard("https://korytnikovayulya-sudo.github.io/muslim-menu-site/")
     print("🌐 Ссылка скопирована!")
 end)
 
@@ -541,7 +539,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v8.7 - MM2 FINAL")
+print("  MUSLIM MENU v8.9 - MM2 PERFECT ESP")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
