@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v8.5 - MM2 EDITION
+--  MUSLIM MENU v8.5.1 - MM2 FIX
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.5 (MM2 Edition)...")
+print("🚀 Загрузка Muslim Menu v8.5.1 (MM2 FIX)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v8.5"
+versionBadge.Text = "v8.5.1"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,73 +219,94 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP MURDER (КРАСНЫЙ)
+--  ПОИСК УБИЙЦЫ И ШЕРИФА В MM2
 -- ============================================================
-local espMurderHighlights = {}
+local function getMurderer()
+    for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+        if plr ~= player and plr.Character then
+            -- Проверяем наличие оружия (убийца обычно с ножом)
+            if plr.Character:FindFirstChild("Tool") then
+                return plr
+            end
+        end
+    end
+    return nil
+end
+
+local function getSheriff()
+    for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+        if plr ~= player and plr.Character then
+            -- Шериф обычно с пистолетом
+            if plr.Character:FindFirstChildWhichIsA("Tool") and plr.Character.Tool.Name:lower():find("gun") or plr.Character.Tool.Name:lower():find("pistol") then
+                return plr
+            end
+        end
+    end
+    return nil
+end
+
+-- ============================================================
+--  ESP MURDER (ТОЛЬКО УБИЙЦА)
+-- ============================================================
+local espMurderHighlight = nil
 
 local function toggleESPMurder(state)
     if state then
-        for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-            if plr ~= player and plr.Character then
-                local highlight = Instance.new("Highlight")
-                highlight.Parent = plr.Character
-                highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Красный
-                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                highlight.FillTransparency = 0.3
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                table.insert(espMurderHighlights, highlight)
-            end
+        local murderer = getMurderer()
+        if murderer and murderer.Character then
+            espMurderHighlight = Instance.new("Highlight")
+            espMurderHighlight.Parent = murderer.Character
+            espMurderHighlight.FillColor = Color3.fromRGB(255, 0, 0)
+            espMurderHighlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            espMurderHighlight.FillTransparency = 0.3
+            espMurderHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
         end
     else
-        for _, highlight in pairs(espMurderHighlights) do
-            if highlight and highlight.Parent then
-                highlight:Destroy()
-            end
+        if espMurderHighlight then
+            espMurderHighlight:Destroy()
+            espMurderHighlight = nil
         end
-        espMurderHighlights = {}
     end
 end
 
 -- ============================================================
---  ESP SHERIFF (СИНИЙ)
+--  ESP SHERIFF (ТОЛЬКО ШЕРИФ)
 -- ============================================================
-local espSheriffHighlights = {}
+local espSheriffHighlight = nil
 
 local function toggleESPSheriff(state)
     if state then
-        for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-            if plr ~= player and plr.Character then
-                local highlight = Instance.new("Highlight")
-                highlight.Parent = plr.Character
-                highlight.FillColor = Color3.fromRGB(0, 100, 255) -- Синий
-                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                highlight.FillTransparency = 0.3
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                table.insert(espSheriffHighlights, highlight)
-            end
+        local sheriff = getSheriff()
+        if sheriff and sheriff.Character then
+            espSheriffHighlight = Instance.new("Highlight")
+            espSheriffHighlight.Parent = sheriff.Character
+            espSheriffHighlight.FillColor = Color3.fromRGB(0, 100, 255)
+            espSheriffHighlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            espSheriffHighlight.FillTransparency = 0.3
+            espSheriffHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
         end
     else
-        for _, highlight in pairs(espSheriffHighlights) do
-            if highlight and highlight.Parent then
-                highlight:Destroy()
-            end
+        if espSheriffHighlight then
+            espSheriffHighlight:Destroy()
+            espSheriffHighlight = nil
         end
-        espSheriffHighlights = {}
     end
 end
 
 -- ============================================================
---  ESP INNOCENT (ЗЕЛЁНЫЙ)
+--  ESP INNOCENT (ВСЕ НЕВИННЫЕ)
 -- ============================================================
 local espInnocentHighlights = {}
 
 local function toggleESPInnocent(state)
     if state then
+        local murderer = getMurderer()
+        local sheriff = getSheriff()
         for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-            if plr ~= player and plr.Character then
+            if plr ~= player and plr ~= murderer and plr ~= sheriff and plr.Character then
                 local highlight = Instance.new("Highlight")
                 highlight.Parent = plr.Character
-                highlight.FillColor = Color3.fromRGB(0, 255, 0) -- Зелёный
+                highlight.FillColor = Color3.fromRGB(0, 255, 0)
                 highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
                 highlight.FillTransparency = 0.3
                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
@@ -318,35 +339,28 @@ createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.30, 0), function(s
 end)
 
 -- ============================================================
---  BUNNY HOP (ПРЫЖКИ ПО СТЕНАМ)
+--  BUNNY HOP (РАБОЧИЙ)
 -- ============================================================
 local bunnyHopEnabled = false
-local bhopConnection = nil
 
 local function toggleBunnyHop(state)
     bunnyHopEnabled = state
     if state then
         print("🐰 Bunny Hop включён!")
-        bhopConnection = game:GetService("UserInputService").Jump:Connect(function()
-            if bunnyHopEnabled then
+        -- Автоматические прыжки при удержании пробела
+        game:GetService("UserInputService").Jump:Connect(function()
+            while bunnyHopEnabled and wait(0.01) do
                 local char = player.Character
                 if char and char:FindFirstChild("Humanoid") then
                     local humanoid = char.Humanoid
-                    -- Прыжок
-                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                    -- Маленькая задержка для эффекта "по стене"
-                    wait(0.05)
-                    -- Принудительный прыжок снова
-                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    if humanoid.FloorMaterial ~= Enum.Material.Air then
+                        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    end
                 end
             end
         end)
     else
         print("🐰 Bunny Hop выключён!")
-        if bhopConnection then
-            bhopConnection:Disconnect()
-            bhopConnection = nil
-        end
     end
 end
 
@@ -532,7 +546,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v8.5 - MM2 EDITION")
+print("  MUSLIM MENU v8.5.1 - MM2 FIX")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
