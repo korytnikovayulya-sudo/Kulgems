@@ -1,15 +1,34 @@
 -- ============================================================
---  MUSLIM MENU v14.4 - FINAL (LANGUAGE INSTANT, NO SAVE)
+--  WERTIUM HUB v14.4 - FINAL (LANGUAGE INSTANT, NO SAVE)
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v14.4...")
+print("🚀 Загрузка Wertium Hub...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
-gui.Name = "MuslimMenu"
+gui.Name = "WertiumHub"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
+
+-- ============================================================
+--  [ПРИВЕТСТВИЕ] HELLO
+-- ============================================================
+local hello = Instance.new("TextLabel")
+hello.Size = UDim2.new(1, 0, 1, 0)
+hello.BackgroundTransparency = 1
+hello.Text = "HELLO"
+hello.TextColor3 = Color3.fromRGB(255, 215, 0)
+hello.TextScaled = true
+hello.Font = Enum.Font.GothamBold
+hello.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+hello.TextStrokeTransparency = 0.5
+hello.Parent = gui
+
+game:GetService("TweenService"):Create(hello, TweenInfo.new(1.5, Enum.EasingStyle.Quad), {TextTransparency = 1}):Play()
+game:GetService("Debris"):AddItem(hello, 1.5)
+
+wait(1.5)
 
 -- ============================================================
 --  ТЕМЫ
@@ -31,7 +50,7 @@ local themeDisplay = {"MIDNIGHT", "EMERALD", "RUBY", "ROYAL", "GOLD"}
 -- ============================================================
 local LANG = {
     ru = {
-        title = "MUSLIM MENU v14.4",
+        title = "Wertium hub",
         info = "📋 ИНФОРМАЦИЯ",
         info_hello = "Привет! Это мой первый скрипт!",
         info_rate = "Если не сложно, оцените его. 🌟",
@@ -40,10 +59,10 @@ local LANG = {
         settings = "⚙️ НАСТРОЙКИ",
         theme = "🎨 Тема:",
         lang = "🌍 Язык:",
-        watermark = "MUSLIM MENU v14.4 | TORMENTOR412"
+        watermark = "Wertium hub | TORMENTOR412"
     },
     en = {
-        title = "MUSLIM MENU v14.4",
+        title = "Wertium hub",
         info = "📋 INFO",
         info_hello = "Hello! It's my first script!",
         info_rate = "If it's not too much trouble, please rate it. 🌟",
@@ -52,7 +71,7 @@ local LANG = {
         settings = "⚙️ SETTINGS",
         theme = "🎨 Theme:",
         lang = "🌍 Language:",
-        watermark = "MUSLIM MENU v14.4 | TORMENTOR412"
+        watermark = "Wertium hub | TORMENTOR412"
     }
 }
 
@@ -60,25 +79,22 @@ local LANG = {
 --  НАСТРОЙКИ (ПО УМОЛЧАНИЮ РУССКИЙ)
 -- ============================================================
 local currentTheme = "midnight"
-local currentLang = "ru"          -- ПО УМОЛЧАНИЮ РУССКИЙ
+local currentLang = "ru"
 
 -- ============================================================
---  ФУНКЦИЯ ПРИМЕНЕНИЯ ВСЕХ НАСТРОЕК (БЕЗ ПРОЗРАЧНОСТИ)
+--  ФУНКЦИЯ ПРИМЕНЕНИЯ ВСЕХ НАСТРОЕК
 -- ============================================================
 local function applyAllSettings()
     local theme = THEMES[currentTheme]
     local lang = LANG[currentLang]
     
-    -- МЕНЮ
     frame.BackgroundColor3 = theme.main
     frame.BorderColor3 = theme.accent
     
-    -- ЗАГОЛОВОК
     header.BackgroundColor3 = theme.header
     title.Text = lang.title
     title.TextColor3 = theme.accent
     
-    -- INFO
     infoTitle.Text = lang.info
     infoTitle.TextColor3 = theme.accent
     infoHello.Text = lang.info_hello
@@ -91,7 +107,6 @@ local function applyAllSettings()
     infoFooter.TextColor3 = theme.text
     lineInfo.BackgroundColor3 = theme.accent
     
-    -- SETTINGS
     settingsTitle.Text = lang.settings
     settingsTitle.TextColor3 = theme.accent
     settingsBorder.BorderColor3 = theme.accent
@@ -101,7 +116,6 @@ local function applyAllSettings()
     langLabel.Text = lang.lang
     langLabel.TextColor3 = theme.text
     
-    -- ВОДЯНОЙ ЗНАК
     watermark.Text = lang.watermark
     watermark.TextColor3 = theme.accent
     
@@ -115,7 +129,7 @@ local function applyAllSettings()
         end
     end
     
-    -- ЯЗЫКОВЫЕ КНОПКИ (подсветка активной)
+    -- ЯЗЫКОВЫЕ КНОПКИ
     langRu.BackgroundColor3 = theme.btn
     langEn.BackgroundColor3 = theme.btn
     if currentLang == "ru" then
@@ -162,9 +176,18 @@ frame.Draggable = true
 frame.ClipsDescendants = true
 frame.Parent = gui
 
+-- СКРУГЛЕНИЕ УГЛОВ (мягкие углы)
 local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
+
+-- БЕЛАЯ ПОДСВЕТКА (свечение)
+local stroke = Instance.new("UIStroke")
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(255, 255, 255)
+stroke.Transparency = 0.5
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+stroke.Parent = frame
 
 -- ============================================================
 --  ЗАГОЛОВОК
@@ -175,17 +198,83 @@ header.BackgroundColor3 = Color3.fromRGB(16, 18, 24)
 header.BackgroundTransparency = 0.15
 header.Parent = frame
 
+local headerCorners = Instance.new("UICorner")
+headerCorners.CornerRadius = UDim.new(0, 20)
+headerCorners.Parent = header
+
+-- АНИМИРОВАННЫЙ ПРИЦЕЛ (слева от названия)
+local crosshairContainer = Instance.new("Frame")
+crosshairContainer.Size = UDim2.new(0, 35, 1, 0)
+crosshairContainer.Position = UDim2.new(0.01, 0, 0, 0)
+crosshairContainer.BackgroundTransparency = 1
+crosshairContainer.Parent = header
+
+local crosshairCircle = Instance.new("Frame")
+crosshairCircle.Size = UDim2.new(1, 0, 0.8, 0)
+crosshairCircle.Position = UDim2.new(0, 0, 0.1, 0)
+crosshairCircle.BackgroundTransparency = 1
+crosshairCircle.BorderSizePixel = 2
+crosshairCircle.BorderColor3 = Color3.fromRGB(100, 180, 255)
+crosshairCircle.Parent = crosshairContainer
+
+local circleCorners = Instance.new("UICorner")
+circleCorners.CornerRadius = UDim.new(1, 0)
+circleCorners.Parent = crosshairCircle
+
+local lineH = Instance.new("Frame")
+lineH.Size = UDim2.new(0.8, 0, 0.08, 0)
+lineH.Position = UDim2.new(0.1, 0, 0.46, 0)
+lineH.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+lineH.BackgroundTransparency = 0.3
+lineH.BorderSizePixel = 0
+lineH.Parent = crosshairContainer
+
+local lineV = Instance.new("Frame")
+lineV.Size = UDim2.new(0.08, 0, 0.8, 0)
+lineV.Position = UDim2.new(0.46, 0, 0.1, 0)
+lineV.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+lineV.BackgroundTransparency = 0.3
+lineV.BorderSizePixel = 0
+lineV.Parent = crosshairContainer
+
+local dot = Instance.new("Frame")
+dot.Size = UDim2.new(0.15, 0, 0.15, 0)
+dot.Position = UDim2.new(0.425, 0, 0.425, 0)
+dot.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+dot.BackgroundTransparency = 0.2
+dot.BorderSizePixel = 0
+dot.Parent = crosshairContainer
+
+local dotCorners = Instance.new("UICorner")
+dotCorners.CornerRadius = UDim.new(1, 0)
+dotCorners.Parent = dot
+
+local angle = 0
+local animConnection = game:GetService("RunService").RenderStepped:Connect(function()
+    if not crosshairContainer or not crosshairContainer.Parent then
+        if animConnection then
+            animConnection:Disconnect()
+            animConnection = nil
+        end
+        return
+    end
+    angle = angle + 0.03
+    crosshairContainer.Rotation = math.deg(angle)
+end)
+
+-- НАЗВАНИЕ
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(0.5, 0, 1, 0)
-title.Position = UDim2.new(0.05, 0, 0, 0)
+title.Position = UDim2.new(0.09, 0, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "MUSLIM MENU v14.4"
+title.Text = "Wertium hub"
 title.TextColor3 = Color3.fromRGB(100, 180, 255)
 title.TextSize = 20
 title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
+-- КНОПКА ЗАКРЫТИЯ
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 32, 0, 32)
 closeBtn.Position = UDim2.new(0.94, 0, 0.5, -16)
@@ -384,7 +473,7 @@ for i, name in ipairs(themeNames) do
     end)
 end
 
--- ЯЗЫК (МГНОВЕННОЕ ПРИМЕНЕНИЕ С ПОДСВЕТКОЙ)
+-- ЯЗЫК
 local langLabel = Instance.new("TextLabel")
 langLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 langLabel.Position = UDim2.new(0.05, 0, 0.22, 0)
@@ -424,7 +513,6 @@ langEn.TextSize = 14
 langEn.Font = Enum.Font.SourceSansBold
 langEn.Parent = langContainer
 
--- МГНОВЕННОЕ ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА С ПОДСВЕТКОЙ
 langRu.MouseButton1Click:Connect(function()
     currentLang = "ru"
     applyAllSettings()
@@ -444,7 +532,7 @@ local watermark = Instance.new("TextLabel")
 watermark.Size = UDim2.new(1, 0, 0, 20)
 watermark.Position = UDim2.new(0, 0, 0.97, 0)
 watermark.BackgroundTransparency = 1
-watermark.Text = "MUSLIM MENU v14.4 | TORMENTOR412"
+watermark.Text = "Wertium hub | TORMENTOR412"
 watermark.TextColor3 = Color3.fromRGB(100, 180, 255)
 watermark.TextSize = 10
 watermark.Font = Enum.Font.SourceSans
@@ -481,6 +569,6 @@ end)
 -- ============================================================
 applyAllSettings()
 
-print("✅ Muslim Menu v14.4 загружен успешно!")
+print("✅ Wertium Hub загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("🌍 Язык по умолчанию: Русский")
