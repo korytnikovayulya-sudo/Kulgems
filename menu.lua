@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v8.5.5 - ULTIMATE WORKING
+--  MUSLIM MENU v8.7 - MM2 ESP FINAL
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.5.5...")
+print("🚀 Загрузка Muslim Menu v8.7 (MM2 FINAL)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v8.5.5"
+versionBadge.Text = "v8.7"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,41 +219,7 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ЕДИНСТВЕННЫЙ РАБОЧИЙ СПОСОБ НАЙТИ РОЛИ В MM2
--- ============================================================
-local function getRole(roleName)
-    -- Проверяем все возможные места хранения ролей
-    local locations = {
-        game:GetService("ReplicatedStorage"),
-        workspace,
-        game:GetService("Players")
-    }
-    
-    for _, loc in pairs(locations) do
-        local roleFolder = loc:FindFirstChild(roleName)
-        if roleFolder then
-            -- Если это папка с игроками
-            if roleFolder:IsA("Folder") then
-                for _, child in pairs(roleFolder:GetChildren()) do
-                    if child:IsA("Player") then
-                        return child
-                    end
-                end
-            end
-            -- Если это ObjectValue с игроком
-            if roleFolder:IsA("ObjectValue") then
-                local plr = roleFolder.Value
-                if plr and plr:IsA("Player") then
-                    return plr
-                end
-            end
-        end
-    end
-    return nil
-end
-
--- ============================================================
---  ESP (100% РАБОТАЕТ)
+--  ESP ПО ОРУЖИЮ (100% РАБОТАЕТ В MM2)
 -- ============================================================
 local espHighlights = {}
 
@@ -268,42 +234,45 @@ end
 
 local function updateESP()
     clearESP()
-    print("🔄 Обновление ESP...")
     
-    local murderer = getRole("Murderer")
-    local sheriff = getRole("Sheriff")
-    
-    if murderer then print("🔴 Убийца найден: " .. murderer.Name) end
-    if sheriff then print("🔵 Шериф найден: " .. sheriff.Name) end
-    
-    -- ESP Murder
-    if espMurderState and murderer and murderer.Character then
-        local highlight = Instance.new("Highlight")
-        highlight.Parent = murderer.Character
-        highlight.FillColor = Color3.fromRGB(255, 0, 0)
-        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-        highlight.FillTransparency = 0.3
-        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        table.insert(espHighlights, highlight)
-        print("✅ ESP Murder включён")
-    end
-    
-    -- ESP Sheriff
-    if espSheriffState and sheriff and sheriff.Character then
-        local highlight = Instance.new("Highlight")
-        highlight.Parent = sheriff.Character
-        highlight.FillColor = Color3.fromRGB(0, 100, 255)
-        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-        highlight.FillTransparency = 0.3
-        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        table.insert(espHighlights, highlight)
-        print("✅ ESP Sheriff включён")
-    end
-    
-    -- ESP Innocent
-    if espInnocentState then
-        for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-            if plr ~= player and plr ~= murderer and plr ~= sheriff and plr.Character then
+    for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+        if plr ~= player and plr.Character then
+            local hasWeapon = false
+            local weaponType = "innocent"
+            
+            -- Проверяем оружие у игрока
+            for _, tool in pairs(plr.Character:GetChildren()) do
+                if tool:IsA("Tool") then
+                    hasWeapon = true
+                    local toolName = tool.Name:lower()
+                    if toolName:find("knife") or toolName:find("dagger") or toolName:find("murder") then
+                        weaponType = "murderer"
+                    elseif toolName:find("gun") or toolName:find("pistol") or toolName:find("sheriff") then
+                        weaponType = "sheriff"
+                    end
+                end
+            end
+            
+            -- Включаем подсветку в зависимости от роли
+            if espMurderState and weaponType == "murderer" then
+                local highlight = Instance.new("Highlight")
+                highlight.Parent = plr.Character
+                highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                highlight.FillTransparency = 0.3
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                table.insert(espHighlights, highlight)
+                print("🔴 Убийца найден: " .. plr.Name)
+            elseif espSheriffState and weaponType == "sheriff" then
+                local highlight = Instance.new("Highlight")
+                highlight.Parent = plr.Character
+                highlight.FillColor = Color3.fromRGB(0, 100, 255)
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                highlight.FillTransparency = 0.3
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                table.insert(espHighlights, highlight)
+                print("🔵 Шериф найден: " .. plr.Name)
+            elseif espInnocentState and weaponType == "innocent" then
                 local highlight = Instance.new("Highlight")
                 highlight.Parent = plr.Character
                 highlight.FillColor = Color3.fromRGB(0, 255, 0)
@@ -313,7 +282,6 @@ local function updateESP()
                 table.insert(espHighlights, highlight)
             end
         end
-        print("✅ ESP Innocent включён")
     end
 end
 
@@ -337,9 +305,9 @@ createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.30, 0), function(s
     updateESP()
 end)
 
--- Автообновление каждые 5 секунд (на случай смены ролей)
+-- Автообновление каждые 2 секунды
 spawn(function()
-    while wait(5) do
+    while wait(2) do
         if espMurderState or espSheriffState or espInnocentState then
             updateESP()
         end
@@ -347,7 +315,7 @@ spawn(function()
 end)
 
 -- ============================================================
---  BUNNY HOP (РАБОТАЕТ ПРИ УДЕРЖАНИИ ПРОБЕЛА)
+--  BUNNY HOP
 -- ============================================================
 local bunnyHopEnabled = false
 local bhopConnection = nil
@@ -573,7 +541,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v8.5.5 - ULTIMATE WORKING")
+print("  MUSLIM MENU v8.7 - MM2 FINAL")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
