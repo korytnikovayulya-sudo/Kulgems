@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v10.0 - SHOOT MURDERER ULTIMATE
+--  MUSLIM MENU v11.0 - РАСШИРЕННОЕ МЕНЮ
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v10.0 (SHOOT MURDERER ULTIMATE)...")
+print("🚀 Загрузка Muslim Menu v11.0 (РАСШИРЕННОЕ МЕНЮ)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -42,11 +42,11 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ
+--  ОСНОВНОЕ МЕНЮ (БОЛЬШОЕ, КАК НА ФОТО)
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 460, 0, 650)
-frame.Position = UDim2.new(0.5, -230, 0.5, -325)
+frame.Size = UDim2.new(0, 520, 0, 750)  -- Шире и выше
+frame.Position = UDim2.new(0.5, -260, 0.5, -375)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v10.0"
+versionBadge.Text = "v11.0"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,7 +219,43 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  BILLBOARD ESP ДЛЯ ВСЕХ РОЛЕЙ
+--  КНОПКИ МЕНЮ (РАСШИРЕННЫЙ СПИСОК)
+-- ============================================================
+
+-- === ESP ===
+createToggle(frame, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.12, 0), function(state)
+    ESP_MURDER = state
+    updateAllESP()
+end)
+
+createToggle(frame, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.19, 0), function(state)
+    ESP_SHERIFF = state
+    updateAllESP()
+end)
+
+createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.26, 0), function(state)
+    ESP_INNOCENT = state
+    updateAllESP()
+end)
+
+-- === ДВИЖЕНИЕ ===
+createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.33, 0), function(state)
+    toggleBunnyHop(state)
+end)
+
+-- === БОЙ ===
+createToggle(frame, "🔫 Shoot Murderer", UDim2.new(0.05, 0, 0.40, 0), function(state)
+    toggleShootMode(state)
+end)
+
+-- === НАСТРОЙКИ ===
+createToggle(frame, "⚙️ Anti-AFK", UDim2.new(0.05, 0, 0.47, 0), function(state)
+    -- Тут можно добавить Anti-AFK
+    print("⚙️ Anti-AFK: " .. (state and "ВКЛ" or "ВЫКЛ"))
+end)
+
+-- ============================================================
+--  BILLBOARD ESP
 -- ============================================================
 local espList = {}
 
@@ -318,23 +354,6 @@ local function updateAllESP()
     end
 end
 
--- КНОПКИ ESP
-createToggle(frame, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.14, 0), function(state)
-    ESP_MURDER = state
-    updateAllESP()
-end)
-
-createToggle(frame, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.22, 0), function(state)
-    ESP_SHERIFF = state
-    updateAllESP()
-end)
-
-createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.30, 0), function(state)
-    ESP_INNOCENT = state
-    updateAllESP()
-end)
-
--- Новые игроки
 game:GetService("Players").PlayerAdded:Connect(function(plr)
     createESPForPlayer(plr)
 end)
@@ -384,10 +403,6 @@ local function toggleBunnyHop(state)
     end
 end
 
-createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.38, 0), function(state)
-    toggleBunnyHop(state)
-end)
-
 -- ============================================================
 --  SHOOT MURDERER (КРАСИВЫЙ КВАДРАТ)
 -- ============================================================
@@ -408,7 +423,6 @@ local function toggleShootMode(state)
             screenGui.Parent = player:WaitForChild("PlayerGui")
         end
         
-        -- Стеклянный квадрат
         shootFrame = Instance.new("Frame")
         shootFrame.Size = UDim2.new(0, 160, 0, 160)
         shootFrame.Position = UDim2.new(0.5, -80, 0.7, -80)
@@ -424,7 +438,6 @@ local function toggleShootMode(state)
         corners2.CornerRadius = UDim.new(0, 20)
         corners2.Parent = shootFrame
         
-        -- Блеск
         local glassShine = Instance.new("Frame")
         glassShine.Size = UDim2.new(0.8, 0, 0.3, 0)
         glassShine.Position = UDim2.new(0.1, 0, 0.05, 0)
@@ -437,7 +450,6 @@ local function toggleShootMode(state)
         shineCorners.CornerRadius = UDim.new(0, 15)
         shineCorners.Parent = glassShine
         
-        -- Текст
         local shootText = Instance.new("TextLabel")
         shootText.Size = UDim2.new(1, 0, 0.3, 0)
         shootText.Position = UDim2.new(0, 0, 0.35, 0)
@@ -449,7 +461,6 @@ local function toggleShootMode(state)
         shootText.TextStrokeTransparency = 0.3
         shootText.Parent = shootFrame
         
-        -- Прицел
         local crosshairContainer = Instance.new("Frame")
         crosshairContainer.Size = UDim2.new(0.4, 0, 0.4, 0)
         crosshairContainer.Position = UDim2.new(0.3, 0, 0.7, 0)
@@ -495,7 +506,6 @@ local function toggleShootMode(state)
         dotCorners.CornerRadius = UDim.new(1, 0)
         dotCorners.Parent = dot
         
-        -- Анимация
         local angle = 0
         animConnection = game:GetService("RunService").RenderStepped:Connect(function()
             if not shootFrame or not shootFrame.Parent then
@@ -515,7 +525,6 @@ local function toggleShootMode(state)
         shootButton.Text = ""
         shootButton.Parent = shootFrame
         
-        -- Крестик закрытия
         local closeBtnShoot = Instance.new("TextButton")
         closeBtnShoot.Size = UDim2.new(0, 35, 0, 35)
         closeBtnShoot.Position = UDim2.new(0.78, 0, -0.12, 0)
@@ -545,7 +554,6 @@ local function toggleShootMode(state)
             print("🔫 Shoot Murderer выключён!")
         end)
         
-        -- ЛОГИКА ВЫСТРЕЛА
         shootButton.MouseButton1Click:Connect(function()
             if not shootMode then return end
             
@@ -628,16 +636,12 @@ local function toggleShootMode(state)
     end
 end
 
-createToggle(frame, "🔫 Shoot Murderer", UDim2.new(0.05, 0, 0.46, 0), function(state)
-    toggleShootMode(state)
-end)
-
 -- ============================================================
 --  ТЕМЫ
 -- ============================================================
 local themeContainer = Instance.new("Frame")
 themeContainer.Size = UDim2.new(0.9, 0, 0, 42)
-themeContainer.Position = UDim2.new(0.05, 0, 0.60, 0)
+themeContainer.Position = UDim2.new(0.05, 0, 0.52, 0)
 themeContainer.BackgroundColor3 = THEMES[currentTheme].btn
 themeContainer.BackgroundTransparency = 0
 themeContainer.BorderSizePixel = 1
@@ -737,7 +741,7 @@ end
 -- ============================================================
 local restartBtn = Instance.new("TextButton")
 restartBtn.Size = UDim2.new(0.4, 0, 0, 40)
-restartBtn.Position = UDim2.new(0.05, 0, 0.82, 0)
+restartBtn.Position = UDim2.new(0.05, 0, 0.78, 0)
 restartBtn.BackgroundColor3 = THEMES[currentTheme].btn
 restartBtn.BackgroundTransparency = 0
 restartBtn.Text = "⟳ Перезапустить"
@@ -758,7 +762,7 @@ end)
 
 local siteBtn = Instance.new("TextButton")
 siteBtn.Size = UDim2.new(0.4, 0, 0, 40)
-siteBtn.Position = UDim2.new(0.55, 0, 0.82, 0)
+siteBtn.Position = UDim2.new(0.55, 0, 0.78, 0)
 siteBtn.BackgroundColor3 = THEMES[currentTheme].btn
 siteBtn.BackgroundTransparency = 0
 siteBtn.Text = "🌐 Сайт"
@@ -781,7 +785,7 @@ end)
 -- ============================================================
 local profileContainer = Instance.new("Frame")
 profileContainer.Size = UDim2.new(0.5, 0, 0, 30)
-profileContainer.Position = UDim2.new(0.05, 0, 0.93, 0)
+profileContainer.Position = UDim2.new(0.05, 0, 0.90, 0)
 profileContainer.BackgroundTransparency = 1
 profileContainer.Parent = frame
 
@@ -810,7 +814,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v10.0 - SHOOT MURDERER ULTIMATE")
+print("  MUSLIM MENU v11.0 - РАСШИРЕННОЕ МЕНЮ")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
