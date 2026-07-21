@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v12.4 - GLASS EDITION
+--  MUSLIM MENU v12.6 - CLEAN EDITION
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v12.4 (GLASS EDITION)...")
+print("🚀 Загрузка Muslim Menu v12.6 (CLEAN EDITION)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -42,13 +42,13 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ (СТЕКЛЯННОЕ)
+--  ОСНОВНОЕ МЕНЮ
 -- ============================================================
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 700, 0, 450)
 frame.Position = UDim2.new(0.5, -350, 0.5, -225)
 frame.BackgroundColor3 = THEMES[currentTheme].main
-frame.BackgroundTransparency = 0.15  -- СТЕКЛЯННЫЙ ЭФФЕКТ
+frame.BackgroundTransparency = 0.15
 frame.BorderSizePixel = 2
 frame.BorderColor3 = THEMES[currentTheme].accent
 frame.Active = true
@@ -60,37 +60,11 @@ local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
--- Стеклянный блеск (сверху)
-local glassShineMain = Instance.new("Frame")
-glassShineMain.Size = UDim2.new(0.9, 0, 0.15, 0)
-glassShineMain.Position = UDim2.new(0.05, 0, 0.02, 0)
-glassShineMain.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-glassShineMain.BackgroundTransparency = 0.7
-glassShineMain.BorderSizePixel = 0
-glassShineMain.Parent = frame
-
-local glassShineCorners = Instance.new("UICorner")
-glassShineCorners.CornerRadius = UDim.new(0, 15)
-glassShineCorners.Parent = glassShineMain
-
--- Второй блеск (снизу)
-local glassShineBottom = Instance.new("Frame")
-glassShineBottom.Size = UDim2.new(0.7, 0, 0.08, 0)
-glassShineBottom.Position = UDim2.new(0.15, 0, 0.9, 0)
-glassShineBottom.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-glassShineBottom.BackgroundTransparency = 0.8
-glassShineBottom.BorderSizePixel = 0
-glassShineBottom.Parent = frame
-
-local glassShineBottomCorners = Instance.new("UICorner")
-glassShineBottomCorners.CornerRadius = UDim.new(0, 10)
-glassShineBottomCorners.Parent = glassShineBottom
-
 -- ===== ЗАГОЛОВОК =====
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 50)
 header.BackgroundColor3 = THEMES[currentTheme].header
-header.BackgroundTransparency = 0.3  -- Стеклянный
+header.BackgroundTransparency = 0.3
 header.Parent = frame
 
 local headerCorners = Instance.new("UICorner")
@@ -124,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.3
-versionBadge.Text = "v12.4"
+versionBadge.Text = "v12.6"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -185,7 +159,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКИ
+--  ВКЛАДКИ (ПЕРЕИМЕНОВАНЫ)
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -759,31 +733,13 @@ local function updateContent()
 end
 
 -- ============================================================
---  ТЕМЫ
+--  ТЕМЫ (ТОЛЬКО ИКОНКИ, БЕЗ СЛОВА "Тема:")
 -- ============================================================
 local themeContainer = Instance.new("Frame")
-themeContainer.Size = UDim2.new(0.9, 0, 0, 42)
-themeContainer.Position = UDim2.new(0.05, 0, 0.52, 0)
-themeContainer.BackgroundColor3 = THEMES[currentTheme].btn
-themeContainer.BackgroundTransparency = 0.2
-themeContainer.BorderSizePixel = 1
-themeContainer.BorderColor3 = THEMES[currentTheme].accent
+themeContainer.Size = UDim2.new(0.5, 0, 0, 42)
+themeContainer.Position = UDim2.new(0.25, 0, 0.52, 0)
+themeContainer.BackgroundTransparency = 1
 themeContainer.Parent = frame
-
-local themeCorners = Instance.new("UICorner")
-themeCorners.CornerRadius = UDim.new(0, 10)
-themeCorners.Parent = themeContainer
-
-local themeLabel = Instance.new("TextLabel")
-themeLabel.Size = UDim2.new(0.3, 0, 1, 0)
-themeLabel.Position = UDim2.new(0.05, 0, 0, 0)
-themeLabel.BackgroundTransparency = 1
-themeLabel.Text = "✦ Тема:"
-themeLabel.TextColor3 = THEMES[currentTheme].text
-themeLabel.TextSize = 14
-themeLabel.Font = Enum.Font.SourceSansBold
-themeLabel.TextXAlignment = Enum.TextXAlignment.Left
-themeLabel.Parent = themeContainer
 
 local themeColors = {
     midnight = Color3.fromRGB(100, 180, 255),
@@ -831,11 +787,6 @@ local function updateTheme(themeName)
         end
     end
     
-    themeContainer.BackgroundColor3 = theme.btn
-    themeContainer.BackgroundTransparency = 0.2
-    themeContainer.BorderColor3 = theme.accent
-    themeLabel.TextColor3 = theme.text
-    
     if mButton then
         mButton.BackgroundColor3 = theme.main
         mButton.BackgroundTransparency = 0.15
@@ -846,7 +797,7 @@ end
 for i, themeName in ipairs(themeNames) do
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 34, 0, 34)
-    btn.Position = UDim2.new(0.33 + (i-1) * 0.1, 0, 0.5, -17)
+    btn.Position = UDim2.new(0.1 + (i-1) * 0.15, 0, 0.5, -17)
     btn.BackgroundColor3 = themeColors[themeName]
     btn.BackgroundTransparency = 0
     btn.Text = themeIcons[i]
@@ -866,85 +817,8 @@ for i, themeName in ipairs(themeNames) do
     end)
 end
 
--- ============================================================
---  КНОПКИ
--- ============================================================
-local restartBtn = Instance.new("TextButton")
-restartBtn.Size = UDim2.new(0.4, 0, 0, 40)
-restartBtn.Position = UDim2.new(0.05, 0, 0.78, 0)
-restartBtn.BackgroundColor3 = THEMES[currentTheme].btn
-restartBtn.BackgroundTransparency = 0.2
-restartBtn.Text = "⟳ Перезапустить"
-restartBtn.TextColor3 = THEMES[currentTheme].accent
-restartBtn.TextSize = 16
-restartBtn.Font = Enum.Font.SourceSansBold
-restartBtn.Parent = frame
-
-local restartCorners = Instance.new("UICorner")
-restartCorners.CornerRadius = UDim.new(0, 10)
-restartCorners.Parent = restartBtn
-
-restartBtn.MouseButton1Click:Connect(function()
-    frame.Visible = false
-    wait(0.3)
-    frame.Visible = true
-end)
-
-local siteBtn = Instance.new("TextButton")
-siteBtn.Size = UDim2.new(0.4, 0, 0, 40)
-siteBtn.Position = UDim2.new(0.55, 0, 0.78, 0)
-siteBtn.BackgroundColor3 = THEMES[currentTheme].btn
-siteBtn.BackgroundTransparency = 0.2
-siteBtn.Text = "🌐 Сайт"
-siteBtn.TextColor3 = THEMES[currentTheme].accent
-siteBtn.TextSize = 16
-siteBtn.Font = Enum.Font.SourceSansBold
-siteBtn.Parent = frame
-
-local siteCorners = Instance.new("UICorner")
-siteCorners.CornerRadius = UDim.new(0, 10)
-siteCorners.Parent = siteBtn
-
-siteBtn.MouseButton1Click:Connect(function()
-    setclipboard("https://korytnikovayulya-sudo.github.io/muslim-menu-site/")
-    print("🌐 Ссылка скопирована!")
-end)
-
--- ============================================================
---  ПРОФИЛЬ
--- ============================================================
-local profileContainer = Instance.new("Frame")
-profileContainer.Size = UDim2.new(0.5, 0, 0, 30)
-profileContainer.Position = UDim2.new(0.05, 0, 0.90, 0)
-profileContainer.BackgroundTransparency = 1
-profileContainer.Parent = frame
-
-local profileIcon = Instance.new("TextLabel")
-profileIcon.Size = UDim2.new(0, 25, 1, 0)
-profileIcon.Position = UDim2.new(0, 0, 0, 0)
-profileIcon.BackgroundTransparency = 1
-profileIcon.Text = "👤"
-profileIcon.TextColor3 = THEMES[currentTheme].accent
-profileIcon.TextSize = 18
-profileIcon.Font = Enum.Font.SourceSansBold
-profileIcon.TextXAlignment = Enum.TextXAlignment.Center
-profileIcon.Parent = profileContainer
-
-local watermark = Instance.new("TextLabel")
-watermark.Name = "Watermark"
-watermark.Size = UDim2.new(0.8, 0, 1, 0)
-watermark.Position = UDim2.new(0.15, 0, 0, 0)
-watermark.BackgroundTransparency = 1
-watermark.Text = "Tormentor412"
-watermark.TextColor3 = THEMES[currentTheme].accent
-watermark.TextSize = 14
-watermark.Font = Enum.Font.SourceSansBold
-watermark.TextXAlignment = Enum.TextXAlignment.Left
-watermark.TextTransparency = 0.3
-watermark.Parent = profileContainer
-
 print("========================================")
-print("  MUSLIM MENU v12.4 - GLASS EDITION")
+print("  MUSLIM MENU v12.6 - CLEAN EDITION")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
