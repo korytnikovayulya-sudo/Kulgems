@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - EMPTY MENU (ready for content)
+--  WERTIUM HUB - FINAL (BEAUTIFUL TITLE)
 --  by Tormentor412
 -- ============================================================
 
@@ -62,7 +62,7 @@ stroke.Parent = frame
 --  ЗАГОЛОВОК С ДВУМЯ ПРИЦЕЛАМИ
 -- ============================================================
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 70)
+header.Size = UDim2.new(1, 0, 0, 90)
 header.BackgroundColor3 = Color3.fromRGB(16, 18, 24)
 header.BackgroundTransparency = 0.15
 header.Parent = frame
@@ -176,20 +176,71 @@ local animConnection = game:GetService("RunService").RenderStepped:Connect(funct
     crosshairContainer2.Rotation = math.deg(-angle)
 end)
 
--- НАЗВАНИЕ ПО ЦЕНТРУ
+-- ============================================================
+--  НАЗВАНИЕ С ГРАДИЕНТОМ, СВЕЧЕНИЕМ И ПУЛЬСАЦИЕЙ
+-- ============================================================
+local titleContainer = Instance.new("Frame")
+titleContainer.Size = UDim2.new(0.6, 0, 1, 0)
+titleContainer.Position = UDim2.new(0.2, 0, 0, 0)
+titleContainer.BackgroundTransparency = 1
+titleContainer.Parent = header
+
+-- Свечение (размытый текст)
+local glow = Instance.new("TextLabel")
+glow.Size = UDim2.new(1, 0, 1, 0)
+glow.BackgroundTransparency = 1
+glow.Text = "WERTIUM HUB"
+glow.TextColor3 = Color3.fromRGB(100, 180, 255)
+glow.TextSize = 42
+glow.Font = Enum.Font.GothamBold
+glow.TextXAlignment = Enum.TextXAlignment.Center
+glow.TextYAlignment = Enum.TextYAlignment.Center
+glow.TextTransparency = 0.6
+glow.Parent = titleContainer
+
+local blur = Instance.new("UIBlur")
+blur.Size = 8
+blur.Parent = glow
+
+-- Основной текст с градиентом
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(0.6, 0, 1, 0)
-title.Position = UDim2.new(0.2, 0, 0, 0)
+title.Size = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
 title.Text = "WERTIUM HUB"
-title.TextColor3 = Color3.fromRGB(100, 180, 255)
-title.TextSize = 34
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 42
 title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.TextYAlignment = Enum.TextYAlignment.Center
-title.Parent = header
+title.Parent = titleContainer
 
--- КНОПКА ЗАКРЫТИЯ
+-- Градиент
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 180, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(200, 120, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 180, 255))
+})
+gradient.Rotation = 45
+gradient.Parent = title
+
+-- Обводка
+local strokeText = Instance.new("UIStroke")
+strokeText.Thickness = 1
+strokeText.Color = Color3.fromRGB(255, 255, 255)
+strokeText.Transparency = 0.3
+strokeText.Parent = title
+
+-- Анимация пульсации
+local tweenService = game:GetService("TweenService")
+local pulse = tweenService:Create(title, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+    TextSize = 44
+})
+pulse:Play()
+
+-- ============================================================
+--  КНОПКА ЗАКРЫТИЯ
+-- ============================================================
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 35, 0, 35)
 closeBtn.Position = UDim2.new(0.95, 0, 0.5, -17)
@@ -229,5 +280,5 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ Wertium Hub (empty) загружен успешно!")
+print("✅ Wertium Hub (beautiful title) загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
