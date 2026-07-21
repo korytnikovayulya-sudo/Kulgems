@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v13.8 - ANIMATED CROSSHAIR
+--  MUSLIM MENU v13.9 - TABS FIXED + ESP
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v13.8...")
+print("🚀 Загрузка Muslim Menu v13.9...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -42,13 +42,13 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ (МЕНЕЕ ПРОЗРАЧНОЕ)
+--  ОСНОВНОЕ МЕНЮ
 -- ============================================================
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 700, 0, 450)
 frame.Position = UDim2.new(0.5, -350, 0.5, -225)
 frame.BackgroundColor3 = THEMES[currentTheme].main
-frame.BackgroundTransparency = 0.05  -- МЕНЕЕ ПРОЗРАЧНОЕ (было 0.15)
+frame.BackgroundTransparency = 0.05
 frame.BorderSizePixel = 2
 frame.BorderColor3 = THEMES[currentTheme].accent
 frame.Active = true
@@ -66,82 +66,29 @@ corners.Parent = frame
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 50)
 header.BackgroundColor3 = THEMES[currentTheme].header
-header.BackgroundTransparency = 0.15  -- МЕНЕЕ ПРОЗРАЧНЫЙ (было 0.3)
+header.BackgroundTransparency = 0.15
 header.Parent = frame
 
 local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- === ИКОНКА С АНИМАЦИЕЙ (ПРИЦЕЛ) ===
-local crosshairContainer = Instance.new("Frame")
-crosshairContainer.Size = UDim2.new(0, 35, 1, 0)
-crosshairContainer.Position = UDim2.new(0.02, 0, 0, 0)
-crosshairContainer.BackgroundTransparency = 1
-crosshairContainer.Parent = header
+-- Иконка
+local icon = Instance.new("TextLabel")
+icon.Size = UDim2.new(0, 35, 1, 0)
+icon.Position = UDim2.new(0.02, 0, 0, 0)
+icon.BackgroundTransparency = 1
+icon.Text = "◈"
+icon.TextColor3 = THEMES[currentTheme].accent
+icon.TextSize = 24
+icon.Font = Enum.Font.SourceSansBold
+icon.Parent = header
 
--- Круг прицела
-local crosshairCircle = Instance.new("Frame")
-crosshairCircle.Size = UDim2.new(1, 0, 0.8, 0)
-crosshairCircle.Position = UDim2.new(0, 0, 0.1, 0)
-crosshairCircle.BackgroundTransparency = 1
-crosshairCircle.BorderSizePixel = 2
-crosshairCircle.BorderColor3 = THEMES[currentTheme].accent
-crosshairCircle.Parent = crosshairContainer
-
-local circleCorners = Instance.new("UICorner")
-circleCorners.CornerRadius = UDim.new(1, 0)
-circleCorners.Parent = crosshairCircle
-
--- Линии прицела (крест)
-local lineH = Instance.new("Frame")
-lineH.Size = UDim2.new(0.8, 0, 0.08, 0)
-lineH.Position = UDim2.new(0.1, 0, 0.46, 0)
-lineH.BackgroundColor3 = THEMES[currentTheme].accent
-lineH.BackgroundTransparency = 0.3
-lineH.BorderSizePixel = 0
-lineH.Parent = crosshairContainer
-
-local lineV = Instance.new("Frame")
-lineV.Size = UDim2.new(0.08, 0, 0.8, 0)
-lineV.Position = UDim2.new(0.46, 0, 0.1, 0)
-lineV.BackgroundColor3 = THEMES[currentTheme].accent
-lineV.BackgroundTransparency = 0.3
-lineV.BorderSizePixel = 0
-lineV.Parent = crosshairContainer
-
--- Точка в центре
-local dot = Instance.new("Frame")
-dot.Size = UDim2.new(0.15, 0, 0.15, 0)
-dot.Position = UDim2.new(0.425, 0, 0.425, 0)
-dot.BackgroundColor3 = THEMES[currentTheme].accent
-dot.BackgroundTransparency = 0.2
-dot.BorderSizePixel = 0
-dot.Parent = crosshairContainer
-
-local dotCorners = Instance.new("UICorner")
-dotCorners.CornerRadius = UDim.new(1, 0)
-dotCorners.Parent = dot
-
--- АНИМАЦИЯ ВРАЩЕНИЯ ПРИЦЕЛА
-local angle = 0
-local animConnection = game:GetService("RunService").RenderStepped:Connect(function()
-    if not crosshairContainer or not crosshairContainer.Parent then
-        if animConnection then
-            animConnection:Disconnect()
-            animConnection = nil
-        end
-        return
-    end
-    angle = angle + 0.03
-    crosshairContainer.Rotation = math.deg(angle)
-end)
-
--- === НАЗВАНИЕ ===
+-- Название
 local title = Instance.new("TextLabel")
 title.Name = "Title"
 title.Size = UDim2.new(0.3, 0, 1, 0)
-title.Position = UDim2.new(0.09, 0, 0, 0)
+title.Position = UDim2.new(0.08, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "MUSLIM MENU"
 title.TextColor3 = THEMES[currentTheme].accent
@@ -150,7 +97,7 @@ title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
--- ТЕМЫ
+-- Темы
 local themeContainer = Instance.new("Frame")
 themeContainer.Size = UDim2.new(0.35, 0, 1, 0)
 themeContainer.Position = UDim2.new(0.4, 0, 0, 0)
@@ -179,10 +126,7 @@ local function updateTheme(themeName)
     header.BackgroundColor3 = theme.header
     header.BackgroundTransparency = 0.15
     title.TextColor3 = theme.accent
-    crosshairCircle.BorderColor3 = theme.accent
-    lineH.BackgroundColor3 = theme.accent
-    lineV.BackgroundColor3 = theme.accent
-    dot.BackgroundColor3 = theme.accent
+    icon.TextColor3 = theme.accent
     versionBadge.BackgroundColor3 = theme.accent
     versionBadge.BackgroundTransparency = 0.15
     versionBadge.TextColor3 = theme.accent
@@ -193,7 +137,7 @@ local function updateTheme(themeName)
             child.BackgroundTransparency = 0.1
             child.TextColor3 = theme.accent
         end
-        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" then
+        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= icon then
             child.TextColor3 = theme.text
         end
     end
@@ -241,7 +185,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.85, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v13.8"
+versionBadge.Text = "v13.9"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -302,7 +246,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКИ
+--  ВКЛАДКИ (ИСПРАВЛЕНЫ!)
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -319,6 +263,7 @@ contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
+-- ===== КНОПКИ ВКЛАДОК =====
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -335,21 +280,25 @@ local function createTabButton(name, yPos)
     btnCorners.CornerRadius = UDim.new(0, 0)
     btnCorners.Parent = btn
     
+    -- ВАЖНО: Привязываем нажатие к updateContent()
     btn.MouseButton1Click:Connect(function()
         activeTab = name
         updateContent()
+        print("🔄 Вкладка: " .. name)
     end)
     
     return btn
 end
 
-createTabButton("INFO", 0)
-createTabButton("ESP", 45)
-createTabButton("COMBAT", 90)
+-- СОЗДАЁМ ТРИ ВКЛАДКИ
+local tabInfo = createTabButton("INFO", 0)
+local tabEsp = createTabButton("ESP", 45)
+local tabCombat = createTabButton("COMBAT", 90)
 
 -- ============================================================
 --  КОНТЕНТ ВКЛАДОК
 -- ============================================================
+-- INFO
 local infoContent = Instance.new("Frame")
 infoContent.Size = UDim2.new(1, 0, 1, 0)
 infoContent.BackgroundTransparency = 1
@@ -412,14 +361,14 @@ infoFooter.TextSize = 16
 infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
--- ESP
+-- ===== ESP (С BILLBOARD) =====
 local espContent = Instance.new("Frame")
 espContent.Size = UDim2.new(1, 0, 1, 0)
 espContent.BackgroundTransparency = 1
 espContent.Visible = false
 espContent.Parent = contentContainer
 
--- COMBAT
+-- ===== COMBAT =====
 local combatContent = Instance.new("Frame")
 combatContent.Size = UDim2.new(1, 0, 1, 0)
 combatContent.BackgroundTransparency = 1
@@ -427,7 +376,7 @@ combatContent.Visible = false
 combatContent.Parent = contentContainer
 
 -- ============================================================
---  ФУНКЦИЯ КНОПОК
+--  ФУНКЦИЯ КНОПОК-ПЕРЕКЛЮЧАТЕЛЕЙ
 -- ============================================================
 local function createToggleInContainer(parent, label, pos, callback)
     local container = Instance.new("Frame")
@@ -487,7 +436,7 @@ local function createToggleInContainer(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP
+--  ESP (BILLBOARD)
 -- ============================================================
 local ESP_MURDER = false
 local ESP_SHERIFF = false
@@ -607,7 +556,7 @@ createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25
 end)
 
 -- ============================================================
---  SHOOT MURDERER
+--  SHOOT MURDERER (COMBAT)
 -- ============================================================
 local shootMode = false
 local shootFrame = nil
@@ -938,12 +887,14 @@ local function updateContent()
     infoContent.Visible = (activeTab == "INFO")
     espContent.Visible = (activeTab == "ESP")
     combatContent.Visible = (activeTab == "COMBAT")
+    print("🔄 Обновлено: " .. activeTab)
 end
 
+-- ПЕРВОНАЧАЛЬНОЕ ОБНОВЛЕНИЕ
 updateContent()
 
 print("========================================")
-print("  MUSLIM MENU v13.8 - ANIMATED CROSSHAIR")
+print("  MUSLIM MENU v13.9 - TABS FIXED + ESP")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
