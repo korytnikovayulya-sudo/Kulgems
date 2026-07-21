@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v13.5 - ULTIMATE FIX
+--  MUSLIM MENU v13.4 - FINAL FIXED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v13.5...")
+print("🚀 Загрузка Muslim Menu v13.4...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -113,29 +113,6 @@ local themeColors = {
 local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
 local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
 
-for i, themeName in ipairs(themeNames) do
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 30, 0, 30)
-    btn.Position = UDim2.new(0.05 + (i-1) * 0.16, 0, 0.5, -15)
-    btn.BackgroundColor3 = themeColors[themeName]
-    btn.BackgroundTransparency = 0
-    btn.Text = themeIcons[i]
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 14
-    btn.Font = Enum.Font.SourceSansBold
-    btn.Parent = themeContainer
-    
-    local btnCorners = Instance.new("UICorner")
-    btnCorners.CornerRadius = UDim.new(0, 8)
-    btnCorners.Parent = btn
-    
-    btn.MouseButton1Click:Connect(function()
-        currentTheme = themeName
-        updateTheme(themeName)
-        print("✅ Тема изменена на: " .. THEMES[themeName].name)
-    end)
-end
-
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     if not theme then return end
@@ -172,12 +149,35 @@ local function updateTheme(themeName)
     end
 end
 
+for i, themeName in ipairs(themeNames) do
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 30, 0, 30)
+    btn.Position = UDim2.new(0.05 + (i-1) * 0.16, 0, 0.5, -15)
+    btn.BackgroundColor3 = themeColors[themeName]
+    btn.BackgroundTransparency = 0
+    btn.Text = themeIcons[i]
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 14
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Parent = themeContainer
+    
+    local btnCorners = Instance.new("UICorner")
+    btnCorners.CornerRadius = UDim.new(0, 8)
+    btnCorners.Parent = btn
+    
+    btn.MouseButton1Click:Connect(function()
+        currentTheme = themeName
+        updateTheme(themeName)
+        print("✅ Тема изменена на: " .. THEMES[themeName].name)
+    end)
+end
+
 local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.85, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.3
-versionBadge.Text = "v13.5"
+versionBadge.Text = "v13.4"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -424,7 +424,7 @@ local function createToggleInContainer(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP
+--  ESP (УБИЙЦА, ШЕРИФ, НЕВИННЫЕ)
 -- ============================================================
 local ESP_MURDER = false
 local ESP_SHERIFF = false
@@ -880,7 +880,7 @@ end
 updateContent()
 
 print("========================================")
-print("  MUSLIM MENU v13.5 - ULTIMATE FIX")
+print("  MUSLIM MENU v13.4 - FINAL FIXED")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
