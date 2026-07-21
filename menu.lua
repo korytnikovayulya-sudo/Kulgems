@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v9.7 - ВСЕ РОЛИ (BILLBOARD)
+--  MUSLIM MENU v9.8 - SHOOT MURDERER
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v9.7 (ВСЕ РОЛИ)...")
+print("🚀 Загрузка Muslim Menu v9.8 (SHOOT MURDERER)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -45,8 +45,8 @@ wait(1.5)
 --  ОСНОВНОЕ МЕНЮ
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 460, 0, 580)
-frame.Position = UDim2.new(0.5, -230, 0.5, -290)
+frame.Size = UDim2.new(0, 460, 0, 620)
+frame.Position = UDim2.new(0.5, -230, 0.5, -310)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v9.7"
+versionBadge.Text = "v9.8"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -389,6 +389,161 @@ createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.38, 0), function(stat
 end)
 
 -- ============================================================
+--  SHOOT MURDERER (КВАДРАТНАЯ КНОПКА)
+-- ============================================================
+local shootMode = false
+local shootButton = nil
+local shootFrame = nil
+
+local function toggleShootMode(state)
+    shootMode = state
+    if state then
+        print("🔫 Shoot Murderer включён!")
+        
+        local screenGui = player:WaitForChild("PlayerGui"):FindFirstChild("ShootGui")
+        if not screenGui then
+            screenGui = Instance.new("ScreenGui")
+            screenGui.Name = "ShootGui"
+            screenGui.Parent = player:WaitForChild("PlayerGui")
+        end
+        
+        shootFrame = Instance.new("Frame")
+        shootFrame.Size = UDim2.new(0, 120, 0, 120)
+        shootFrame.Position = UDim2.new(0.5, -60, 0.7, -60)
+        shootFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        shootFrame.BackgroundTransparency = 0.6
+        shootFrame.BorderSizePixel = 3
+        shootFrame.BorderColor3 = Color3.fromRGB(255, 50, 50)
+        shootFrame.Active = true
+        shootFrame.Draggable = true
+        shootFrame.Parent = screenGui
+        
+        local corners = Instance.new("UICorner")
+        corners.CornerRadius = UDim.new(0, 15)
+        corners.Parent = shootFrame
+        
+        local shootText = Instance.new("TextLabel")
+        shootText.Size = UDim2.new(1, 0, 1, 0)
+        shootText.BackgroundTransparency = 1
+        shootText.Text = "🔫 SHOOT"
+        shootText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        shootText.TextSize = 28
+        shootText.Font = Enum.Font.SourceSansBold
+        shootText.Parent = shootFrame
+        
+        shootButton = Instance.new("TextButton")
+        shootButton.Size = UDim2.new(1, 0, 1, 0)
+        shootButton.BackgroundTransparency = 1
+        shootButton.Text = ""
+        shootButton.Parent = shootFrame
+        
+        shootButton.MouseButton1Click:Connect(function()
+            if not shootMode then return end
+            
+            local char = player.Character
+            if not char then return end
+            
+            -- Проверяем пистолет
+            local gun = nil
+            for _, tool in pairs(char:GetChildren()) do
+                if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
+                    gun = tool
+                    break
+                end
+            end
+            
+            if not gun then
+                local backpack = player.Backpack
+                for _, tool in pairs(backpack:GetChildren()) do
+                    if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
+                        gun = tool
+                        break
+                    end
+                end
+            end
+            
+            if not gun then
+                print("❌ Нет пистолета!")
+                return
+            end
+            
+            -- Ищем убийцу
+            local murderer = nil
+            for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+                if plr ~= player and plr.Character then
+                    local hasKnife = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
+                    if hasKnife then
+                        murderer = plr
+                        break
+                    end
+                end
+            end
+            
+            if not murderer then
+                print("❌ Убийца не найден!")
+                return
+            end
+            
+            -- Наводимся и стреляем
+            local root = murderer.Character:FindFirstChild("HumanoidRootPart")
+            local myRoot = char:FindFirstChild("HumanoidRootPart")
+            if root and myRoot then
+                myRoot.CFrame = CFrame.new(myRoot.Position, root.Position)
+                print("🎯 Наведено на убийцу: " .. murderer.Name)
+                
+                gun.Parent = char
+                wait(0.1)
+                
+                local virtualInput = game:GetService("VirtualInputManager")
+                virtualInput:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+                wait(0.05)
+                virtualInput:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+                
+                print("🔫 Выстрел произведён в убийцу!")
+            end
+        end)
+        
+        -- Крестик закрытия
+        local closeBtnShoot = Instance.new("TextButton")
+        closeBtnShoot.Size = UDim2.new(0, 30, 0, 30)
+        closeBtnShoot.Position = UDim2.new(0.75, 0, -0.25, 0)
+        closeBtnShoot.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+        closeBtnShoot.BackgroundTransparency = 0
+        closeBtnShoot.Text = "✕"
+        closeBtnShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeBtnShoot.TextSize = 18
+        closeBtnShoot.Font = Enum.Font.SourceSansBold
+        closeBtnShoot.Parent = shootFrame
+        
+        local closeCornersShoot = Instance.new("UICorner")
+        closeCornersShoot.CornerRadius = UDim.new(0, 8)
+        closeCornersShoot.Parent = closeBtnShoot
+        
+        closeBtnShoot.MouseButton1Click:Connect(function()
+            shootMode = false
+            if shootFrame then
+                shootFrame:Destroy()
+                shootFrame = nil
+            end
+            shootButton = nil
+            print("🔫 Shoot Murderer выключён!")
+        end)
+        
+    else
+        if shootFrame then
+            shootFrame:Destroy()
+            shootFrame = nil
+        end
+        shootButton = nil
+        print("🔫 Shoot Murderer выключн!")
+    end
+end
+
+createToggle(frame, "🔫 Shoot Murderer", UDim2.new(0.05, 0, 0.46, 0), function(state)
+    toggleShootMode(state)
+end)
+
+-- ============================================================
 --  ТЕМЫ
 -- ============================================================
 local themeContainer = Instance.new("Frame")
@@ -566,7 +721,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v9.7 - ВСЕ РОЛИ")
+print("  MUSLIM MENU v9.8 - SHOOT MURDERER")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
