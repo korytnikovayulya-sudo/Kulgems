@@ -133,7 +133,7 @@ local function updateContent()
         settingsContent.Visible = (activeTab == "SETTINGS")
     end
     
-    -- ОБНОВЛЯЕМ ЦВЕТА КНОПОК ВКЛАДОК (С ПРОВЕРКОЙ)
+    -- ОБНОВЛЯЕМ ЦВЕТА КНОПОК ВКЛАДОК
     if tabContainer then
         for _, btn in pairs(tabContainer:GetChildren()) do
             if btn:IsA("TextButton") then
@@ -337,7 +337,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  [7] ВКЛАДКИ (ИСПРАВЛЕНО!)
+--  [7] ВКЛАДКИ
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -354,7 +354,7 @@ contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- === КНОПКИ ВКЛАДОК (ИСПРАВЛЕНО) ===
+-- === КНОПКИ ВКЛАДОК ===
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -371,31 +371,32 @@ local function createTabButton(name, yPos)
     btnCorners.CornerRadius = UDim.new(0, 0)
     btnCorners.Parent = btn
     
-    -- ГЛАВНОЕ ИСПРАВЛЕНИЕ: ПРЯМОЕ ПЕРЕКЛЮЧЕНИЕ
     btn.MouseButton1Click:Connect(function()
         activeTab = name
         print("🔄 Вкладка: " .. name)
         
-        -- ПРЯМОЕ ПЕРЕКЛЮЧЕНИЕ БЕЗ ФУНКЦИИ
+        -- ПРЯМОЕ ПЕРЕКЛЮЧЕНИЕ С ПРОВЕРКОЙ
         if name == "INFO" then
-            infoContent.Visible = true
-            settingsContent.Visible = false
+            if infoContent then infoContent.Visible = true end
+            if settingsContent then settingsContent.Visible = false end
         elseif name == "SETTINGS" then
-            infoContent.Visible = false
-            settingsContent.Visible = true
+            if infoContent then infoContent.Visible = false end
+            if settingsContent then settingsContent.Visible = true end
         end
         
         -- ЦВЕТА КНОПОК
-        for _, b in pairs(tabContainer:GetChildren()) do
-            if b:IsA("TextButton") then
-                if b.Text == name then
-                    b.BackgroundColor3 = THEMES[currentTheme].accent
-                    b.BackgroundTransparency = 0.15
-                    b.TextColor3 = THEMES[currentTheme].main
-                else
-                    b.BackgroundColor3 = THEMES[currentTheme].btn
-                    b.BackgroundTransparency = 0.15
-                    b.TextColor3 = THEMES[currentTheme].text
+        if tabContainer then
+            for _, b in pairs(tabContainer:GetChildren()) do
+                if b:IsA("TextButton") then
+                    if b.Text == name then
+                        b.BackgroundColor3 = THEMES[currentTheme].accent
+                        b.BackgroundTransparency = 0.15
+                        b.TextColor3 = THEMES[currentTheme].main
+                    else
+                        b.BackgroundColor3 = THEMES[currentTheme].btn
+                        b.BackgroundTransparency = 0.15
+                        b.TextColor3 = THEMES[currentTheme].text
+                    end
                 end
             end
         end
@@ -473,13 +474,18 @@ infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
 -- ============================================================
---  [9] КОНТЕНТ SETTINGS (ИСПРАВЛЕНО)
+--  [9] КОНТЕНТ SETTINGS (ПОЛНОСТЬЮ ПЕРЕПИСАНО)
 -- ============================================================
 local settingsContent = Instance.new("Frame")
 settingsContent.Size = UDim2.new(1, 0, 1, 0)
 settingsContent.BackgroundTransparency = 1
 settingsContent.Visible = false
 settingsContent.Parent = contentContainer
+
+-- ПРОВЕРКА: УБЕЖДАЕМСЯ, ЧТО settingsContent СУЩЕСТВУЕТ
+if not settingsContent then
+    error("❌ settingsContent не создан!")
+end
 
 local settingsTitle = Instance.new("TextLabel")
 settingsTitle.Size = UDim2.new(0.8, 0, 0.08, 0)
@@ -520,7 +526,6 @@ local themeColorsSettings = {
 local themeNamesSettings = {"midnight", "emerald", "ruby", "royal", "gold"}
 local themeIconsSettings = {"🌙", "🌿", "♦", "👑", "★"}
 
--- ИСПРАВЛЕНО: УБРАНА ОШИБКА THEMES[themeName].name
 for i, themeName in ipairs(themeNamesSettings) do
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 30, 0, 30)
@@ -721,15 +726,16 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
 end)
 
 -- ============================================================
---  [12] ИНИЦИАЛИЗАЦИЯ (ИСПРАВЛЕНО)
+--  [12] ИНИЦИАЛИЗАЦИЯ
 -- ============================================================
 -- ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ INFO ПРИ СТАРТЕ
-infoContent.Visible = true
-settingsContent.Visible = false
+if infoContent then infoContent.Visible = true end
+if settingsContent then settingsContent.Visible = false end
 
 -- НАСТРАИВАЕМ ЦВЕТА КНОПОК ВРУЧНУЮ
 if tabContainer then
-    for _, btn in pairs(tabContainer:GetChildren()) do        if btn:IsA("TextButton") then
+    for _, btn in pairs(tabContainer:GetChildren()) do
+        if btn:IsA("TextButton") then
             if btn.Text == "INFO" then
                 btn.BackgroundColor3 = THEMES[currentTheme].accent
                 btn.BackgroundTransparency = 0.15
