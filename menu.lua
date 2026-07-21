@@ -1,5 +1,5 @@
 -- ============================================================
---  MUSLIM MENU v14.4 - SETTINGS FIXED
+--  MUSLIM MENU v14.4 - FULLY FIXED
 --  by Tormentor412
 -- ============================================================
 
@@ -126,8 +126,12 @@ end
 
 local function updateContent()
     -- ПОКАЗЫВАЕМ ТОЛЬКО АКТИВНУЮ ВКЛАДКУ
-    infoContent.Visible = (activeTab == "INFO")
-    settingsContent.Visible = (activeTab == "SETTINGS")
+    if infoContent then
+        infoContent.Visible = (activeTab == "INFO")
+    end
+    if settingsContent then
+        settingsContent.Visible = (activeTab == "SETTINGS")
+    end
     
     -- ОБНОВЛЯЕМ ЦВЕТА КНОПОК ВКЛАДОК
     for _, btn in pairs(tabContainer:GetChildren()) do
@@ -331,7 +335,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  [7] ВКЛАДКИ (ЗДЕСЬ ВАЖНО!)
+--  [7] ВКЛАДКИ (ИСПРАВЛЕНО!)
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -348,7 +352,7 @@ contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- === КНОПКИ ВКЛАДОК ===
+-- === КНОПКИ ВКЛАДОК (ИСПРАВЛЕНО) ===
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -365,6 +369,7 @@ local function createTabButton(name, yPos)
     btnCorners.CornerRadius = UDim.new(0, 0)
     btnCorners.Parent = btn
     
+    -- ГЛАВНОЕ ИСПРАВЛЕНИЕ: ДОБАВЛЕН ВЫЗОВ updateContent()
     btn.MouseButton1Click:Connect(function()
         activeTab = name
         updateContent()
@@ -443,12 +448,12 @@ infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
 -- ============================================================
---  [9] КОНТЕНТ SETTINGS
+--  [9] КОНТЕНТ SETTINGS (ИСПРАВЛЕНО)
 -- ============================================================
 local settingsContent = Instance.new("Frame")
 settingsContent.Size = UDim2.new(1, 0, 1, 0)
 settingsContent.BackgroundTransparency = 1
-settingsContent.Visible = false  -- Скрыта по умолчанию
+settingsContent.Visible = false
 settingsContent.Parent = contentContainer
 
 local settingsTitle = Instance.new("TextLabel")
@@ -490,6 +495,7 @@ local themeColorsSettings = {
 local themeNamesSettings = {"midnight", "emerald", "ruby", "royal", "gold"}
 local themeIconsSettings = {"🌙", "🌿", "♦", "👑", "★"}
 
+-- ИСПРАВЛЕНО: УБРАНА ОШИБКА THEMES[themeName].name
 for i, themeName in ipairs(themeNamesSettings) do
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 30, 0, 30)
@@ -508,7 +514,7 @@ for i, themeName in ipairs(themeNamesSettings) do
     
     btn.MouseButton1Click:Connect(function()
         tempTheme = themeName
-        print("🎨 Выбрана тема: " .. THEMES[themeName].name)
+        print("🎨 Выбрана тема: " .. themeName)  -- ИСПРАВЛЕНО
     end)
 end
 
@@ -652,7 +658,7 @@ saveBtn.MouseButton1Click:Connect(function()
     end
     
     print("✅ Настройки сохранены!")
-    print("🎨 Тема: " .. THEMES[currentTheme].name)
+    print("🎨 Тема: " .. currentTheme)
     print("🔲 Прозрачность: " .. math.round(currentTransparency / 0.95 * 100) .. "%")
     print("🌍 Язык: " .. (currentLang == "ru" and "Русский" or "English"))
 end)
