@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v8.4.1 - CUSTOM FIX
+--  MUSLIM MENU v8.4.2 - CLOSE BUTTON FIXED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v8.4.1...")
+print("🚀 Загрузка Muslim Menu v8.4.2...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -45,7 +45,7 @@ wait(1.5)
 --  ОСНОВНОЕ МЕНЮ (ШИРЕ)
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 460, 0, 520)  -- было 400, стало 460
+frame.Size = UDim2.new(0, 460, 0, 520)
 frame.Position = UDim2.new(0.5, -230, 0.5, -260)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
@@ -101,7 +101,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v8.4.1"
+versionBadge.Text = "v8.4.2"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -112,11 +112,11 @@ local versionCorners = Instance.new("UICorner")
 versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
--- ===== КРАСНАЯ КНОПКА (БЕЗ КВАДРАТА, ПРОСТО КВАДРАТНАЯ) =====
+-- ===== КРАСНАЯ КНОПКА (ИСПРАВЛЕНА) =====
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
-closeBtn.Size = UDim2.new(0, 34, 0, 34)  -- Маленькая квадратная кнопка
-closeBtn.Position = UDim2.new(0.93, 0, 0.5, -17)
+closeBtn.Size = UDim2.new(0, 32, 0, 32)  -- размер
+closeBtn.Position = UDim2.new(0.92, 0, 0.5, -16)  -- позиция внутри заголовка
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
 closeBtn.BackgroundTransparency = 0
 closeBtn.Text = "✕"
@@ -126,7 +126,7 @@ closeBtn.Font = Enum.Font.SourceSansBold
 closeBtn.Parent = header
 
 local closeCorners = Instance.new("UICorner")
-closeCorners.CornerRadius = UDim.new(0, 6)  -- чуть скруглённые углы
+closeCorners.CornerRadius = UDim.new(0, 6)
 closeCorners.Parent = closeBtn
 
 -- ============================================================
@@ -627,7 +627,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v8.4.1 - CUSTOM FIX")
+print("  MUSLIM MENU v8.4.2 - CLOSE BUTTON FIXED")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
