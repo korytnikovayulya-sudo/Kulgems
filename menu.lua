@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v13.2 - THEMES IN HEADER
+--  MUSLIM MENU v13.3 - FULLY WORKING
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v13.2...")
+print("🚀 Загрузка Muslim Menu v13.3...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -60,7 +60,9 @@ local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
--- ===== ЗАГОЛОВОК (С ТЕМАМИ) =====
+-- ============================================================
+--  ЗАГОЛОВОК (С ТЕМАМИ)
+-- ============================================================
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 50)
 header.BackgroundColor3 = THEMES[currentTheme].header
@@ -71,7 +73,6 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- Иконка
 local icon = Instance.new("TextLabel")
 icon.Size = UDim2.new(0, 35, 1, 0)
 icon.Position = UDim2.new(0.02, 0, 0, 0)
@@ -82,7 +83,6 @@ icon.TextSize = 22
 icon.Font = Enum.Font.SourceSansBold
 icon.Parent = header
 
--- Название
 local title = Instance.new("TextLabel")
 title.Name = "Title"
 title.Size = UDim2.new(0.3, 0, 1, 0)
@@ -95,7 +95,7 @@ title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
--- ===== ТЕМЫ (В ЗАГОЛОВКЕ) =====
+-- ТЕМЫ (В ЗАГОЛОВКЕ)
 local themeContainer = Instance.new("Frame")
 themeContainer.Size = UDim2.new(0.35, 0, 1, 0)
 themeContainer.Position = UDim2.new(0.4, 0, 0, 0)
@@ -112,6 +112,42 @@ local themeColors = {
 
 local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
 local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
+
+local function updateTheme(themeName)
+    local theme = THEMES[themeName]
+    if not theme then return end
+    
+    frame.BackgroundColor3 = theme.main
+    frame.BorderColor3 = theme.accent
+    
+    header.BackgroundColor3 = theme.header
+    title.TextColor3 = theme.accent
+    icon.TextColor3 = theme.accent
+    versionBadge.BackgroundColor3 = theme.accent
+    versionBadge.TextColor3 = theme.accent
+    
+    for _, child in pairs(frame:GetDescendants()) do
+        if child:IsA("TextButton") and child.Name ~= "CloseBtn" and child.Name ~= "FloatBtn" then
+            child.BackgroundColor3 = theme.btn
+            child.TextColor3 = theme.accent
+        end
+        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= icon then
+            child.TextColor3 = theme.text
+        end
+    end
+    
+    for _, container in pairs(frame:GetChildren()) do
+        if container:IsA("Frame") and container ~= header and container ~= themeContainer then
+            container.BackgroundColor3 = theme.btn
+            container.BorderColor3 = theme.accent
+        end
+    end
+    
+    if mButton then
+        mButton.BackgroundColor3 = theme.main
+        mButton.TextColor3 = theme.accent
+    end
+end
 
 for i, themeName in ipairs(themeNames) do
     local btn = Instance.new("TextButton")
@@ -136,13 +172,12 @@ for i, themeName in ipairs(themeNames) do
     end)
 end
 
--- Версия
 local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.85, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.3
-versionBadge.Text = "v13.2"
+versionBadge.Text = "v13.3"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -153,7 +188,6 @@ local versionCorners = Instance.new("UICorner")
 versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
--- Кнопка закрытия
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
 closeBtn.Size = UDim2.new(0, 32, 0, 32)
@@ -215,13 +249,14 @@ tabContainer.BorderSizePixel = 0
 tabContainer.Parent = frame
 
 local activeTab = "INFO"
+
 local contentContainer = Instance.new("Frame")
 contentContainer.Size = UDim2.new(1, -100, 1, -50)
 contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- Кнопки вкладок
+-- ===== КНОПКИ ВКЛАДОК =====
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -246,9 +281,10 @@ local function createTabButton(name, yPos)
     return btn
 end
 
-createTabButton("INFO", 0)
-createTabButton("ESP", 45)
-createTabButton("COMBAT", 90)
+-- СОЗДАЁМ ТРИ ВКЛАДКИ
+local tab1 = createTabButton("INFO", 0)
+local tab2 = createTabButton("ESP", 45)
+local tab3 = createTabButton("COMBAT", 90)
 
 -- ============================================================
 --  КОНТЕНТ ВКЛАДОК
@@ -836,52 +872,7 @@ local function toggleShootMode(state)
 end
 
 -- ============================================================
---  ОБНОВЛЕНИЕ ТЕМЫ
--- ============================================================
-local function updateTheme(themeName)
-    local theme = THEMES[themeName]
-    if not theme then return end
-    
-    frame.BackgroundColor3 = theme.main
-    frame.BackgroundTransparency = 0.15
-    frame.BorderColor3 = theme.accent
-    
-    header.BackgroundColor3 = theme.header
-    header.BackgroundTransparency = 0.3
-    title.TextColor3 = theme.accent
-    icon.TextColor3 = theme.accent
-    versionBadge.BackgroundColor3 = theme.accent
-    versionBadge.BackgroundTransparency = 0.3
-    versionBadge.TextColor3 = theme.accent
-    
-    for _, child in pairs(frame:GetDescendants()) do
-        if child:IsA("TextButton") and child.Name ~= "CloseBtn" and child.Name ~= "FloatBtn" then
-            child.BackgroundColor3 = theme.btn
-            child.BackgroundTransparency = 0.2
-            child.TextColor3 = theme.accent
-        end
-        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= icon then
-            child.TextColor3 = theme.text
-        end
-    end
-    
-    for _, container in pairs(frame:GetChildren()) do
-        if container:IsA("Frame") and container ~= header and container ~= themeContainer then
-            container.BackgroundColor3 = theme.btn
-            container.BackgroundTransparency = 0.2
-            container.BorderColor3 = theme.accent
-        end
-    end
-    
-    if mButton then
-        mButton.BackgroundColor3 = theme.main
-        mButton.BackgroundTransparency = 0.15
-        mButton.TextColor3 = theme.accent
-    end
-end
-
--- ============================================================
---  ОБНОВЛЕНИЕ ВКЛАДОК
+--  ОБНОВЛЕНИЕ ВКЛАДОК (ГЛАВНАЯ ФУНКЦИЯ!)
 -- ============================================================
 local function updateContent()
     infoContent.Visible = (activeTab == "INFO")
@@ -889,8 +880,11 @@ local function updateContent()
     combatContent.Visible = (activeTab == "COMBAT")
 end
 
+-- ВЫЗЫВАЕМ ОБНОВЛЕНИЕ ПРИ СТАРТЕ
+updateContent()
+
 print("========================================")
-print("  MUSLIM MENU v13.2 - THEMES IN HEADER")
+print("  MUSLIM MENU v13.3 - FULLY WORKING")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
