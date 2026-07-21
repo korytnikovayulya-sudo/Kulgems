@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v11.2 - ПРОСТО ШИРОКОЕ
+--  MUSLIM MENU v12.1 - FULL FIXED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v11.2 (ПРОСТО ШИРОКОЕ)...")
+print("🚀 Загрузка Muslim Menu v12.1 (FULL FIXED)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -42,11 +42,11 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ (ШИРЕ!)
+--  ОСНОВНОЕ МЕНЮ
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 700, 0, 500)  -- ШИРИНА 700 (было 460)
-frame.Position = UDim2.new(0.5, -350, 0.5, -250)  -- Сдвиг под новый размер
+frame.Size = UDim2.new(0, 700, 0, 450)
+frame.Position = UDim2.new(0.5, -350, 0.5, -225)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v11.2"
+versionBadge.Text = "v12.1"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -159,9 +159,59 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ФУНКЦИЯ КНОПОК
+--  ВКЛАДКИ (СЛЕВА)
 -- ============================================================
-local function createToggle(parent, label, pos, callback)
+local tabContainer = Instance.new("Frame")
+tabContainer.Size = UDim2.new(0, 100, 1, -50)
+tabContainer.Position = UDim2.new(0, 0, 0, 50)
+tabContainer.BackgroundColor3 = THEMES[currentTheme].btn
+tabContainer.BackgroundTransparency = 0
+tabContainer.BorderSizePixel = 0
+tabContainer.Parent = frame
+
+local activeTab = "ESP"
+local contentContainer = Instance.new("Frame")
+contentContainer.Size = UDim2.new(1, -100, 1, -50)
+contentContainer.Position = UDim2.new(0, 100, 0, 50)
+contentContainer.BackgroundTransparency = 1
+contentContainer.Parent = frame
+
+-- Функция создания кнопок вкладок
+local function createTabButton(name, yPos)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, 0, 0, 40)
+    btn.Position = UDim2.new(0, 0, 0, yPos)
+    btn.BackgroundColor3 = THEMES[currentTheme].btn
+    btn.BackgroundTransparency = 0
+    btn.Text = name
+    btn.TextColor3 = THEMES[currentTheme].text
+    btn.TextSize = 14
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Parent = tabContainer
+    
+    local btnCorners = Instance.new("UICorner")
+    btnCorners.CornerRadius = UDim.new(0, 0)
+    btnCorners.Parent = btn
+    
+    btn.MouseButton1Click:Connect(function()
+        activeTab = name
+        updateContent()
+    end)
+    
+    return btn
+end
+
+local tabESP = createTabButton("ESP", 0)
+local tabCombat = createTabButton("Combat", 45)
+
+-- ============================================================
+--  КОНТЕНТ ВКЛАДОК
+-- ============================================================
+local ESP_MURDER = false
+local ESP_SHERIFF = false
+local ESP_INNOCENT = false
+
+local function createToggleInContainer(parent, label, pos, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.9, 0, 0, 44)
     container.Position = pos
@@ -218,38 +268,48 @@ local function createToggle(parent, label, pos, callback)
     end)
 end
 
--- ============================================================
---  ВСЕ КНОПКИ (ТЕ ЖЕ, ЧТО И БЫЛИ)
--- ============================================================
-local ESP_MURDER = false
-local ESP_SHERIFF = false
-local ESP_INNOCENT = false
+-- Контент для вкладки ESP
+local espContent = Instance.new("Frame")
+espContent.Size = UDim2.new(1, 0, 1, 0)
+espContent.BackgroundTransparency = 1
+espContent.Parent = contentContainer
 
-createToggle(frame, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.12, 0), function(state)
+createToggleInContainer(espContent, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.05, 0), function(state)
     ESP_MURDER = state
     updateAllESP()
 end)
 
-createToggle(frame, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.19, 0), function(state)
+createToggleInContainer(espContent, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.15, 0), function(state)
     ESP_SHERIFF = state
     updateAllESP()
 end)
 
-createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.26, 0), function(state)
+createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25, 0), function(state)
     ESP_INNOCENT = state
     updateAllESP()
 end)
 
-createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.33, 0), function(state)
-    toggleBunnyHop(state)
-end)
+-- Контент для вкладки Combat
+local combatContent = Instance.new("Frame")
+combatContent.Size = UDim2.new(1, 0, 1, 0)
+combatContent.BackgroundTransparency = 1
+combatContent.Visible = false
+combatContent.Parent = contentContainer
 
-createToggle(frame, "🔫 Shoot Murderer", UDim2.new(0.05, 0, 0.40, 0), function(state)
+createToggleInContainer(combatContent, "⬜ Shoot Murderer", UDim2.new(0.05, 0, 0.05, 0), function(state)
     toggleShootMode(state)
 end)
 
 -- ============================================================
---  ESP
+--  ОБНОВЛЕНИЕ ВКЛАДОК
+-- ============================================================
+local function updateContent()
+    espContent.Visible = (activeTab == "ESP")
+    combatContent.Visible = (activeTab == "Combat")
+end
+
+-- ============================================================
+--  ESP (BILLBOARD)
 -- ============================================================
 local espList = {}
 
@@ -282,7 +342,7 @@ local function createESPForPlayer(plr)
     local conn
     conn = game:GetService("RunService").RenderStepped:Connect(function()
         if not plr or not plr.Parent or not plr.Character or not plr.Character:FindFirstChild("Head") then
-            billboard:Destroy()
+            if billboard then billboard:Destroy() end
             espList[plr] = nil
             conn:Disconnect()
             return
@@ -349,62 +409,27 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
 end)
 
 -- ============================================================
---  BUNNY HOP
--- ============================================================
-local bunnyHopEnabled = false
-local bhopConnection = nil
-local jumpKeyDown = false
-
-local function toggleBunnyHop(state)
-    bunnyHopEnabled = state
-    if state then
-        print("🐰 Bunny Hop включён! Удерживай пробел")
-        game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            if input.KeyCode == Enum.KeyCode.Space then
-                jumpKeyDown = true
-            end
-        end)
-        game:GetService("UserInputService").InputEnded:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            if input.KeyCode == Enum.KeyCode.Space then
-                jumpKeyDown = false
-            end
-        end)
-        
-        bhopConnection = game:GetService("RunService").RenderStepped:Connect(function()
-            if bunnyHopEnabled and jumpKeyDown then
-                local char = player.Character
-                if char and char:FindFirstChild("Humanoid") then
-                    local humanoid = char.Humanoid
-                    if humanoid.FloorMaterial ~= Enum.Material.Air then
-                        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                    end
-                end
-            end
-        end)
-    else
-        print("🐰 Bunny Hop выключён!")
-        jumpKeyDown = false
-        if bhopConnection then
-            bhopConnection:Disconnect()
-            bhopConnection = nil
-        end
-    end
-end
-
--- ============================================================
---  SHOOT MURDERER
+--  SHOOT MURDERER (КВАДРАТ С ПОЛЗУНКОМ)
 -- ============================================================
 local shootMode = false
-local shootButton = nil
 local shootFrame = nil
+local shootButton = nil
 local animConnection = nil
+local sliderContainer = nil
+local shootSize = 100
+
+local function updateShootSize()
+    if shootFrame then
+        local size = 60 + (shootSize - 1) * 6
+        shootFrame.Size = UDim2.new(0, size, 0, size)
+        shootFrame.Position = UDim2.new(0.5, -size/2, 0.7, -size/2)
+    end
+end
 
 local function toggleShootMode(state)
     shootMode = state
     if state then
-        print("🔫 Shoot Murderer включён!")
+        print("⬜ Shoot Murderer включён!")
         
         local screenGui = player:WaitForChild("PlayerGui"):FindFirstChild("ShootGui")
         if not screenGui then
@@ -413,6 +438,7 @@ local function toggleShootMode(state)
             screenGui.Parent = player:WaitForChild("PlayerGui")
         end
         
+        -- Квадрат
         shootFrame = Instance.new("Frame")
         shootFrame.Size = UDim2.new(0, 160, 0, 160)
         shootFrame.Position = UDim2.new(0.5, -80, 0.7, -80)
@@ -428,6 +454,7 @@ local function toggleShootMode(state)
         corners2.CornerRadius = UDim.new(0, 20)
         corners2.Parent = shootFrame
         
+        -- Блеск
         local glassShine = Instance.new("Frame")
         glassShine.Size = UDim2.new(0.8, 0, 0.3, 0)
         glassShine.Position = UDim2.new(0.1, 0, 0.05, 0)
@@ -440,17 +467,19 @@ local function toggleShootMode(state)
         shineCorners.CornerRadius = UDim.new(0, 15)
         shineCorners.Parent = glassShine
         
+        -- Текст SHOOT
         local shootText = Instance.new("TextLabel")
         shootText.Size = UDim2.new(1, 0, 0.3, 0)
         shootText.Position = UDim2.new(0, 0, 0.35, 0)
         shootText.BackgroundTransparency = 1
-        shootText.Text = "🔫 SHOOT"
+        shootText.Text = "SHOOT"
         shootText.TextColor3 = Color3.fromRGB(255, 255, 255)
-        shootText.TextSize = 28
+        shootText.TextSize = 24
         shootText.Font = Enum.Font.SourceSansBold
         shootText.TextStrokeTransparency = 0.3
         shootText.Parent = shootFrame
         
+        -- Прицел (анимированный)
         local crosshairContainer = Instance.new("Frame")
         crosshairContainer.Size = UDim2.new(0.4, 0, 0.4, 0)
         crosshairContainer.Position = UDim2.new(0.3, 0, 0.7, 0)
@@ -496,6 +525,7 @@ local function toggleShootMode(state)
         dotCorners.CornerRadius = UDim.new(1, 0)
         dotCorners.Parent = dot
         
+        -- Анимация
         local angle = 0
         animConnection = game:GetService("RunService").RenderStepped:Connect(function()
             if not shootFrame or not shootFrame.Parent then
@@ -509,40 +539,12 @@ local function toggleShootMode(state)
             crosshairContainer.Rotation = math.deg(angle)
         end)
         
+        -- Кнопка выстрела
         shootButton = Instance.new("TextButton")
         shootButton.Size = UDim2.new(1, 0, 1, 0)
         shootButton.BackgroundTransparency = 1
         shootButton.Text = ""
         shootButton.Parent = shootFrame
-        
-        local closeBtnShoot = Instance.new("TextButton")
-        closeBtnShoot.Size = UDim2.new(0, 35, 0, 35)
-        closeBtnShoot.Position = UDim2.new(0.78, 0, -0.12, 0)
-        closeBtnShoot.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
-        closeBtnShoot.BackgroundTransparency = 0.1
-        closeBtnShoot.Text = "✕"
-        closeBtnShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
-        closeBtnShoot.TextSize = 20
-        closeBtnShoot.Font = Enum.Font.SourceSansBold
-        closeBtnShoot.Parent = shootFrame
-        
-        local closeCornersShoot = Instance.new("UICorner")
-        closeCornersShoot.CornerRadius = UDim.new(0, 10)
-        closeCornersShoot.Parent = closeBtnShoot
-        
-        closeBtnShoot.MouseButton1Click:Connect(function()
-            shootMode = false
-            if shootFrame then
-                shootFrame:Destroy()
-                shootFrame = nil
-            end
-            if animConnection then
-                animConnection:Disconnect()
-                animConnection = nil
-            end
-            shootButton = nil
-            print("🔫 Shoot Murderer выключён!")
-        end)
         
         shootButton.MouseButton1Click:Connect(function()
             if not shootMode then return end
@@ -612,6 +614,107 @@ local function toggleShootMode(state)
             end
         end)
         
+        -- Крестик закрытия
+        local closeBtnShoot = Instance.new("TextButton")
+        closeBtnShoot.Size = UDim2.new(0, 35, 0, 35)
+        closeBtnShoot.Position = UDim2.new(0.78, 0, -0.12, 0)
+        closeBtnShoot.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+        closeBtnShoot.BackgroundTransparency = 0.1
+        closeBtnShoot.Text = "✕"
+        closeBtnShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeBtnShoot.TextSize = 20
+        closeBtnShoot.Font = Enum.Font.SourceSansBold
+        closeBtnShoot.Parent = shootFrame
+        
+        local closeCornersShoot = Instance.new("UICorner")
+        closeCornersShoot.CornerRadius = UDim.new(0, 10)
+        closeCornersShoot.Parent = closeBtnShoot
+        
+        closeBtnShoot.MouseButton1Click:Connect(function()
+            shootMode = false
+            if shootFrame then
+                shootFrame:Destroy()
+                shootFrame = nil
+            end
+            if animConnection then
+                animConnection:Disconnect()
+                animConnection = nil
+            end
+            if sliderContainer then
+                sliderContainer.Visible = false
+            end
+            shootButton = nil
+            print("⬜ Shoot Murderer выключён!")
+        end)
+        
+        -- ПОЛЗУНОК РАЗМЕРА
+        sliderContainer = Instance.new("Frame")
+        sliderContainer.Size = UDim2.new(0.6, 0, 0, 40)
+        sliderContainer.Position = UDim2.new(0.2, 0, 0.15, 0)
+        sliderContainer.BackgroundColor3 = THEMES[currentTheme].btn
+        sliderContainer.BackgroundTransparency = 0
+        sliderContainer.BorderSizePixel = 1
+        sliderContainer.BorderColor3 = THEMES[currentTheme].accent
+        sliderContainer.Visible = true
+        sliderContainer.Parent = combatContent
+        
+        local sliderCorners = Instance.new("UICorner")
+        sliderCorners.CornerRadius = UDim.new(0, 10)
+        sliderCorners.Parent = sliderContainer
+        
+        local sliderLabel = Instance.new("TextLabel")
+        sliderLabel.Size = UDim2.new(0.3, 0, 1, 0)
+        sliderLabel.Position = UDim2.new(0.05, 0, 0, 0)
+        sliderLabel.BackgroundTransparency = 1
+        sliderLabel.Text = "Размер: 100"
+        sliderLabel.TextColor3 = THEMES[currentTheme].text
+        sliderLabel.TextSize = 14
+        sliderLabel.Font = Enum.Font.SourceSansBold
+        sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+        sliderLabel.Parent = sliderContainer
+        
+        local minusBtn = Instance.new("TextButton")
+        minusBtn.Size = UDim2.new(0, 30, 0, 30)
+        minusBtn.Position = UDim2.new(0.5, 0, 0.5, -15)
+        minusBtn.BackgroundColor3 = THEMES[currentTheme].accent
+        minusBtn.Text = "-"
+        minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        minusBtn.TextSize = 20
+        minusBtn.Font = Enum.Font.SourceSansBold
+        minusBtn.Parent = sliderContainer
+        
+        local minusCorners = Instance.new("UICorner")
+        minusCorners.CornerRadius = UDim.new(0, 8)
+        minusCorners.Parent = minusBtn
+        
+        local plusBtn = Instance.new("TextButton")
+        plusBtn.Size = UDim2.new(0, 30, 0, 30)
+        plusBtn.Position = UDim2.new(0.7, 0, 0.5, -15)
+        plusBtn.BackgroundColor3 = THEMES[currentTheme].accent
+        plusBtn.Text = "+"
+        plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        plusBtn.TextSize = 20
+        plusBtn.Font = Enum.Font.SourceSansBold
+        plusBtn.Parent = sliderContainer
+        
+        local plusCorners = Instance.new("UICorner")
+        plusCorners.CornerRadius = UDim.new(0, 8)
+        plusCorners.Parent = plusBtn
+        
+        minusBtn.MouseButton1Click:Connect(function()
+            shootSize = math.max(1, shootSize - 1)
+            sliderLabel.Text = "Размер: " .. tostring(shootSize)
+            updateShootSize()
+        end)
+        
+        plusBtn.MouseButton1Click:Connect(function()
+            shootSize = math.min(100, shootSize + 1)
+            sliderLabel.Text = "Размер: " .. tostring(shootSize)
+            updateShootSize()
+        end)
+        
+        updateShootSize()
+        
     else
         if shootFrame then
             shootFrame:Destroy()
@@ -621,8 +724,12 @@ local function toggleShootMode(state)
             animConnection:Disconnect()
             animConnection = nil
         end
+        if sliderContainer then
+            sliderContainer:Destroy()
+            sliderContainer = nil
+        end
         shootButton = nil
-        print("🔫 Shoot Murderer выключён!")
+        print("⬜ Shoot Murderer выключён!")
     end
 end
 
@@ -804,7 +911,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v11.2 - ПРОСТО ШИРОКОЕ")
+print("  MUSLIM MENU v12.1 - FULL FIXED")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
