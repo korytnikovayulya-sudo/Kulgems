@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v9.0 - ESP THROUGH WALLS
+--  MUSLIM MENU v9.4 - ULTIMATE ESP
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v9.0 (ESP THROUGH WALLS)...")
+print("🚀 Загрузка Muslim Menu v9.4 (ULTIMATE ESP)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v9.0"
+versionBadge.Text = "v9.4"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,67 +219,79 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP СКВОЗЬ СТЕНЫ
+--  ESP через BillboardGui (РАБОТАЕТ ВСЕГДА)
 -- ============================================================
-local espHighlights = {}
+local espData = {} -- {plr = BillboardGui}
 
 local function clearESP()
-    for _, highlight in pairs(espHighlights) do
-        if highlight and highlight.Parent then
-            highlight:Destroy()
+    for _, data in pairs(espData) do
+        if data and data.Parent then
+            data:Destroy()
         end
     end
-    espHighlights = {}
+    espData = {}
 end
 
-local function createWallESP(plr, color)
-    if not plr or not plr.Character or not plr.Character:FindFirstChild("HumanoidRootPart") then
-        return nil
-    end
+local function createESP(plr, text, bgColor)
+    if not plr or not plr.Character then return nil end
     
-    local highlight = Instance.new("Highlight")
-    highlight.Parent = plr.Character
-    highlight.FillColor = color
-    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-    highlight.FillTransparency = 0.2
-    -- ГЛАВНОЕ: видимость сквозь стены
-    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    -- Привязываем к голове, а не к HumanoidRootPart
+    local head = plr.Character:FindFirstChild("Head")
+    if not head then return nil end
     
-    return highlight
+    local bill = Instance.new("BillboardGui")
+    bill.Size = UDim2.new(0, 200, 0, 50)
+    bill.AlwaysOnTop = true  -- ВИДЕН СКВОЗЬ СТЕНЫ!
+    bill.Adornee = head      -- Привязываем к голове
+    bill.Parent = gui        -- Родитель в PlayerGui, а не в персонаже
+    
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 0.2
+    label.BackgroundColor3 = bgColor
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextSize = 22
+    label.Font = Enum.Font.SourceSansBold
+    label.TextStrokeTransparency = 0.2
+    label.Parent = bill
+    
+    return bill
 end
 
 local function updateESP()
     clearESP()
     
     for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-        if plr ~= player and plr.Character then
+        if plr ~= player then
             local weaponType = "innocent"
             
-            -- Ищем Knife и Gun
-            for _, tool in pairs(plr.Character:GetChildren()) do
-                if tool:IsA("Tool") then
-                    local toolName = tool.Name
-                    if toolName == "Knife" then
-                        weaponType = "murderer"
-                        print("🔴 Убийца найден: " .. plr.Name .. " (Knife)")
-                    elseif toolName == "Gun" then
-                        weaponType = "sheriff"
-                        print("🔵 Шериф найден: " .. plr.Name .. " (Gun)")
+            -- Проверяем наличие оружия
+            if plr.Character then
+                for _, tool in pairs(plr.Character:GetChildren()) do
+                    if tool:IsA("Tool") then
+                        if tool.Name == "Knife" then
+                            weaponType = "murderer"
+                            print("🔴 УБИЙЦА: " .. plr.Name)
+                        elseif tool.Name == "Gun" then
+                            weaponType = "sheriff"
+                            print("🔵 ШЕРИФ: " .. plr.Name)
+                        end
                     end
                 end
             end
             
-            local highlight = nil
+            local bill = nil
             if espMurderState and weaponType == "murderer" then
-                highlight = createWallESP(plr, Color3.fromRGB(255, 0, 0))
+                bill = createESP(plr, "🔴 УБИЙЦА", Color3.fromRGB(255, 0, 0))
             elseif espSheriffState and weaponType == "sheriff" then
-                highlight = createWallESP(plr, Color3.fromRGB(0, 100, 255))
+                bill = createESP(plr, "🔵 ШЕРИФ", Color3.fromRGB(0, 100, 255))
             elseif espInnocentState and weaponType == "innocent" then
-                highlight = createWallESP(plr, Color3.fromRGB(0, 255, 0))
+                bill = createESP(plr, "🟢 НЕВИННЫЙ", Color3.fromRGB(0, 200, 0))
             end
             
-            if highlight then
-                table.insert(espHighlights, highlight)
+            if bill then
+                espData[plr] = bill
             end
         end
     end
@@ -289,7 +301,6 @@ local espMurderState = false
 local espSheriffState = false
 local espInnocentState = false
 
--- Кнопки ESP
 createToggle(frame, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.14, 0), function(state)
     espMurderState = state
     updateESP()
@@ -305,7 +316,17 @@ createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.30, 0), function(s
     updateESP()
 end)
 
--- Автообновление каждые 2 секунды
+-- ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ ПЕРСОНАЖА =====
+local function onCharacterAdded()
+    wait(1)
+    if espMurderState or espSheriffState or espInnocentState then
+        updateESP()
+    end
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+
+-- Автообновление каждые 2 секунды (для надёжности)
 spawn(function()
     while wait(2) do
         if espMurderState or espSheriffState or espInnocentState then
@@ -541,7 +562,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v9.0 - ESP THROUGH WALLS")
+print("  MUSLIM MENU v9.4 - ULTIMATE ESP")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
