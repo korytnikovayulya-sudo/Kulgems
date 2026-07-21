@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v13.9 - INFO ONLY
+--  MUSLIM MENU v14.0 - SETTINGS + LANG
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v13.9...")
+print("🚀 Загрузка Muslim Menu v14.0...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -23,6 +23,44 @@ local THEMES = {
 }
 
 local currentTheme = "midnight"
+local currentTransparency = 0.05  -- 0% = матовое, 100% = прозрачное (0.95)
+local currentLang = "ru"
+
+-- ============================================================
+--  ЯЗЫКИ
+-- ============================================================
+local LANG = {
+    ru = {
+        title = "MUSLIM MENU",
+        info_title = "📋 ИНФОРМАЦИЯ",
+        info_hello = "Привет! Это мой первый скрипт!",
+        info_rate = "Если не сложно, оцените его. 🌟",
+        info_nick = "👤 Мой Roblox: TORMENTOR412",
+        info_footer = "❤️ Спасибо за использование!",
+        settings_title = "⚙️ НАСТРОЙКИ",
+        theme_label = "🎨 Тема:",
+        transparency_label = "🔲 Прозрачность:",
+        lang_label = "🌍 Язык:",
+        lang_ru = "Русский",
+        lang_en = "Английский",
+        watermark = "MUSLIM MENU v14.0 | TORMENTOR412"
+    },
+    en = {
+        title = "MUSLIM MENU",
+        info_title = "📋 INFO",
+        info_hello = "Hello! It's my first script!",
+        info_rate = "If it's not too much trouble, please rate it. 🌟",
+        info_nick = "👤 My Roblox: TORMENTOR412",
+        info_footer = "❤️ Thanks for using!",
+        settings_title = "⚙️ SETTINGS",
+        theme_label = "🎨 Theme:",
+        transparency_label = "🔲 Transparency:",
+        lang_label = "🌍 Language:",
+        lang_ru = "Russian",
+        lang_en = "English",
+        watermark = "MUSLIM MENU v14.0 | TORMENTOR412"
+    }
+}
 
 -- ============================================================
 --  ПРИВЕТСТВИЕ
@@ -48,7 +86,7 @@ local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 700, 0, 450)
 frame.Position = UDim2.new(0.5, -350, 0.5, -225)
 frame.BackgroundColor3 = THEMES[currentTheme].main
-frame.BackgroundTransparency = 0.05
+frame.BackgroundTransparency = currentTransparency
 frame.BorderSizePixel = 2
 frame.BorderColor3 = THEMES[currentTheme].accent
 frame.Active = true
@@ -139,105 +177,19 @@ title.Name = "Title"
 title.Size = UDim2.new(0.3, 0, 1, 0)
 title.Position = UDim2.new(0.09, 0, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "MUSLIM MENU"
+title.Text = LANG[currentLang].title
 title.TextColor3 = THEMES[currentTheme].accent
 title.TextSize = 20
 title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
--- ТЕМЫ
-local themeContainer = Instance.new("Frame")
-themeContainer.Size = UDim2.new(0.35, 0, 1, 0)
-themeContainer.Position = UDim2.new(0.4, 0, 0, 0)
-themeContainer.BackgroundTransparency = 1
-themeContainer.Parent = header
-
-local themeColors = {
-    midnight = Color3.fromRGB(100, 180, 255),
-    emerald = Color3.fromRGB(80, 220, 140),
-    ruby = Color3.fromRGB(255, 70, 70),
-    royal = Color3.fromRGB(200, 120, 255),
-    gold = Color3.fromRGB(255, 215, 0)
-}
-
-local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
-local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
-
-local function updateTheme(themeName)
-    local theme = THEMES[themeName]
-    if not theme then return end
-    
-    frame.BackgroundColor3 = theme.main
-    frame.BackgroundTransparency = 0.05
-    frame.BorderColor3 = theme.accent
-    
-    header.BackgroundColor3 = theme.header
-    header.BackgroundTransparency = 0.15
-    title.TextColor3 = theme.accent
-    crosshairCircle.BorderColor3 = theme.accent
-    lineH.BackgroundColor3 = theme.accent
-    lineV.BackgroundColor3 = theme.accent
-    dot.BackgroundColor3 = theme.accent
-    versionBadge.BackgroundColor3 = theme.accent
-    versionBadge.BackgroundTransparency = 0.15
-    versionBadge.TextColor3 = theme.accent
-    
-    for _, child in pairs(frame:GetDescendants()) do
-        if child:IsA("TextButton") and child.Name ~= "CloseBtn" and child.Name ~= "FloatBtn" then
-            child.BackgroundColor3 = theme.btn
-            child.BackgroundTransparency = 0.1
-            child.TextColor3 = theme.accent
-        end
-        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" then
-            child.TextColor3 = theme.text
-        end
-    end
-    
-    for _, container in pairs(frame:GetChildren()) do
-        if container:IsA("Frame") and container ~= header and container ~= themeContainer then
-            container.BackgroundColor3 = theme.btn
-            container.BackgroundTransparency = 0.1
-            container.BorderColor3 = theme.accent
-        end
-    end
-    
-    if mButton then
-        mButton.BackgroundColor3 = theme.main
-        mButton.BackgroundTransparency = 0.05
-        mButton.TextColor3 = theme.accent
-    end
-end
-
-for i, themeName in ipairs(themeNames) do
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 30, 0, 30)
-    btn.Position = UDim2.new(0.05 + (i-1) * 0.16, 0, 0.5, -15)
-    btn.BackgroundColor3 = themeColors[themeName]
-    btn.BackgroundTransparency = 0
-    btn.Text = themeIcons[i]
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 14
-    btn.Font = Enum.Font.SourceSansBold
-    btn.Parent = themeContainer
-    
-    local btnCorners = Instance.new("UICorner")
-    btnCorners.CornerRadius = UDim.new(0, 8)
-    btnCorners.Parent = btn
-    
-    btn.MouseButton1Click:Connect(function()
-        currentTheme = themeName
-        updateTheme(themeName)
-        print("✅ Тема изменена на: " .. THEMES[themeName].name)
-    end)
-end
-
 local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.85, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v13.9"
+versionBadge.Text = "v14.0"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -296,7 +248,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКА INFO (ТОЛЬКО ОНА)
+--  ВКЛАДКИ (INFO, SETTINGS)
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -306,27 +258,41 @@ tabContainer.BackgroundTransparency = 0.15
 tabContainer.BorderSizePixel = 0
 tabContainer.Parent = frame
 
+local activeTab = "INFO"
 local contentContainer = Instance.new("Frame")
 contentContainer.Size = UDim2.new(1, -100, 1, -50)
 contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- Кнопка INFO (только одна)
-local infoBtn = Instance.new("TextButton")
-infoBtn.Size = UDim2.new(1, 0, 0, 40)
-infoBtn.Position = UDim2.new(0, 0, 0, 0)
-infoBtn.BackgroundColor3 = THEMES[currentTheme].accent
-infoBtn.BackgroundTransparency = 0.15
-infoBtn.Text = "INFO"
-infoBtn.TextColor3 = THEMES[currentTheme].main
-infoBtn.TextSize = 14
-infoBtn.Font = Enum.Font.SourceSansBold
-infoBtn.Parent = tabContainer
+local tabButtons = {}
 
-local infoBtnCorners = Instance.new("UICorner")
-infoBtnCorners.CornerRadius = UDim.new(0, 0)
-infoBtnCorners.Parent = infoBtn
+local function createTabButton(name, yPos)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, 0, 0, 40)
+    btn.Position = UDim2.new(0, 0, 0, yPos)
+    btn.BackgroundColor3 = THEMES[currentTheme].btn
+    btn.BackgroundTransparency = 0.15
+    btn.Text = name
+    btn.TextColor3 = THEMES[currentTheme].text
+    btn.TextSize = 14
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Parent = tabContainer
+    
+    local btnCorners = Instance.new("UICorner")
+    btnCorners.CornerRadius = UDim.new(0, 0)
+    btnCorners.Parent = btn
+    
+    btn.MouseButton1Click:Connect(function()
+        activeTab = name
+        updateContent()
+    end)
+    
+    return btn
+end
+
+createTabButton("INFO", 0)
+createTabButton("SETTINGS", 45)
 
 -- ============================================================
 --  КОНТЕНТ INFO
@@ -340,7 +306,7 @@ local infoTitle = Instance.new("TextLabel")
 infoTitle.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoTitle.Position = UDim2.new(0.1, 0, 0.05, 0)
 infoTitle.BackgroundTransparency = 1
-infoTitle.Text = "📋 INFO"
+infoTitle.Text = LANG[currentLang].info_title
 infoTitle.TextColor3 = THEMES[currentTheme].accent
 infoTitle.TextSize = 28
 infoTitle.Font = Enum.Font.SourceSansBold
@@ -350,7 +316,7 @@ local infoHello = Instance.new("TextLabel")
 infoHello.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoHello.Position = UDim2.new(0.1, 0, 0.2, 0)
 infoHello.BackgroundTransparency = 1
-infoHello.Text = "Hello! It's my first script!"
+infoHello.Text = LANG[currentLang].info_hello
 infoHello.TextColor3 = THEMES[currentTheme].text
 infoHello.TextSize = 22
 infoHello.Font = Enum.Font.SourceSansBold
@@ -360,7 +326,7 @@ local infoRate = Instance.new("TextLabel")
 infoRate.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoRate.Position = UDim2.new(0.1, 0, 0.4, 0)
 infoRate.BackgroundTransparency = 1
-infoRate.Text = "If it's not too much trouble, please rate it. 🌟"
+infoRate.Text = LANG[currentLang].info_rate
 infoRate.TextColor3 = THEMES[currentTheme].text
 infoRate.TextSize = 18
 infoRate.Font = Enum.Font.SourceSansBold
@@ -370,7 +336,7 @@ local infoNick = Instance.new("TextLabel")
 infoNick.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoNick.Position = UDim2.new(0.1, 0, 0.6, 0)
 infoNick.BackgroundTransparency = 1
-infoNick.Text = "👤 My Roblox: TORMENTOR412"
+infoNick.Text = LANG[currentLang].info_nick
 infoNick.TextColor3 = THEMES[currentTheme].accent
 infoNick.TextSize = 20
 infoNick.Font = Enum.Font.SourceSansBold
@@ -387,11 +353,279 @@ local infoFooter = Instance.new("TextLabel")
 infoFooter.Size = UDim2.new(0.8, 0, 0.1, 0)
 infoFooter.Position = UDim2.new(0.1, 0, 0.85, 0)
 infoFooter.BackgroundTransparency = 1
-infoFooter.Text = "❤️ Thanks for using!"
+infoFooter.Text = LANG[currentLang].info_footer
 infoFooter.TextColor3 = THEMES[currentTheme].text
 infoFooter.TextSize = 16
 infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
+
+-- ============================================================
+--  КОНТЕНТ SETTINGS
+-- ============================================================
+local settingsContent = Instance.new("Frame")
+settingsContent.Size = UDim2.new(1, 0, 1, 0)
+settingsContent.BackgroundTransparency = 1
+settingsContent.Visible = false
+settingsContent.Parent = contentContainer
+
+local settingsTitle = Instance.new("TextLabel")
+settingsTitle.Size = UDim2.new(0.8, 0, 0.08, 0)
+settingsTitle.Position = UDim2.new(0.1, 0, 0.02, 0)
+settingsTitle.BackgroundTransparency = 1
+settingsTitle.Text = LANG[currentLang].settings_title
+settingsTitle.TextColor3 = THEMES[currentTheme].accent
+settingsTitle.TextSize = 24
+settingsTitle.Font = Enum.Font.SourceSansBold
+settingsTitle.Parent = settingsContent
+
+-- === НАСТРОЙКА ТЕМ ===
+local themeLabel = Instance.new("TextLabel")
+themeLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
+themeLabel.Position = UDim2.new(0.1, 0, 0.12, 0)
+themeLabel.BackgroundTransparency = 1
+themeLabel.Text = LANG[currentLang].theme_label
+themeLabel.TextColor3 = THEMES[currentTheme].text
+themeLabel.TextSize = 16
+themeLabel.Font = Enum.Font.SourceSansBold
+themeLabel.TextXAlignment = Enum.TextXAlignment.Left
+themeLabel.Parent = settingsContent
+
+local themeContainerSettings = Instance.new("Frame")
+themeContainerSettings.Size = UDim2.new(0.6, 0, 0.06, 0)
+themeContainerSettings.Position = UDim2.new(0.35, 0, 0.12, 0)
+themeContainerSettings.BackgroundTransparency = 1
+themeContainerSettings.Parent = settingsContent
+
+local themeColorsSettings = {
+    midnight = Color3.fromRGB(100, 180, 255),
+    emerald = Color3.fromRGB(80, 220, 140),
+    ruby = Color3.fromRGB(255, 70, 70),
+    royal = Color3.fromRGB(200, 120, 255),
+    gold = Color3.fromRGB(255, 215, 0)
+}
+
+local themeNamesSettings = {"midnight", "emerald", "ruby", "royal", "gold"}
+local themeIconsSettings = {"🌙", "🌿", "♦", "👑", "★"}
+
+for i, themeName in ipairs(themeNamesSettings) do
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 30, 0, 30)
+    btn.Position = UDim2.new(0.05 + (i-1) * 0.16, 0, 0, 0)
+    btn.BackgroundColor3 = themeColorsSettings[themeName]
+    btn.BackgroundTransparency = 0
+    btn.Text = themeIconsSettings[i]
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 14
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Parent = themeContainerSettings
+    
+    local btnCorners = Instance.new("UICorner")
+    btnCorners.CornerRadius = UDim.new(0, 8)
+    btnCorners.Parent = btn
+    
+    btn.MouseButton1Click:Connect(function()
+        currentTheme = themeName
+        updateTheme(themeName)
+        print("✅ Тема изменена на: " .. THEMES[themeName].name)
+    end)
+end
+
+-- === НАСТРОЙКА ПРОЗРАЧНОСТИ ===
+local transLabel = Instance.new("TextLabel")
+transLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
+transLabel.Position = UDim2.new(0.1, 0, 0.22, 0)
+transLabel.BackgroundTransparency = 1
+transLabel.Text = LANG[currentLang].transparency_label
+transLabel.TextColor3 = THEMES[currentTheme].text
+transLabel.TextSize = 16
+transLabel.Font = Enum.Font.SourceSansBold
+transLabel.TextXAlignment = Enum.TextXAlignment.Left
+transLabel.Parent = settingsContent
+
+local transValue = Instance.new("TextLabel")
+transValue.Size = UDim2.new(0.1, 0, 0.06, 0)
+transValue.Position = UDim2.new(0.75, 0, 0.22, 0)
+transValue.BackgroundTransparency = 1
+transValue.Text = "0%"
+transValue.TextColor3 = THEMES[currentTheme].text
+transValue.TextSize = 16
+transValue.Font = Enum.Font.SourceSansBold
+transValue.TextXAlignment = Enum.TextXAlignment.Right
+transValue.Parent = settingsContent
+
+local transSlider = Instance.new("Frame")
+transSlider.Size = UDim2.new(0.4, 0, 0.04, 0)
+transSlider.Position = UDim2.new(0.35, 0, 0.24, 0)
+transSlider.BackgroundColor3 = THEMES[currentTheme].btn
+transSlider.BackgroundTransparency = 0.1
+transSlider.BorderSizePixel = 1
+transSlider.BorderColor3 = THEMES[currentTheme].accent
+transSlider.Parent = settingsContent
+
+local transFill = Instance.new("Frame")
+transFill.Size = UDim2.new(currentTransparency / 0.95, 0, 1, 0)
+transFill.BackgroundColor3 = THEMES[currentTheme].accent
+transFill.BackgroundTransparency = 0.1
+transFill.BorderSizePixel = 0
+transFill.Parent = transSlider
+
+local transKnob = Instance.new("TextButton")
+transKnob.Size = UDim2.new(0, 16, 0, 16)
+transKnob.Position = UDim2.new(currentTransparency / 0.95, -8, 0.5, -8)
+transKnob.BackgroundColor3 = THEMES[currentTheme].accent
+transKnob.BackgroundTransparency = 0
+transKnob.Text = ""
+transKnob.Parent = transSlider
+
+local knobCorners = Instance.new("UICorner")
+knobCorners.CornerRadius = UDim.new(1, 0)
+knobCorners.Parent = transKnob
+
+local dragging = false
+transKnob.MouseButton1Down:Connect(function()
+    dragging = true
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if not dragging then return end
+    local mouse = player:GetMouse()
+    if not mouse then return end
+    local relX = (mouse.X - transSlider.AbsolutePosition.X) / transSlider.AbsoluteSize.X
+    local val = math.clamp(relX, 0, 1)
+    currentTransparency = val * 0.95
+    transFill.Size = UDim2.new(val, 0, 1, 0)
+    transKnob.Position = UDim2.new(val, -8, 0.5, -8)
+    transValue.Text = math.round(val * 100) .. "%"
+    frame.BackgroundTransparency = currentTransparency
+    if mButton then
+        mButton.BackgroundTransparency = currentTransparency
+    end
+end)
+
+-- === НАСТРОЙКА ЯЗЫКА ===
+local langLabel = Instance.new("TextLabel")
+langLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
+langLabel.Position = UDim2.new(0.1, 0, 0.32, 0)
+langLabel.BackgroundTransparency = 1
+langLabel.Text = LANG[currentLang].lang_label
+langLabel.TextColor3 = THEMES[currentTheme].text
+langLabel.TextSize = 16
+langLabel.Font = Enum.Font.SourceSansBold
+langLabel.TextXAlignment = Enum.TextXAlignment.Left
+langLabel.Parent = settingsContent
+
+local langBtn = Instance.new("TextButton")
+langBtn.Size = UDim2.new(0.15, 0, 0.06, 0)
+langBtn.Position = UDim2.new(0.45, 0, 0.32, 0)
+langBtn.BackgroundColor3 = THEMES[currentTheme].accent
+langBtn.BackgroundTransparency = 0.1
+langBtn.Text = currentLang == "ru" and LANG[currentLang].lang_ru or LANG[currentLang].lang_en
+langBtn.TextColor3 = THEMES[currentTheme].text
+langBtn.TextSize = 16
+langBtn.Font = Enum.Font.SourceSansBold
+langBtn.Parent = settingsContent
+
+local langCorners = Instance.new("UICorner")
+langCorners.CornerRadius = UDim.new(0, 8)
+langCorners.Parent = langBtn
+
+langBtn.MouseButton1Click:Connect(function()
+    currentLang = currentLang == "ru" and "en" or "ru"
+    langBtn.Text = currentLang == "ru" and LANG[currentLang].lang_ru or LANG[currentLang].lang_en
+    updateLanguage(currentLang)
+end)
+
+-- ============================================================
+--  ФУНКЦИЯ ОБНОВЛЕНИЯ ТЕМЫ
+-- ============================================================
+local function updateTheme(themeName)
+    local theme = THEMES[themeName]
+    if not theme then return end
+    
+    frame.BackgroundColor3 = theme.main
+    frame.BorderColor3 = theme.accent
+    
+    header.BackgroundColor3 = theme.header
+    title.TextColor3 = theme.accent
+    crosshairCircle.BorderColor3 = theme.accent
+    lineH.BackgroundColor3 = theme.accent
+    lineV.BackgroundColor3 = theme.accent
+    dot.BackgroundColor3 = theme.accent
+    versionBadge.BackgroundColor3 = theme.accent
+    versionBadge.BackgroundTransparency = 0.15
+    versionBadge.TextColor3 = theme.accent
+    
+    for _, child in pairs(frame:GetDescendants()) do
+        if child:IsA("TextButton") and child.Name ~= "CloseBtn" and child.Name ~= "FloatBtn" then
+            child.BackgroundColor3 = theme.btn
+            child.BackgroundTransparency = 0.1
+            child.TextColor3 = theme.accent
+        end
+        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" then
+            child.TextColor3 = theme.text
+        end
+    end
+    
+    for _, container in pairs(frame:GetChildren()) do
+        if container:IsA("Frame") and container ~= header and container ~= tabContainer and container ~= contentContainer then
+            container.BackgroundColor3 = theme.btn
+            container.BackgroundTransparency = 0.1
+            container.BorderColor3 = theme.accent
+        end
+    end
+    
+    if mButton then
+        mButton.BackgroundColor3 = theme.main
+        mButton.TextColor3 = theme.accent
+    end
+end
+
+-- ============================================================
+--  ФУНКЦИЯ ОБНОВЛЕНИЯ ЯЗЫКА
+-- ============================================================
+local function updateLanguage(langCode)
+    title.Text = LANG[langCode].title
+    infoTitle.Text = LANG[langCode].info_title
+    infoHello.Text = LANG[langCode].info_hello
+    infoRate.Text = LANG[langCode].info_rate
+    infoNick.Text = LANG[langCode].info_nick
+    infoFooter.Text = LANG[langCode].info_footer
+    settingsTitle.Text = LANG[langCode].settings_title
+    themeLabel.Text = LANG[langCode].theme_label
+    transLabel.Text = LANG[langCode].transparency_label
+    langLabel.Text = LANG[langCode].lang_label
+    watermark.Text = LANG[langCode].watermark
+end
+
+-- ============================================================
+--  ОБНОВЛЕНИЕ КОНТЕНТА
+-- ============================================================
+local function updateContent()
+    infoContent.Visible = (activeTab == "INFO")
+    settingsContent.Visible = (activeTab == "SETTINGS")
+    
+    for _, btn in pairs(tabContainer:GetChildren()) do
+        if btn:IsA("TextButton") then
+            if btn.Text == activeTab then
+                btn.BackgroundColor3 = THEMES[currentTheme].accent
+                btn.BackgroundTransparency = 0.15
+                btn.TextColor3 = THEMES[currentTheme].main
+            else
+                btn.BackgroundColor3 = THEMES[currentTheme].btn
+                btn.BackgroundTransparency = 0.15
+                btn.TextColor3 = THEMES[currentTheme].text
+            end
+        end
+    end
+end
+
+updateContent()
 
 -- ============================================================
 --  ВОДЯНОЙ ЗНАК
@@ -401,7 +635,7 @@ watermark.Name = "Watermark"
 watermark.Size = UDim2.new(1, 0, 0, 20)
 watermark.Position = UDim2.new(0, 0, 0.97, 0)
 watermark.BackgroundTransparency = 1
-watermark.Text = "MUSLIM MENU v13.9 | TORMENTOR412"
+watermark.Text = LANG[currentLang].watermark
 watermark.TextColor3 = THEMES[currentTheme].accent
 watermark.TextSize = 10
 watermark.Font = Enum.Font.SourceSans
@@ -428,6 +662,6 @@ end)
 -- ============================================================
 --  ФИНАЛ
 -- ============================================================
-print("✅ Muslim Menu v13.9 загружен успешно!")
+print("✅ Muslim Menu v14.0 загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("🔑 M - открыть/закрыть (когда меню скрыто)")
