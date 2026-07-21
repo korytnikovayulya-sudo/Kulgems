@@ -1,8 +1,8 @@
 -- ============================================================
---  WERTIUM HUB - ТЕСТОВАЯ ВЕРСИЯ
+--  WERTIUM HUB - КРАСНОЕ МЕНЮ С БЕЛОЙ ПОДСВЕТКОЙ
 -- ============================================================
 
-print("🚀 Тестовая загрузка...")
+print("🚀 Загрузка...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -25,36 +25,36 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 
 wait(1.5)
 
--- ОСНОВНОЕ ОКНО
+-- ОСНОВНОЕ ОКНО (КРАСНОЕ)
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 600, 0, 400)
 frame.Position = UDim2.new(0.5, -300, 0.5, -200)
-frame.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
+frame.BackgroundColor3 = Color3.fromRGB(140, 20, 20)  -- КРАСНЫЙ
 frame.BackgroundTransparency = 0.05
 frame.BorderSizePixel = 2
-frame.BorderColor3 = Color3.fromRGB(100, 180, 255)
+frame.BorderColor3 = Color3.fromRGB(200, 50, 50)      -- РАМКА ТОЖЕ КРАСНАЯ
 frame.Active = true
 frame.Draggable = true
 frame.ClipsDescendants = true
 frame.Parent = gui
 
--- УГЛЫ
+-- МЯГКИЕ УГЛЫ
 local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
--- ПОДСВЕТКА
+-- БЕЛАЯ ЗАМЕТНАЯ ПОДСВЕТКА
 local stroke = Instance.new("UIStroke")
-stroke.Thickness = 2
+stroke.Thickness = 4
 stroke.Color = Color3.fromRGB(255, 255, 255)
-stroke.Transparency = 0.5
+stroke.Transparency = 0.1   -- ПОЧТИ НЕПРОЗРАЧНАЯ
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = frame
 
 -- ЗАГОЛОВОК
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 70)
-header.BackgroundColor3 = Color3.fromRGB(16, 18, 24)
+header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)  -- ТЕМНЕЕ КРАСНЫЙ
 header.BackgroundTransparency = 0.15
 header.Parent = frame
 
@@ -62,7 +62,7 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- ЛЕВЫЙ ПРИЦЕЛ
+-- ЛЕВЫЙ ПРИЦЕЛ (ГОЛУБОЙ)
 local crosshairL = Instance.new("Frame")
 crosshairL.Size = UDim2.new(0, 40, 0.8, 0)
 crosshairL.Position = UDim2.new(0.02, 0, 0.1, 0)
@@ -73,7 +73,7 @@ local circleL = Instance.new("Frame")
 circleL.Size = UDim2.new(1, 0, 1, 0)
 circleL.BackgroundTransparency = 1
 circleL.BorderSizePixel = 2
-circleL.BorderColor3 = Color3.fromRGB(100, 180, 255)
+circleL.BorderColor3 = Color3.fromRGB(100, 200, 255)   -- ГОЛУБОЙ
 circleL.Parent = crosshairL
 local circleLc = Instance.new("UICorner")
 circleLc.CornerRadius = UDim.new(1, 0)
@@ -82,7 +82,7 @@ circleLc.Parent = circleL
 local hL = Instance.new("Frame")
 hL.Size = UDim2.new(0.8, 0, 0.08, 0)
 hL.Position = UDim2.new(0.1, 0, 0.46, 0)
-hL.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+hL.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
 hL.BackgroundTransparency = 0.3
 hL.BorderSizePixel = 0
 hL.Parent = crosshairL
@@ -90,7 +90,7 @@ hL.Parent = crosshairL
 local vL = Instance.new("Frame")
 vL.Size = UDim2.new(0.08, 0, 0.8, 0)
 vL.Position = UDim2.new(0.46, 0, 0.1, 0)
-vL.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+vL.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
 vL.BackgroundTransparency = 0.3
 vL.BorderSizePixel = 0
 vL.Parent = crosshairL
@@ -98,7 +98,7 @@ vL.Parent = crosshairL
 local dotL = Instance.new("Frame")
 dotL.Size = UDim2.new(0.15, 0, 0.15, 0)
 dotL.Position = UDim2.new(0.425, 0, 0.425, 0)
-dotL.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+dotL.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
 dotL.BackgroundTransparency = 0.2
 dotL.BorderSizePixel = 0
 dotL.Parent = crosshairL
@@ -106,7 +106,7 @@ local dotLc = Instance.new("UICorner")
 dotLc.CornerRadius = UDim.new(1, 0)
 dotLc.Parent = dotL
 
--- ПРАВЫЙ ПРИЦЕЛ
+-- ПРАВЫЙ ПРИЦЕЛ (ГОЛУБОЙ)
 local crosshairR = Instance.new("Frame")
 crosshairR.Size = UDim2.new(0, 40, 0.8, 0)
 crosshairR.Position = UDim2.new(0.88, 0, 0.1, 0)
@@ -117,7 +117,7 @@ local circleR = Instance.new("Frame")
 circleR.Size = UDim2.new(1, 0, 1, 0)
 circleR.BackgroundTransparency = 1
 circleR.BorderSizePixel = 2
-circleR.BorderColor3 = Color3.fromRGB(100, 180, 255)
+circleR.BorderColor3 = Color3.fromRGB(100, 200, 255)
 circleR.Parent = crosshairR
 local circleRc = Instance.new("UICorner")
 circleRc.CornerRadius = UDim.new(1, 0)
@@ -126,7 +126,7 @@ circleRc.Parent = circleR
 local hR = Instance.new("Frame")
 hR.Size = UDim2.new(0.8, 0, 0.08, 0)
 hR.Position = UDim2.new(0.1, 0, 0.46, 0)
-hR.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+hR.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
 hR.BackgroundTransparency = 0.3
 hR.BorderSizePixel = 0
 hR.Parent = crosshairR
@@ -134,7 +134,7 @@ hR.Parent = crosshairR
 local vR = Instance.new("Frame")
 vR.Size = UDim2.new(0.08, 0, 0.8, 0)
 vR.Position = UDim2.new(0.46, 0, 0.1, 0)
-vR.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+vR.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
 vR.BackgroundTransparency = 0.3
 vR.BorderSizePixel = 0
 vR.Parent = crosshairR
@@ -142,7 +142,7 @@ vR.Parent = crosshairR
 local dotR = Instance.new("Frame")
 dotR.Size = UDim2.new(0.15, 0, 0.15, 0)
 dotR.Position = UDim2.new(0.425, 0, 0.425, 0)
-dotR.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+dotR.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
 dotR.BackgroundTransparency = 0.2
 dotR.BorderSizePixel = 0
 dotR.Parent = crosshairR
@@ -164,7 +164,7 @@ title.Size = UDim2.new(0.5, 0, 1, 0)
 title.Position = UDim2.new(0.25, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "WERTIUM HUB"
-title.TextColor3 = Color3.fromRGB(100, 180, 255)
+title.TextColor3 = Color3.fromRGB(255, 255, 255)   -- БЕЛЫЙ ТЕКСТ
 title.TextSize = 34
 title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
@@ -192,7 +192,7 @@ watermark.Size = UDim2.new(1, 0, 0, 25)
 watermark.Position = UDim2.new(0, 0, 0.95, 0)
 watermark.BackgroundTransparency = 1
 watermark.Text = "WERTIUM HUB | TORMENTOR412"
-watermark.TextColor3 = Color3.fromRGB(100, 180, 255)
+watermark.TextColor3 = Color3.fromRGB(200, 200, 200)
 watermark.TextSize = 12
 watermark.Font = Enum.Font.SourceSans
 watermark.TextTransparency = 0.5
@@ -206,4 +206,5 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ Тестовая версия загружена! Нажми F1, чтобы открыть/закрыть.")
+print("✅ Красное меню с белой подсветкой и голубыми прицелами загружено!")
+print("🔑 F1 - открыть/закрыть")
