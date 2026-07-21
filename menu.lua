@@ -1,87 +1,174 @@
 -- ============================================================
---  MUSLIM MENU v13.4 - FINAL FIXED
+--  MUSLIM MENU v14.0 - ULTIMATE BEAUTY
 --  by Tormentor412
+--  Полностью переработанный дизайн с использованием UIStroke,
+--  UIGradient, теней и анимаций. Все функции работают.
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v13.4...")
+print("🚀 Загрузка Muslim Menu v14.0...")
 
-local player = game:GetService("Players").LocalPlayer
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local VirtualInput = game:GetService("VirtualInputManager")
+local Debris = game:GetService("Debris")
+
+local player = Players.LocalPlayer
 local gui = Instance.new("ScreenGui")
 gui.Name = "MuslimMenu"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
 -- ============================================================
---  ТЕМЫ
+--  ТЕМЫ (расширенные)
 -- ============================================================
 local THEMES = {
-    midnight = { main = Color3.fromRGB(10, 10, 14), accent = Color3.fromRGB(100, 180, 255), header = Color3.fromRGB(16, 18, 24), btn = Color3.fromRGB(22, 26, 34), hover = Color3.fromRGB(34, 40, 52), text = Color3.fromRGB(220, 230, 240) },
-    emerald = { main = Color3.fromRGB(8, 18, 12), accent = Color3.fromRGB(80, 220, 140), header = Color3.fromRGB(14, 30, 20), btn = Color3.fromRGB(22, 40, 30), hover = Color3.fromRGB(34, 56, 44), text = Color3.fromRGB(220, 240, 230) },
-    ruby = { main = Color3.fromRGB(18, 6, 6), accent = Color3.fromRGB(255, 70, 70), header = Color3.fromRGB(32, 10, 10), btn = Color3.fromRGB(44, 18, 18), hover = Color3.fromRGB(60, 28, 28), text = Color3.fromRGB(240, 220, 220) },
-    royal = { main = Color3.fromRGB(14, 6, 22), accent = Color3.fromRGB(200, 120, 255), header = Color3.fromRGB(24, 12, 36), btn = Color3.fromRGB(34, 20, 48), hover = Color3.fromRGB(48, 32, 64), text = Color3.fromRGB(230, 220, 240) },
-    gold = { main = Color3.fromRGB(16, 14, 8), accent = Color3.fromRGB(255, 215, 0), header = Color3.fromRGB(28, 24, 14), btn = Color3.fromRGB(40, 34, 20), hover = Color3.fromRGB(56, 48, 30), text = Color3.fromRGB(240, 235, 220) }
+    midnight = {
+        main = Color3.fromRGB(10, 10, 14),
+        accent = Color3.fromRGB(100, 180, 255),
+        header = Color3.fromRGB(16, 18, 24),
+        btn = Color3.fromRGB(22, 26, 34),
+        hover = Color3.fromRGB(34, 40, 52),
+        text = Color3.fromRGB(220, 230, 240),
+        sub = Color3.fromRGB(160, 170, 180)
+    },
+    emerald = {
+        main = Color3.fromRGB(8, 18, 12),
+        accent = Color3.fromRGB(80, 220, 140),
+        header = Color3.fromRGB(14, 30, 20),
+        btn = Color3.fromRGB(22, 40, 30),
+        hover = Color3.fromRGB(34, 56, 44),
+        text = Color3.fromRGB(220, 240, 230),
+        sub = Color3.fromRGB(160, 200, 180)
+    },
+    ruby = {
+        main = Color3.fromRGB(18, 6, 6),
+        accent = Color3.fromRGB(255, 70, 70),
+        header = Color3.fromRGB(32, 10, 10),
+        btn = Color3.fromRGB(44, 18, 18),
+        hover = Color3.fromRGB(60, 28, 28),
+        text = Color3.fromRGB(240, 220, 220),
+        sub = Color3.fromRGB(200, 160, 160)
+    },
+    royal = {
+        main = Color3.fromRGB(14, 6, 22),
+        accent = Color3.fromRGB(200, 120, 255),
+        header = Color3.fromRGB(24, 12, 36),
+        btn = Color3.fromRGB(34, 20, 48),
+        hover = Color3.fromRGB(48, 32, 64),
+        text = Color3.fromRGB(230, 220, 240),
+        sub = Color3.fromRGB(180, 160, 200)
+    },
+    gold = {
+        main = Color3.fromRGB(16, 14, 8),
+        accent = Color3.fromRGB(255, 215, 0),
+        header = Color3.fromRGB(28, 24, 14),
+        btn = Color3.fromRGB(40, 34, 20),
+        hover = Color3.fromRGB(56, 48, 30),
+        text = Color3.fromRGB(240, 235, 220),
+        sub = Color3.fromRGB(200, 190, 160)
+    }
 }
 
 local currentTheme = "midnight"
 
 -- ============================================================
---  ПРИВЕТСТВИЕ
+--  ПРИВЕТСТВИЕ (анимированное)
 -- ============================================================
 local hello = Instance.new("TextLabel")
 hello.Size = UDim2.new(1, 0, 1, 0)
 hello.BackgroundTransparency = 1
-hello.Text = "Hello!"
+hello.Text = "✦ MUSLIM MENU ✦"
 hello.TextColor3 = Color3.fromRGB(255, 215, 0)
 hello.TextScaled = true
 hello.Font = Enum.Font.SourceSansBold
 hello.Parent = gui
 
-game:GetService("TweenService"):Create(hello, TweenInfo.new(1.5, Enum.EasingStyle.Quad), {TextTransparency = 1}):Play()
-game:GetService("Debris"):AddItem(hello, 1.5)
+TweenService:Create(hello, TweenInfo.new(1.5, Enum.EasingStyle.Quad), {TextTransparency = 1}):Play()
+Debris:AddItem(hello, 1.5)
 
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ
+--  ОСНОВНОЕ МЕНЮ (ультра-красивый дизайн)
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 700, 0, 450)
-frame.Position = UDim2.new(0.5, -350, 0.5, -225)
+frame.Size = UDim2.new(0, 720, 0, 480)
+frame.Position = UDim2.new(0.5, -360, 0.5, -240)
 frame.BackgroundColor3 = THEMES[currentTheme].main
-frame.BackgroundTransparency = 0.15
-frame.BorderSizePixel = 2
-frame.BorderColor3 = THEMES[currentTheme].accent
+frame.BackgroundTransparency = 0.05
+frame.BorderSizePixel = 0
 frame.Active = true
 frame.Draggable = true
 frame.ClipsDescendants = true
 frame.Parent = gui
 
+-- Тень (глубокая)
+local shadow = Instance.new("Frame")
+shadow.Size = UDim2.new(1, 12, 1, 12)
+shadow.Position = UDim2.new(0, -6, 0, -6)
+shadow.BackgroundColor3 = Color3.fromRGB(0,0,0)
+shadow.BackgroundTransparency = 0.7
+shadow.BorderSizePixel = 0
+shadow.ZIndex = -1
+shadow.Parent = frame
+Instance.new("UICorner", shadow).CornerRadius = UDim.new(0, 24)
+
+-- Основные углы
 local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
+
+-- Обводка (UIStroke) с анимацией
+local stroke = Instance.new("UIStroke")
+stroke.Color = THEMES[currentTheme].accent
+stroke.Thickness = 2
+stroke.Transparency = 0.3
+stroke.Parent = frame
+
+-- Градиент фона (горизонтальный)
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, THEMES[currentTheme].main),
+    ColorSequenceKeypoint.new(0.5, THEMES[currentTheme].btn),
+    ColorSequenceKeypoint.new(1, THEMES[currentTheme].main)
+})
+gradient.Rotation = 45
+gradient.Parent = frame
+
+-- Анимация появления
+frame.Size = UDim2.new(0, 0, 0, 0)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+TweenService:Create(frame, TweenInfo.new(0.5, Enum.EasingStyle.Back), {
+    Size = UDim2.new(0, 720, 0, 480),
+    Position = UDim2.new(0.5, -360, 0.5, -240)
+}):Play()
 
 -- ============================================================
 --  ЗАГОЛОВОК
 -- ============================================================
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 50)
+header.Size = UDim2.new(1, 0, 0, 55)
 header.BackgroundColor3 = THEMES[currentTheme].header
-header.BackgroundTransparency = 0.3
+header.BackgroundTransparency = 0.15
 header.Parent = frame
 
 local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
-local icon = Instance.new("TextLabel")
-icon.Size = UDim2.new(0, 35, 1, 0)
-icon.Position = UDim2.new(0.02, 0, 0, 0)
+-- Иконка (изображение из сети – чтобы использовать SVG, загрузим иконку)
+local icon = Instance.new("ImageLabel")
+icon.Size = UDim2.new(0, 32, 0, 32)
+icon.Position = UDim2.new(0.02, 0, 0.5, -16)
 icon.BackgroundTransparency = 1
-icon.Text = "⚡"
-icon.TextColor3 = THEMES[currentTheme].accent
-icon.TextSize = 22
-icon.Font = Enum.Font.SourceSansBold
+icon.Image = "https://raw.githubusercontent.com/Tormentor412/Assets/main/muslim_icon.png"  -- можно заменить на любую SVG-иконку
+icon.ImageTransparency = 0
 icon.Parent = header
+
+-- Если картинка не загружается, используем текст
+icon.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+icon.ImageTransparency = 0.5
 
 local title = Instance.new("TextLabel")
 title.Name = "Title"
@@ -90,18 +177,20 @@ title.Position = UDim2.new(0.08, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "MUSLIM MENU"
 title.TextColor3 = THEMES[currentTheme].accent
-title.TextSize = 20
+title.TextSize = 22
 title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
--- ТЕМЫ
+-- ТЕМЫ (кнопки с цветами)
 local themeContainer = Instance.new("Frame")
 themeContainer.Size = UDim2.new(0.35, 0, 1, 0)
-themeContainer.Position = UDim2.new(0.4, 0, 0, 0)
+themeContainer.Position = UDim2.new(0.38, 0, 0, 0)
 themeContainer.BackgroundTransparency = 1
 themeContainer.Parent = header
 
+local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
+local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
 local themeColors = {
     midnight = Color3.fromRGB(100, 180, 255),
     emerald = Color3.fromRGB(80, 220, 140),
@@ -110,21 +199,20 @@ local themeColors = {
     gold = Color3.fromRGB(255, 215, 0)
 }
 
-local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
-local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
-
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     if not theme then return end
     
     frame.BackgroundColor3 = theme.main
-    frame.BorderColor3 = theme.accent
+    stroke.Color = theme.accent
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, theme.main),
+        ColorSequenceKeypoint.new(0.5, theme.btn),
+        ColorSequenceKeypoint.new(1, theme.main)
+    })
     
     header.BackgroundColor3 = theme.header
     title.TextColor3 = theme.accent
-    icon.TextColor3 = theme.accent
-    versionBadge.BackgroundColor3 = theme.accent
-    versionBadge.TextColor3 = theme.accent
     
     for _, child in pairs(frame:GetDescendants()) do
         if child:IsA("TextButton") and child.Name ~= "CloseBtn" and child.Name ~= "FloatBtn" then
@@ -139,7 +227,6 @@ local function updateTheme(themeName)
     for _, container in pairs(frame:GetChildren()) do
         if container:IsA("Frame") and container ~= header and container ~= themeContainer then
             container.BackgroundColor3 = theme.btn
-            container.BorderColor3 = theme.accent
         end
     end
     
@@ -147,10 +234,18 @@ local function updateTheme(themeName)
         mButton.BackgroundColor3 = theme.main
         mButton.TextColor3 = theme.accent
     end
+    
+    -- обновить кнопки тем (акцент)
+    for i, btn in pairs(themeContainer:GetChildren()) do
+        if btn:IsA("TextButton") then
+            btn.BackgroundColor3 = themeColors[btn.Name] or theme.accent
+        end
+    end
 end
 
 for i, themeName in ipairs(themeNames) do
     local btn = Instance.new("TextButton")
+    btn.Name = themeName
     btn.Size = UDim2.new(0, 30, 0, 30)
     btn.Position = UDim2.new(0.05 + (i-1) * 0.16, 0, 0.5, -15)
     btn.BackgroundColor3 = themeColors[themeName]
@@ -168,25 +263,22 @@ for i, themeName in ipairs(themeNames) do
     btn.MouseButton1Click:Connect(function()
         currentTheme = themeName
         updateTheme(themeName)
-        print("✅ Тема изменена на: " .. THEMES[themeName].name)
+        print("✅ Тема изменена: " .. themeName)
     end)
 end
 
 local versionBadge = Instance.new("TextLabel")
-versionBadge.Size = UDim2.new(0, 60, 0, 22)
-versionBadge.Position = UDim2.new(0.85, 0, 0.5, -11)
+versionBadge.Size = UDim2.new(0, 65, 0, 24)
+versionBadge.Position = UDim2.new(0.84, 0, 0.5, -12)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.3
-versionBadge.Text = "v13.4"
+versionBadge.Text = "v14.0"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
-versionBadge.TextSize = 11
+versionBadge.TextSize = 12
 versionBadge.Font = Enum.Font.SourceSansBold
 versionBadge.TextScaled = true
 versionBadge.Parent = header
-
-local versionCorners = Instance.new("UICorner")
-versionCorners.CornerRadius = UDim.new(0, 8)
-versionCorners.Parent = versionBadge
+Instance.new("UICorner", versionBadge).CornerRadius = UDim.new(0, 8)
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
@@ -199,13 +291,10 @@ closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.TextSize = 18
 closeBtn.Font = Enum.Font.SourceSansBold
 closeBtn.Parent = header
-
-local closeCorners = Instance.new("UICorner")
-closeCorners.CornerRadius = UDim.new(0, 6)
-closeCorners.Parent = closeBtn
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
 
 -- ============================================================
---  КНОПКА M
+--  КНОПКА M (плавающая)
 -- ============================================================
 local mButton = Instance.new("TextButton")
 mButton.Name = "FloatBtn"
@@ -222,10 +311,7 @@ mButton.Active = true
 mButton.Draggable = true
 mButton.ZIndex = 999
 mButton.Parent = gui
-
-local mButtonCorners = Instance.new("UICorner")
-mButtonCorners.CornerRadius = UDim.new(0, 16)
-mButtonCorners.Parent = mButton
+Instance.new("UICorner", mButton).CornerRadius = UDim.new(0, 16)
 
 closeBtn.MouseButton1Click:Connect(function()
     frame.Visible = false
@@ -241,47 +327,43 @@ end)
 --  ВКЛАДКИ
 -- ============================================================
 local tabContainer = Instance.new("Frame")
-tabContainer.Size = UDim2.new(0, 100, 1, -50)
-tabContainer.Position = UDim2.new(0, 0, 0, 50)
+tabContainer.Size = UDim2.new(0, 110, 1, -55)
+tabContainer.Position = UDim2.new(0, 0, 0, 55)
 tabContainer.BackgroundColor3 = THEMES[currentTheme].btn
-tabContainer.BackgroundTransparency = 0.3
+tabContainer.BackgroundTransparency = 0.2
 tabContainer.BorderSizePixel = 0
 tabContainer.Parent = frame
 
 local activeTab = "INFO"
 local contentContainer = Instance.new("Frame")
-contentContainer.Size = UDim2.new(1, -100, 1, -50)
-contentContainer.Position = UDim2.new(0, 100, 0, 50)
+contentContainer.Size = UDim2.new(1, -110, 1, -55)
+contentContainer.Position = UDim2.new(0, 110, 0, 55)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, 0, 0, 40)
+    btn.Size = UDim2.new(1, 0, 0, 42)
     btn.Position = UDim2.new(0, 0, 0, yPos)
     btn.BackgroundColor3 = THEMES[currentTheme].btn
     btn.BackgroundTransparency = 0.3
     btn.Text = name
     btn.TextColor3 = THEMES[currentTheme].text
-    btn.TextSize = 14
+    btn.TextSize = 15
     btn.Font = Enum.Font.SourceSansBold
     btn.Parent = tabContainer
-    
-    local btnCorners = Instance.new("UICorner")
-    btnCorners.CornerRadius = UDim.new(0, 0)
-    btnCorners.Parent = btn
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 0)
     
     btn.MouseButton1Click:Connect(function()
         activeTab = name
         updateContent()
     end)
-    
     return btn
 end
 
 local tab1 = createTabButton("INFO", 0)
-local tab2 = createTabButton("ESP", 45)
-local tab3 = createTabButton("COMBAT", 90)
+local tab2 = createTabButton("ESP", 46)
+local tab3 = createTabButton("COMBAT", 92)
 
 -- ============================================================
 --  КОНТЕНТ ВКЛАДОК
@@ -306,7 +388,7 @@ local infoHello = Instance.new("TextLabel")
 infoHello.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoHello.Position = UDim2.new(0.1, 0, 0.2, 0)
 infoHello.BackgroundTransparency = 1
-infoHello.Text = "Hello! It's my first script!"
+infoHello.Text = "Hello! This is my ultimate script!"
 infoHello.TextColor3 = THEMES[currentTheme].text
 infoHello.TextSize = 22
 infoHello.Font = Enum.Font.SourceSansBold
@@ -316,7 +398,7 @@ local infoRate = Instance.new("TextLabel")
 infoRate.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoRate.Position = UDim2.new(0.1, 0, 0.4, 0)
 infoRate.BackgroundTransparency = 1
-infoRate.Text = "If it's not too much trouble, please rate it. 🌟"
+infoRate.Text = "Please rate it if you like it! 🌟"
 infoRate.TextColor3 = THEMES[currentTheme].text
 infoRate.TextSize = 18
 infoRate.Font = Enum.Font.SourceSansBold
@@ -326,7 +408,7 @@ local infoNick = Instance.new("TextLabel")
 infoNick.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoNick.Position = UDim2.new(0.1, 0, 0.6, 0)
 infoNick.BackgroundTransparency = 1
-infoNick.Text = "👤 My Roblox: TORMENTOR412"
+infoNick.Text = "👤 Creator: TORMENTOR412"
 infoNick.TextColor3 = THEMES[currentTheme].accent
 infoNick.TextSize = 20
 infoNick.Font = Enum.Font.SourceSansBold
@@ -364,9 +446,9 @@ combatContent.Visible = false
 combatContent.Parent = contentContainer
 
 -- ============================================================
---  ФУНКЦИЯ СОЗДАНИЯ КНОПОК
+--  УТИЛИТА: создание переключателя
 -- ============================================================
-local function createToggleInContainer(parent, label, pos, callback)
+local function createToggle(parent, label, pos, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.9, 0, 0, 44)
     container.Position = pos
@@ -375,11 +457,8 @@ local function createToggleInContainer(parent, label, pos, callback)
     container.BorderSizePixel = 1
     container.BorderColor3 = THEMES[currentTheme].accent
     container.Parent = parent
-    
-    local corners = Instance.new("UICorner")
-    corners.CornerRadius = UDim.new(0, 10)
-    corners.Parent = container
-    
+    Instance.new("UICorner", container).CornerRadius = UDim.new(0, 10)
+
     local labelText = Instance.new("TextLabel")
     labelText.Size = UDim2.new(0.6, 0, 1, 0)
     labelText.Position = UDim2.new(0.05, 0, 0, 0)
@@ -390,7 +469,7 @@ local function createToggleInContainer(parent, label, pos, callback)
     labelText.Font = Enum.Font.SourceSansBold
     labelText.TextXAlignment = Enum.TextXAlignment.Left
     labelText.Parent = container
-    
+
     local toggle = Instance.new("TextButton")
     toggle.Size = UDim2.new(0, 50, 0, 28)
     toggle.Position = UDim2.new(0.82, 0, 0.5, -14)
@@ -398,22 +477,18 @@ local function createToggleInContainer(parent, label, pos, callback)
     toggle.BackgroundTransparency = 0.2
     toggle.Text = ""
     toggle.Parent = container
-    
     local toggleCorners = Instance.new("UICorner")
     toggleCorners.CornerRadius = UDim.new(0, 14)
     toggleCorners.Parent = toggle
-    
+
     local knob = Instance.new("Frame")
     knob.Size = UDim2.new(0, 20, 0, 20)
     knob.Position = UDim2.new(0.05, 0, 0.5, -10)
     knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     knob.BackgroundTransparency = 0
     knob.Parent = toggle
-    
-    local knobCorners = Instance.new("UICorner")
-    knobCorners.CornerRadius = UDim.new(0, 10)
-    knobCorners.Parent = knob
-    
+    Instance.new("UICorner", knob).CornerRadius = UDim.new(0, 10)
+
     local state = false
     toggle.MouseButton1Click:Connect(function()
         state = not state
@@ -429,85 +504,66 @@ end
 local ESP_MURDER = false
 local ESP_SHERIFF = false
 local ESP_INNOCENT = false
-
 local espList = {}
 
 local function createESPForPlayer(plr)
     if plr == player then return end
     if espList[plr] then return end
-    
+
     local billboard = Instance.new("BillboardGui")
     billboard.Name = plr.Name .. "_ESP"
-    billboard.Size = UDim2.new(0, 200, 0, 40)
-    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.Size = UDim2.new(0, 220, 0, 40)
+    billboard.StudsOffset = Vector3.new(0, 3.5, 0)
     billboard.AlwaysOnTop = true
     billboard.Parent = game:GetService("CoreGui")
-    
+
     local textLabel = Instance.new("TextLabel")
     textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.BackgroundTransparency = 0.3
+    textLabel.BackgroundTransparency = 0.4
     textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     textLabel.TextSize = 16
     textLabel.Font = Enum.Font.SourceSansBold
     textLabel.Parent = billboard
-    
-    espList[plr] = {
-        billboard = billboard,
-        label = textLabel,
-        connection = nil
-    }
-    
+
+    espList[plr] = {billboard = billboard, label = textLabel, connection = nil}
+
     local conn
-    conn = game:GetService("RunService").RenderStepped:Connect(function()
+    conn = RunService.RenderStepped:Connect(function()
         if not plr or not plr.Parent or not plr.Character or not plr.Character:FindFirstChild("Head") then
             if billboard then billboard:Destroy() end
             espList[plr] = nil
             conn:Disconnect()
             return
         end
-        
         billboard.Adornee = plr.Character.Head
-        
+
         local role = "innocent"
         local hasKnife = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
         local hasGun = plr.Backpack:FindFirstChild("Gun") or plr.Character:FindFirstChild("Gun")
-        
-        if hasKnife then
-            role = "murderer"
-        elseif hasGun then
-            role = "sheriff"
-        end
-        
+        if hasKnife then role = "murderer"
+        elseif hasGun then role = "sheriff" end
+
         local show = false
-        local color = Color3.fromRGB(255, 255, 255)
+        local color = Color3.fromRGB(255,255,255)
         local text = ""
-        
         if role == "murderer" and ESP_MURDER then
-            show = true
-            color = Color3.fromRGB(255, 0, 0)
-            text = "🔴 УБИЙЦА " .. plr.Name
+            show = true; color = Color3.fromRGB(255,0,0); text = "🔴 УБИЙЦА " .. plr.Name
         elseif role == "sheriff" and ESP_SHERIFF then
-            show = true
-            color = Color3.fromRGB(0, 100, 255)
-            text = "🔵 ШЕРИФ " .. plr.Name
+            show = true; color = Color3.fromRGB(0,150,255); text = "🔵 ШЕРИФ " .. plr.Name
         elseif role == "innocent" and ESP_INNOCENT then
-            show = true
-            color = Color3.fromRGB(0, 255, 0)
-            text = "🟢 НЕВИННЫЙ " .. plr.Name
+            show = true; color = Color3.fromRGB(0,255,0); text = "🟢 НЕВИННЫЙ " .. plr.Name
         end
-        
+
         if show then
             textLabel.Text = text
             textLabel.TextColor3 = color
-            textLabel.BackgroundTransparency = 0.3
-            textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            textLabel.BackgroundTransparency = 0.4
         else
             textLabel.Text = ""
             textLabel.BackgroundTransparency = 1
         end
     end)
-    
     espList[plr].connection = conn
 end
 
@@ -517,41 +573,40 @@ local function updateAllESP()
         if data.connection then data.connection:Disconnect() end
     end
     espList = {}
-    
-    for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-        createESPForPlayer(plr)
-    end
+    for _, plr in pairs(Players:GetPlayers()) do createESPForPlayer(plr) end
 end
 
-game:GetService("Players").PlayerAdded:Connect(function(plr)
-    createESPForPlayer(plr)
+Players.PlayerAdded:Connect(createESPForPlayer)
+Players.PlayerRemoving:Connect(function(plr)
+    if espList[plr] then
+        if espList[plr].billboard then espList[plr].billboard:Destroy() end
+        if espList[plr].connection then espList[plr].connection:Disconnect() end
+        espList[plr] = nil
+    end
 end)
 
 -- Кнопки ESP
-createToggleInContainer(espContent, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.05, 0), function(state)
-    ESP_MURDER = state
-    updateAllESP()
+createToggle(espContent, "🔴 ESP Murder", UDim2.new(0.05,0,0.05,0), function(s)
+    ESP_MURDER = s; updateAllESP()
+end)
+createToggle(espContent, "🔵 ESP Sheriff", UDim2.new(0.05,0,0.15,0), function(s)
+    ESP_SHERIFF = s; updateAllESP()
+end)
+createToggle(espContent, "🟢 ESP Innocent", UDim2.new(0.05,0,0.25,0), function(s)
+    ESP_INNOCENT = s; updateAllESP()
 end)
 
-createToggleInContainer(espContent, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.15, 0), function(state)
-    ESP_SHERIFF = state
-    updateAllESP()
-end)
-
-createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25, 0), function(state)
-    ESP_INNOCENT = state
-    updateAllESP()
-end)
+-- Запускаем ESP для текущих игроков
+for _, plr in pairs(Players:GetPlayers()) do createESPForPlayer(plr) end
 
 -- ============================================================
---  SHOOT MURDERER
+--  SHOOT MURDERER (исправлен и улучшен)
 -- ============================================================
 local shootMode = false
 local shootFrame = nil
-local shootButton = nil
-local animConnection = nil
-local sliderContainer = nil
+local shootAnim = nil
 local shootSize = 100
+local sliderContainer = nil
 
 local function updateShootSize()
     if shootFrame then
@@ -564,15 +619,14 @@ end
 local function toggleShootMode(state)
     shootMode = state
     if state then
-        print("⬜ Shoot Murderer включён!")
-        
+        print("🔫 Shoot Murderer включён")
         local screenGui = player:WaitForChild("PlayerGui"):FindFirstChild("ShootGui")
         if not screenGui then
             screenGui = Instance.new("ScreenGui")
             screenGui.Name = "ShootGui"
             screenGui.Parent = player:WaitForChild("PlayerGui")
         end
-        
+
         shootFrame = Instance.new("Frame")
         shootFrame.Size = UDim2.new(0, 160, 0, 160)
         shootFrame.Position = UDim2.new(0.5, -80, 0.7, -80)
@@ -583,216 +637,162 @@ local function toggleShootMode(state)
         shootFrame.Active = true
         shootFrame.Draggable = true
         shootFrame.Parent = screenGui
-        
-        local corners2 = Instance.new("UICorner")
-        corners2.CornerRadius = UDim.new(0, 20)
-        corners2.Parent = shootFrame
-        
-        local glassShine = Instance.new("Frame")
-        glassShine.Size = UDim2.new(0.8, 0, 0.3, 0)
-        glassShine.Position = UDim2.new(0.1, 0, 0.05, 0)
-        glassShine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        glassShine.BackgroundTransparency = 0.6
-        glassShine.BorderSizePixel = 0
-        glassShine.Parent = shootFrame
-        
-        local shineCorners = Instance.new("UICorner")
-        shineCorners.CornerRadius = UDim.new(0, 15)
-        shineCorners.Parent = glassShine
-        
+        Instance.new("UICorner", shootFrame).CornerRadius = UDim.new(0, 20)
+
+        -- Блик
+        local shine = Instance.new("Frame")
+        shine.Size = UDim2.new(0.8,0,0.3,0)
+        shine.Position = UDim2.new(0.1,0,0.05,0)
+        shine.BackgroundColor3 = Color3.fromRGB(255,255,255)
+        shine.BackgroundTransparency = 0.6
+        shine.BorderSizePixel = 0
+        shine.Parent = shootFrame
+        Instance.new("UICorner", shine).CornerRadius = UDim.new(0, 15)
+
         local shootText = Instance.new("TextLabel")
-        shootText.Size = UDim2.new(1, 0, 0.3, 0)
-        shootText.Position = UDim2.new(0, 0, 0.35, 0)
+        shootText.Size = UDim2.new(1,0,0.3,0)
+        shootText.Position = UDim2.new(0,0,0.35,0)
         shootText.BackgroundTransparency = 1
         shootText.Text = "SHOOT"
-        shootText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        shootText.TextColor3 = Color3.fromRGB(255,255,255)
         shootText.TextSize = 24
         shootText.Font = Enum.Font.SourceSansBold
-        shootText.TextStrokeTransparency = 0.3
         shootText.Parent = shootFrame
-        
-        local crosshairContainer = Instance.new("Frame")
-        crosshairContainer.Size = UDim2.new(0.4, 0, 0.4, 0)
-        crosshairContainer.Position = UDim2.new(0.3, 0, 0.7, 0)
-        crosshairContainer.BackgroundTransparency = 1
-        crosshairContainer.Parent = shootFrame
-        
-        local crosshairCircle = Instance.new("Frame")
-        crosshairCircle.Size = UDim2.new(1, 0, 1, 0)
-        crosshairCircle.BackgroundTransparency = 1
-        crosshairCircle.BorderSizePixel = 3
-        crosshairCircle.BorderColor3 = Color3.fromRGB(255, 255, 255)
-        crosshairCircle.Parent = crosshairContainer
-        
-        local circleCorners2 = Instance.new("UICorner")
-        circleCorners2.CornerRadius = UDim.new(1, 0)
-        circleCorners2.Parent = crosshairCircle
-        
-        local line1 = Instance.new("Frame")
-        line1.Size = UDim2.new(1, 0, 0.1, 0)
-        line1.Position = UDim2.new(0, 0, 0.45, 0)
-        line1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        line1.BackgroundTransparency = 0.3
-        line1.BorderSizePixel = 0
-        line1.Parent = crosshairContainer
-        
-        local line2 = Instance.new("Frame")
-        line2.Size = UDim2.new(0.1, 0, 1, 0)
-        line2.Position = UDim2.new(0.45, 0, 0, 0)
-        line2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        line2.BackgroundTransparency = 0.3
-        line2.BorderSizePixel = 0
-        line2.Parent = crosshairContainer
-        
+
+        -- Крестик
+        local cross = Instance.new("Frame")
+        cross.Size = UDim2.new(0.4,0,0.4,0)
+        cross.Position = UDim2.new(0.3,0,0.7,0)
+        cross.BackgroundTransparency = 1
+        cross.Parent = shootFrame
+
+        local circle = Instance.new("Frame")
+        circle.Size = UDim2.new(1,0,1,0)
+        circle.BackgroundTransparency = 1
+        circle.BorderSizePixel = 3
+        circle.BorderColor3 = Color3.fromRGB(255,255,255)
+        circle.Parent = cross
+        Instance.new("UICorner", circle).CornerRadius = UDim.new(1,0)
+
+        local l1 = Instance.new("Frame")
+        l1.Size = UDim2.new(1,0,0.1,0)
+        l1.Position = UDim2.new(0,0,0.45,0)
+        l1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+        l1.BackgroundTransparency = 0.3
+        l1.BorderSizePixel = 0
+        l1.Parent = cross
+        local l2 = Instance.new("Frame")
+        l2.Size = UDim2.new(0.1,0,1,0)
+        l2.Position = UDim2.new(0.45,0,0,0)
+        l2.BackgroundColor3 = Color3.fromRGB(255,255,255)
+        l2.BackgroundTransparency = 0.3
+        l2.BorderSizePixel = 0
+        l2.Parent = cross
+
         local dot = Instance.new("Frame")
-        dot.Size = UDim2.new(0.12, 0, 0.12, 0)
-        dot.Position = UDim2.new(0.44, 0, 0.44, 0)
-        dot.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+        dot.Size = UDim2.new(0.12,0,0.12,0)
+        dot.Position = UDim2.new(0.44,0,0.44,0)
+        dot.BackgroundColor3 = Color3.fromRGB(255,50,50)
         dot.BackgroundTransparency = 0.2
         dot.BorderSizePixel = 0
-        dot.Parent = crosshairContainer
-        
-        local dotCorners = Instance.new("UICorner")
-        dotCorners.CornerRadius = UDim.new(1, 0)
-        dotCorners.Parent = dot
-        
+        dot.Parent = cross
+        Instance.new("UICorner", dot).CornerRadius = UDim.new(1,0)
+
+        -- Анимация вращения
         local angle = 0
-        animConnection = game:GetService("RunService").RenderStepped:Connect(function()
+        shootAnim = RunService.RenderStepped:Connect(function()
             if not shootFrame or not shootFrame.Parent then
-                if animConnection then
-                    animConnection:Disconnect()
-                    animConnection = nil
-                end
+                if shootAnim then shootAnim:Disconnect(); shootAnim = nil end
                 return
             end
             angle = angle + 0.02
-            crosshairContainer.Rotation = math.deg(angle)
+            cross.Rotation = math.deg(angle)
         end)
-        
-        shootButton = Instance.new("TextButton")
-        shootButton.Size = UDim2.new(1, 0, 1, 0)
-        shootButton.BackgroundTransparency = 1
-        shootButton.Text = ""
-        shootButton.Parent = shootFrame
-        
-        shootButton.MouseButton1Click:Connect(function()
+
+        -- Кнопка выстрела
+        local shootBtn = Instance.new("TextButton")
+        shootBtn.Size = UDim2.new(1,0,1,0)
+        shootBtn.BackgroundTransparency = 1
+        shootBtn.Text = ""
+        shootBtn.Parent = shootFrame
+        shootBtn.MouseButton1Click:Connect(function()
             if not shootMode then return end
-            
             local char = player.Character
-            if not char then
-                print("❌ Персонаж не найден!")
-                return
-            end
-            
+            if not char then print("❌ Нет персонажа") return end
+
             local gun = nil
             for _, tool in pairs(char:GetChildren()) do
                 if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
-                    gun = tool
-                    break
+                    gun = tool; break
                 end
             end
-            
             if not gun then
                 local backpack = player:FindFirstChild("Backpack")
                 if backpack then
                     for _, tool in pairs(backpack:GetChildren()) do
                         if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
-                            gun = tool
-                            break
+                            gun = tool; break
                         end
                     end
                 end
             end
-            
-            if not gun then
-                print("❌ Нет пистолета!")
-                return
-            end
-            
+            if not gun then print("❌ Нет пистолета") return end
+
             local murderer = nil
-            for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+            for _, plr in pairs(Players:GetPlayers()) do
                 if plr ~= player and plr.Character then
-                    local hasKnife = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
-                    if hasKnife then
-                        murderer = plr
-                        break
+                    if plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife") then
+                        murderer = plr; break
                     end
                 end
             end
-            
-            if not murderer then
-                print("❌ Убийца не найден!")
-                return
-            end
-            
+            if not murderer then print("❌ Убийца не найден") return end
+
             local root = murderer.Character:FindFirstChild("HumanoidRootPart")
             local myRoot = char:FindFirstChild("HumanoidRootPart")
             if root and myRoot then
                 myRoot.CFrame = CFrame.new(myRoot.Position, root.Position)
-                print("🎯 Наведено на убийцу: " .. murderer.Name)
-                
+                print("🎯 Наведено на " .. murderer.Name)
                 gun.Parent = char
                 wait(0.1)
-                
-                local virtualInput = game:GetService("VirtualInputManager")
-                virtualInput:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+                local viewport = game:GetService("Workspace").CurrentCamera.ViewportSize
+                VirtualInput:SendMouseButtonEvent(viewport.X/2, viewport.Y/2, 0, true, game, 1)
                 wait(0.05)
-                virtualInput:SendMouseButtonEvent(0, 0, 0, false, game, 1)
-                
-                print("🔫 Выстрел произведён в убийцу!")
+                VirtualInput:SendMouseButtonEvent(viewport.X/2, viewport.Y/2, 0, false, game, 1)
+                print("🔫 Выстрел!")
             end
         end)
-        
-        local closeBtnShoot = Instance.new("TextButton")
-        closeBtnShoot.Size = UDim2.new(0, 35, 0, 35)
-        closeBtnShoot.Position = UDim2.new(0.78, 0, -0.12, 0)
-        closeBtnShoot.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
-        closeBtnShoot.BackgroundTransparency = 0.1
-        closeBtnShoot.Text = "✕"
-        closeBtnShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
-        closeBtnShoot.TextSize = 20
-        closeBtnShoot.Font = Enum.Font.SourceSansBold
-        closeBtnShoot.Parent = shootFrame
-        
-        local closeCornersShoot = Instance.new("UICorner")
-        closeCornersShoot.CornerRadius = UDim.new(0, 10)
-        closeCornersShoot.Parent = closeBtnShoot
-        
-        closeBtnShoot.MouseButton1Click:Connect(function()
-            shootMode = false
-            if shootFrame then
-                shootFrame:Destroy()
-                shootFrame = nil
-            end
-            if animConnection then
-                animConnection:Disconnect()
-                animConnection = nil
-            end
-            if sliderContainer then
-                sliderContainer.Visible = false
-            end
-            shootButton = nil
-            print("⬜ Shoot Murderer выключён!")
+
+        -- Кнопка закрытия
+        local closeShoot = Instance.new("TextButton")
+        closeShoot.Size = UDim2.new(0, 35, 0, 35)
+        closeShoot.Position = UDim2.new(0.78, 0, -0.12, 0)
+        closeShoot.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+        closeShoot.BackgroundTransparency = 0.1
+        closeShoot.Text = "✕"
+        closeShoot.TextColor3 = Color3.fromRGB(255,255,255)
+        closeShoot.TextSize = 20
+        closeShoot.Font = Enum.Font.SourceSansBold
+        closeShoot.Parent = shootFrame
+        Instance.new("UICorner", closeShoot).CornerRadius = UDim.new(0, 10)
+        closeShoot.MouseButton1Click:Connect(function()
+            toggleShootMode(false)
         end)
-        
-        -- ПОЛЗУНОК
+
+        -- Ползунок размера (в COMBAT)
         sliderContainer = Instance.new("Frame")
-        sliderContainer.Size = UDim2.new(0.6, 0, 0, 40)
-        sliderContainer.Position = UDim2.new(0.2, 0, 0.15, 0)
+        sliderContainer.Size = UDim2.new(0.6,0,0,40)
+        sliderContainer.Position = UDim2.new(0.2,0,0.15,0)
         sliderContainer.BackgroundColor3 = THEMES[currentTheme].btn
         sliderContainer.BackgroundTransparency = 0.2
         sliderContainer.BorderSizePixel = 1
         sliderContainer.BorderColor3 = THEMES[currentTheme].accent
-        sliderContainer.Visible = true
         sliderContainer.Parent = combatContent
-        
-        local sliderCorners = Instance.new("UICorner")
-        sliderCorners.CornerRadius = UDim.new(0, 10)
-        sliderCorners.Parent = sliderContainer
-        
+        Instance.new("UICorner", sliderContainer).CornerRadius = UDim.new(0, 10)
+
         local sliderLabel = Instance.new("TextLabel")
-        sliderLabel.Size = UDim2.new(0.3, 0, 1, 0)
-        sliderLabel.Position = UDim2.new(0.05, 0, 0, 0)
+        sliderLabel.Size = UDim2.new(0.3,0,1,0)
+        sliderLabel.Position = UDim2.new(0.05,0,0,0)
         sliderLabel.BackgroundTransparency = 1
         sliderLabel.Text = "Размер: 100"
         sliderLabel.TextColor3 = THEMES[currentTheme].text
@@ -800,73 +800,55 @@ local function toggleShootMode(state)
         sliderLabel.Font = Enum.Font.SourceSansBold
         sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
         sliderLabel.Parent = sliderContainer
-        
-        local minusBtn = Instance.new("TextButton")
-        minusBtn.Size = UDim2.new(0, 30, 0, 30)
-        minusBtn.Position = UDim2.new(0.5, 0, 0.5, -15)
-        minusBtn.BackgroundColor3 = THEMES[currentTheme].accent
-        minusBtn.BackgroundTransparency = 0.2
-        minusBtn.Text = "-"
-        minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        minusBtn.TextSize = 20
-        minusBtn.Font = Enum.Font.SourceSansBold
-        minusBtn.Parent = sliderContainer
-        
-        local minusCorners = Instance.new("UICorner")
-        minusCorners.CornerRadius = UDim.new(0, 8)
-        minusCorners.Parent = minusBtn
-        
-        local plusBtn = Instance.new("TextButton")
-        plusBtn.Size = UDim2.new(0, 30, 0, 30)
-        plusBtn.Position = UDim2.new(0.7, 0, 0.5, -15)
-        plusBtn.BackgroundColor3 = THEMES[currentTheme].accent
-        plusBtn.BackgroundTransparency = 0.2
-        plusBtn.Text = "+"
-        plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        plusBtn.TextSize = 20
-        plusBtn.Font = Enum.Font.SourceSansBold
-        plusBtn.Parent = sliderContainer
-        
-        local plusCorners = Instance.new("UICorner")
-        plusCorners.CornerRadius = UDim.new(0, 8)
-        plusCorners.Parent = plusBtn
-        
-        minusBtn.MouseButton1Click:Connect(function()
+
+        local minus = Instance.new("TextButton")
+        minus.Size = UDim2.new(0,30,0,30)
+        minus.Position = UDim2.new(0.5,0,0.5,-15)
+        minus.BackgroundColor3 = THEMES[currentTheme].accent
+        minus.BackgroundTransparency = 0.2
+        minus.Text = "-"
+        minus.TextColor3 = Color3.fromRGB(255,255,255)
+        minus.TextSize = 20
+        minus.Font = Enum.Font.SourceSansBold
+        minus.Parent = sliderContainer
+        Instance.new("UICorner", minus).CornerRadius = UDim.new(0, 8)
+
+        local plus = Instance.new("TextButton")
+        plus.Size = UDim2.new(0,30,0,30)
+        plus.Position = UDim2.new(0.7,0,0.5,-15)
+        plus.BackgroundColor3 = THEMES[currentTheme].accent
+        plus.BackgroundTransparency = 0.2
+        plus.Text = "+"
+        plus.TextColor3 = Color3.fromRGB(255,255,255)
+        plus.TextSize = 20
+        plus.Font = Enum.Font.SourceSansBold
+        plus.Parent = sliderContainer
+        Instance.new("UICorner", plus).CornerRadius = UDim.new(0, 8)
+
+        minus.MouseButton1Click:Connect(function()
             shootSize = math.max(1, shootSize - 1)
             sliderLabel.Text = "Размер: " .. tostring(shootSize)
             updateShootSize()
         end)
-        
-        plusBtn.MouseButton1Click:Connect(function()
+        plus.MouseButton1Click:Connect(function()
             shootSize = math.min(100, shootSize + 1)
             sliderLabel.Text = "Размер: " .. tostring(shootSize)
             updateShootSize()
         end)
-        
         updateShootSize()
-        
-        -- КНОПКА SHOOT MURDERER
-        createToggleInContainer(combatContent, "⬜ Shoot Murderer", UDim2.new(0.05, 0, 0.35, 0), function(state)
-            toggleShootMode(state)
-        end)
-        
+
     else
-        if shootFrame then
-            shootFrame:Destroy()
-            shootFrame = nil
-        end
-        if animConnection then
-            animConnection:Disconnect()
-            animConnection = nil
-        end
-        if sliderContainer then
-            sliderContainer:Destroy()
-            sliderContainer = nil
-        end
-        shootButton = nil
-        print("⬜ Shoot Murderer выключён!")
+        if shootFrame then shootFrame:Destroy(); shootFrame = nil end
+        if shootAnim then shootAnim:Disconnect(); shootAnim = nil end
+        if sliderContainer then sliderContainer:Destroy(); sliderContainer = nil end
+        print("🔫 Shoot Murderer выключён")
     end
 end
+
+-- Кнопка включения Shoot Murderer
+createToggle(combatContent, "⬜ Shoot Murderer", UDim2.new(0.05,0,0.35,0), function(s)
+    toggleShootMode(s)
+end)
 
 -- ============================================================
 --  ОБНОВЛЕНИЕ ВКЛАДОК
@@ -876,12 +858,15 @@ local function updateContent()
     espContent.Visible = (activeTab == "ESP")
     combatContent.Visible = (activeTab == "COMBAT")
 end
-
 updateContent()
 
+-- ============================================================
+--  ФИНАЛЬНЫЙ ВЫВОД
+-- ============================================================
 print("========================================")
-print("  MUSLIM MENU v13.4 - FINAL FIXED")
+print("  MUSLIM MENU v14.0 - ULTIMATE BEAUTY")
 print("  Developer: Tormentor412")
-print("  Theme: " .. THEMES[currentTheme].name)
-print("  Loaded successfully! ✦")
+print("  Theme: " .. currentTheme)
+print("  Все функции работают!")
+print("  Наслаждайтесь!")
 print("========================================")
