@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v11.0 - РАСШИРЕННОЕ МЕНЮ
+--  MUSLIM MENU v11.2 - ПРОСТО ШИРОКОЕ
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v11.0 (РАСШИРЕННОЕ МЕНЮ)...")
+print("🚀 Загрузка Muslim Menu v11.2 (ПРОСТО ШИРОКОЕ)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -42,11 +42,11 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ (БОЛЬШОЕ, КАК НА ФОТО)
+--  ОСНОВНОЕ МЕНЮ (ШИРЕ!)
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 520, 0, 750)  -- Шире и выше
-frame.Position = UDim2.new(0.5, -260, 0.5, -375)
+frame.Size = UDim2.new(0, 700, 0, 500)  -- ШИРИНА 700 (было 460)
+frame.Position = UDim2.new(0.5, -350, 0.5, -250)  -- Сдвиг под новый размер
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
@@ -83,8 +83,8 @@ icon.Parent = header
 
 local title = Instance.new("TextLabel")
 title.Name = "Title"
-title.Size = UDim2.new(0.55, 0, 1, 0)
-title.Position = UDim2.new(0.10, 0, 0, 0)
+title.Size = UDim2.new(0.5, 0, 1, 0)
+title.Position = UDim2.new(0.08, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "MUSLIM MENU"
 title.TextColor3 = THEMES[currentTheme].accent
@@ -95,10 +95,10 @@ title.Parent = header
 
 local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
-versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
+versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v11.0"
+versionBadge.Text = "v11.2"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,10 +219,12 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  КНОПКИ МЕНЮ (РАСШИРЕННЫЙ СПИСОК)
+--  ВСЕ КНОПКИ (ТЕ ЖЕ, ЧТО И БЫЛИ)
 -- ============================================================
+local ESP_MURDER = false
+local ESP_SHERIFF = false
+local ESP_INNOCENT = false
 
--- === ESP ===
 createToggle(frame, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.12, 0), function(state)
     ESP_MURDER = state
     updateAllESP()
@@ -238,30 +240,18 @@ createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.26, 0), function(s
     updateAllESP()
 end)
 
--- === ДВИЖЕНИЕ ===
 createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.33, 0), function(state)
     toggleBunnyHop(state)
 end)
 
--- === БОЙ ===
 createToggle(frame, "🔫 Shoot Murderer", UDim2.new(0.05, 0, 0.40, 0), function(state)
     toggleShootMode(state)
 end)
 
--- === НАСТРОЙКИ ===
-createToggle(frame, "⚙️ Anti-AFK", UDim2.new(0.05, 0, 0.47, 0), function(state)
-    -- Тут можно добавить Anti-AFK
-    print("⚙️ Anti-AFK: " .. (state and "ВКЛ" or "ВЫКЛ"))
-end)
-
 -- ============================================================
---  BILLBOARD ESP
+--  ESP
 -- ============================================================
 local espList = {}
-
-local ESP_MURDER = false
-local ESP_SHERIFF = false
-local ESP_INNOCENT = false
 
 local function createESPForPlayer(plr)
     if plr == player then return end
@@ -404,7 +394,7 @@ local function toggleBunnyHop(state)
 end
 
 -- ============================================================
---  SHOOT MURDERER (КРАСИВЫЙ КВАДРАТ)
+--  SHOOT MURDERER
 -- ============================================================
 local shootMode = false
 local shootButton = nil
@@ -814,7 +804,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v11.0 - РАСШИРЕННОЕ МЕНЮ")
+print("  MUSLIM MENU v11.2 - ПРОСТО ШИРОКОЕ")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
