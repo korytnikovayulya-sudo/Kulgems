@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - С ESP
+--  WERTIUM HUB - С ESP (ПОЛНАЯ ВЕРСИЯ)
 -- ============================================================
 
 print("🚀 Загрузка...")
@@ -199,22 +199,22 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ПАНЕЛЬ УПРАВЛЕНИЯ (ESP)
+--  ПАНЕЛЬ УПРАВЛЕНИЯ (ESP КНОПКА ПО ЦЕНТРУ)
 -- ============================================================
 local controlPanel = Instance.new("Frame")
 controlPanel.Size = UDim2.new(1, 0, 0, 60)
-controlPanel.Position = UDim2.new(0, 0, 0, 90)
+controlPanel.Position = UDim2.new(0, 0, 0, 90) -- Сразу под заголовком
 controlPanel.BackgroundTransparency = 1
 controlPanel.Parent = frame
 
 local espBtn = Instance.new("TextButton")
-espBtn.Size = UDim2.new(0, 160, 0, 40)
-espBtn.Position = UDim2.new(0.5, -80, 0.5, -20)
+espBtn.Size = UDim2.new(0, 200, 0, 45)
+espBtn.Position = UDim2.new(0.5, -100, 0.5, -22.5)
 espBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 espBtn.BackgroundTransparency = 0.3
 espBtn.Text = "ESP: Вкл"
 espBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-espBtn.TextSize = 20
+espBtn.TextSize = 22
 espBtn.Font = Enum.Font.SourceSansBold
 espBtn.Parent = controlPanel
 
@@ -226,48 +226,47 @@ espCorners.Parent = espBtn
 --  ЛОГИКА ESP
 -- ============================================================
 local espEnabled = false
-local espBillboards = {}  -- таблица { [Player] = BillboardGui }
+local espBillboards = {} -- таблица { [Player] = BillboardGui }
 
-local function getRole(player)
-    -- Определяем роль по наличию оружия
-    if not player or not player.Character then return "innocent" end
-    local backpack = player:FindFirstChild("Backpack")
+local function getRole(p)
+    -- Определяем роль по наличию оружия в руках или рюкзаке
+    if not p or not p.Character then return "innocent" end
+    local char = p.Character
+    local backpack = p:FindFirstChild("Backpack")
+    
+    local function checkTool(tool)
+        if not tool:IsA("Tool") then return false end
+        local name = tool.Name:lower()
+        if name:find("knife") or name:find("dagger") then
+            return "murderer"
+        elseif name:find("gun") or name:find("pistol") or name:find("revolver") then
+            return "sheriff"
+        end
+        return false
+    end
+    
+    -- Проверяем в руках
+    for _, tool in pairs(char:GetChildren()) do
+        local role = checkTool(tool)
+        if role then return role end
+    end
+    -- Проверяем в рюкзаке
     if backpack then
         for _, tool in pairs(backpack:GetChildren()) do
-            if tool:IsA("Tool") then
-                local name = tool.Name:lower()
-                if name:find("knife") or name:find("dagger") then
-                    return "murderer"
-                elseif name:find("gun") or name:find("pistol") or name:find("revolver") then
-                    return "sheriff"
-                end
-            end
-        end
-    end
-    -- Проверяем также в руках (Character)
-    local char = player.Character
-    if char then
-        for _, tool in pairs(char:GetChildren()) do
-            if tool:IsA("Tool") then
-                local name = tool.Name:lower()
-                if name:find("knife") or name:find("dagger") then
-                    return "murderer"
-                elseif name:find("gun") or name:find("pistol") or name:find("revolver") then
-                    return "sheriff"
-                end
-            end
+            local role = checkTool(tool)
+            if role then return role end
         end
     end
     return "innocent"
 end
 
-local function createBillboard(player)
-    if player == game.Players.LocalPlayer then return end  -- не показываем себе
-    if espBillboards[player] then return end
+local function createBillboard(p)
+    if p == player then return end -- не показываем себе
+    if espBillboards[p] then return end
 
-    local role = getRole(player)
+    local role = getRole(p)
     local text = ""
-    local color = Color3.fromRGB(0, 255, 0) -- зелёный по умолчанию
+    local color = Color3.fromRGB(0, 255, 0)
     if role == "murderer" then
         text = "MURDERER"
         color = Color3.fromRGB(255, 0, 0)
@@ -279,34 +278,33 @@ local function createBillboard(player)
         color = Color3.fromRGB(0, 255, 0)
     end
 
-    local billboard = Instance.new("BillboardGui")
-    billboard.Size = UDim2.new(0, 200, 0, 40)
-    billboard.Adornee = player.Character and player.Character:FindFirstChild("Head")
-    if not billboard.Adornee then
-        billboard:Destroy()
-        return
-    end
-    billboard.StudsOffset = Vector3.new(0, 3, 0)
-    billboard.Parent = gui
+    local head = p.Character and p.Character:FindFirstChild("Head")
+    if not head then return end
+
+    local bill = Instance.new("BillboardGui")
+    bill.Size = UDim2.new(0, 200, 0, 40)
+    bill.Adornee = head
+    bill.StudsOffset = Vector3.new(0, 2.5, 0)
+    bill.Parent = gui
 
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, 0, 1, 0)
     label.BackgroundTransparency = 1
     label.Text = text
     label.TextColor3 = color
-    label.TextSize = 18
+    label.TextSize = 20
     label.Font = Enum.Font.SourceSansBold
     label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-    label.TextStrokeTransparency = 0.3
-    label.Parent = billboard
+    label.TextStrokeTransparency = 0.2
+    label.Parent = bill
 
-    espBillboards[player] = billboard
+    espBillboards[p] = bill
 end
 
-local function removeBillboard(player)
-    if espBillboards[player] then
-        espBillboards[player]:Destroy()
-        espBillboards[player] = nil
+local function removeBillboard(p)
+    if espBillboards[p] then
+        espBillboards[p]:Destroy()
+        espBillboards[p] = nil
     end
 end
 
@@ -318,7 +316,6 @@ local function clearAllBillboards()
 end
 
 local function updateAllESP()
-    -- Удаляем все биллборды и создаём заново
     clearAllBillboards()
     for _, p in pairs(game.Players:GetPlayers()) do
         createBillboard(p)
@@ -327,22 +324,19 @@ end
 
 -- Подписываемся на изменения игроков
 game.Players.PlayerAdded:Connect(function(p)
-    if espEnabled then
-        p.CharacterAdded:Connect(function()
-            wait(0.5)
-            if espEnabled then
-                removeBillboard(p)
-                createBillboard(p)
-            end
-        end)
-        p.CharacterRemoving:Connect(function()
-            removeBillboard(p)
-        end)
-        -- Создаём при добавлении
+    p.CharacterAdded:Connect(function()
         wait(0.5)
         if espEnabled then
+            removeBillboard(p)
             createBillboard(p)
         end
+    end)
+    p.CharacterRemoving:Connect(function()
+        removeBillboard(p)
+    end)
+    wait(0.5)
+    if espEnabled then
+        createBillboard(p)
     end
 end)
 
@@ -350,54 +344,48 @@ game.Players.PlayerRemoving:Connect(function(p)
     removeBillboard(p)
 end)
 
--- Таймер обновления ролей (каждые 3 секунды)
+-- Обновление ролей каждые 3 секунды
 local function espLoop()
     while espEnabled do
-        -- Обновляем все биллборды (пересоздаём, т.к. роли могут меняться)
-        -- Оптимизация: можно обновлять только текст и цвет, но для простоты пересоздаём
-        if espEnabled then
-            for p, bill in pairs(espBillboards) do
-                if p and p.Character and p.Character:FindFirstChild("Head") then
-                    local role = getRole(p)
-                    local text = ""
-                    local color = Color3.fromRGB(0, 255, 0)
-                    if role == "murderer" then
-                        text = "MURDERER"
-                        color = Color3.fromRGB(255, 0, 0)
-                    elseif role == "sheriff" then
-                        text = "SHERIFF"
-                        color = Color3.fromRGB(0, 150, 255)
-                    else
-                        text = "INNOCENT"
-                        color = Color3.fromRGB(0, 255, 0)
-                    end
-                    local label = bill:FindFirstChild("TextLabel")
-                    if label then
-                        label.Text = text
-                        label.TextColor3 = color
-                    end
+        for p, bill in pairs(espBillboards) do
+            if p and p.Character and p.Character:FindFirstChild("Head") then
+                local role = getRole(p)
+                local text = ""
+                local color = Color3.fromRGB(0, 255, 0)
+                if role == "murderer" then
+                    text = "MURDERER"
+                    color = Color3.fromRGB(255, 0, 0)
+                elseif role == "sheriff" then
+                    text = "SHERIFF"
+                    color = Color3.fromRGB(0, 150, 255)
                 else
-                    removeBillboard(p)
+                    text = "INNOCENT"
+                    color = Color3.fromRGB(0, 255, 0)
                 end
+                local label = bill:FindFirstChild("TextLabel")
+                if label then
+                    label.Text = text
+                    label.TextColor3 = color
+                end
+            else
+                removeBillboard(p)
             end
-            -- Проверяем новых игроков, которых ещё нет в таблице
-            for _, p in pairs(game.Players:GetPlayers()) do
-                if p ~= player and not espBillboards[p] and p.Character and p.Character:FindFirstChild("Head") then
-                    createBillboard(p)
-                end
+        end
+        -- Добавляем новых игроков
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p ~= player and not espBillboards[p] and p.Character and p.Character:FindFirstChild("Head") then
+                createBillboard(p)
             end
         end
         wait(3)
     end
 end
 
--- Функция включения/выключения ESP
 local function toggleESP()
     espEnabled = not espEnabled
     if espEnabled then
         espBtn.Text = "ESP: Выкл"
         updateAllESP()
-        -- Запускаем цикл обновления
         spawn(espLoop)
     else
         espBtn.Text = "ESP: Вкл"
@@ -429,5 +417,5 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ Меню с ESP загружено!")
+print("✅ WERTIUM HUB с ESP загружен! Кнопка ESP по центру сверху.")
 print("🔑 F1 - открыть/закрыть")
