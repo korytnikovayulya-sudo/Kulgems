@@ -1,5 +1,5 @@
 -- ============================================================
---  MUSLIM MENU v14.4 - FULLY WORKING
+--  MUSLIM MENU v14.4 - FULLY WORKING (FIXED)
 --  by Tormentor412
 -- ============================================================
 
@@ -27,7 +27,7 @@ local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
 local themeDisplay = {"MIDNIGHT", "EMERALD", "RUBY", "ROYAL", "GOLD"}
 
 -- ============================================================
---  ЯЗЫКИ
+--  ЯЗЫКИ (ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ)
 -- ============================================================
 local LANG = {
     ru = {
@@ -39,7 +39,6 @@ local LANG = {
         info_footer = "❤️ Спасибо за использование!",
         settings = "⚙️ НАСТРОЙКИ",
         theme = "🎨 Тема:",
-        transparency = "🔲 Прозрачность:",
         lang = "🌍 Язык:",
         save = "💾 Сохранить",
         watermark = "MUSLIM MENU v14.4 | TORMENTOR412"
@@ -53,7 +52,6 @@ local LANG = {
         info_footer = "❤️ Thanks for using!",
         settings = "⚙️ SETTINGS",
         theme = "🎨 Theme:",
-        transparency = "🔲 Transparency:",
         lang = "🌍 Language:",
         save = "💾 Save",
         watermark = "MUSLIM MENU v14.4 | TORMENTOR412"
@@ -61,14 +59,14 @@ local LANG = {
 }
 
 -- ============================================================
---  НАСТРОЙКИ
+--  НАСТРОЙКИ (ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ, БЕЗ ПРОЗРАЧНОСТИ)
 -- ============================================================
 local currentTheme = "midnight"
-local currentTransparency = 0.05
-local currentLang = "ru"
+local currentLang = "en"          -- ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ
+local tempLang = "en"             -- ВРЕМЕННЫЙ ВЫБОР ЯЗЫКА
 
 -- ============================================================
---  ФУНКЦИЯ ПРИМЕНЕНИЯ ВСЕХ НАСТРОЕК
+--  ФУНКЦИЯ ПРИМЕНЕНИЯ ВСЕХ НАСТРОЕК (БЕЗ ПРОЗРАЧНОСТИ)
 -- ============================================================
 local function applyAllSettings()
     local theme = THEMES[currentTheme]
@@ -76,7 +74,6 @@ local function applyAllSettings()
     
     -- МЕНЮ
     frame.BackgroundColor3 = theme.main
-    frame.BackgroundTransparency = currentTransparency
     frame.BorderColor3 = theme.accent
     
     -- ЗАГОЛОВОК
@@ -104,8 +101,6 @@ local function applyAllSettings()
     
     themeLabel.Text = lang.theme
     themeLabel.TextColor3 = theme.text
-    transLabel.Text = lang.transparency
-    transLabel.TextColor3 = theme.text
     langLabel.Text = lang.lang
     langLabel.TextColor3 = theme.text
     saveBtn.Text = lang.save
@@ -115,11 +110,6 @@ local function applyAllSettings()
     -- ВОДЯНОЙ ЗНАК
     watermark.Text = lang.watermark
     watermark.TextColor3 = theme.accent
-    
-    -- ПОЛЗУНОК
-    transSlider.BorderColor3 = theme.accent
-    transFill.BackgroundColor3 = theme.accent
-    transKnob.BackgroundColor3 = theme.accent
     
     -- КНОПКИ ТЕМ
     for i, btn in pairs(themeContainer:GetChildren()) do
@@ -131,7 +121,7 @@ local function applyAllSettings()
         end
     end
     
-    -- ЯЗЫКОВЫЕ КНОПКИ
+    -- ЯЗЫКОВЫЕ КНОПКИ (подсветка только после сохранения)
     langRu.BackgroundColor3 = theme.btn
     langEn.BackgroundColor3 = theme.btn
     if currentLang == "ru" then
@@ -153,18 +143,14 @@ local function applyAllSettings()
         infoBtn.TextColor3 = theme.text
     end
     
-    -- ЗНАЧЕНИЯ
+    -- ЗНАЧЕНИЕ ТЕМЫ
     for i, name in ipairs(themeNames) do
         if name == currentTheme then
             themeValue.Text = themeIcons[i] .. " " .. themeDisplay[i]
         end
     end
     
-    local percent = math.round(currentTransparency * 100)
-    transValue.Text = percent .. "%"
-    transFill.Size = UDim2.new(currentTransparency, 0, 1, 0)
-    transKnob.Position = UDim2.new(currentTransparency, -8, 0.5, -8)
-    
+    -- ЗНАЧЕНИЕ ЯЗЫКА (отображаем текущий выбранный язык)
     langValue.Text = currentLang == "ru" and "🇷🇺 Русский" or "🇬🇧 English"
 end
 
@@ -327,7 +313,7 @@ infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
 -- ============================================================
---  SETTINGS
+--  SETTINGS (БЕЗ ПРОЗРАЧНОСТИ)
 -- ============================================================
 local settingsContent = Instance.new("Frame")
 settingsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -398,93 +384,17 @@ for i, name in ipairs(themeNames) do
     btnCorners.Parent = btn
     
     btn.MouseButton1Click:Connect(function()
-        currentTheme = name  -- 👈 СРАЗУ МЕНЯЕМ, БЕЗ СОХРАНЕНИЯ
+        currentTheme = name
         themeValue.Text = themeIcons[i] .. " " .. themeDisplay[i]
         applyAllSettings()
         print("🎨 Тема: " .. name)
     end)
 end
 
--- ПРОЗРАЧНОСТЬ
-local transLabel = Instance.new("TextLabel")
-transLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
-transLabel.Position = UDim2.new(0.05, 0, 0.22, 0)
-transLabel.BackgroundTransparency = 1
-transLabel.Text = "🔲 Прозрачность:"
-transLabel.TextColor3 = Color3.fromRGB(220, 230, 240)
-transLabel.TextSize = 16
-transLabel.Font = Enum.Font.SourceSansBold
-transLabel.TextXAlignment = Enum.TextXAlignment.Left
-transLabel.Parent = settingsContent
-
-local transValue = Instance.new("TextLabel")
-transValue.Size = UDim2.new(0.15, 0, 0.06, 0)
-transValue.Position = UDim2.new(0.8, 0, 0.22, 0)
-transValue.BackgroundTransparency = 1
-transValue.Text = "5%"
-transValue.TextColor3 = Color3.fromRGB(100, 180, 255)
-transValue.TextSize = 16
-transValue.Font = Enum.Font.SourceSansBold
-transValue.TextXAlignment = Enum.TextXAlignment.Right
-transValue.Parent = settingsContent
-
-local transSlider = Instance.new("Frame")
-transSlider.Size = UDim2.new(0.45, 0, 0.035, 0)
-transSlider.Position = UDim2.new(0.35, 0, 0.235, 0)
-transSlider.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
-transSlider.BackgroundTransparency = 0.1
-transSlider.BorderSizePixel = 1
-transSlider.BorderColor3 = Color3.fromRGB(100, 180, 255)
-transSlider.Parent = settingsContent
-
-local transFill = Instance.new("Frame")
-transFill.Size = UDim2.new(0.05, 0, 1, 0)
-transFill.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
-transFill.BackgroundTransparency = 0.5
-transFill.BorderSizePixel = 0
-transFill.Parent = transSlider
-
-local transKnob = Instance.new("TextButton")
-transKnob.Size = UDim2.new(0, 16, 0, 16)
-transKnob.Position = UDim2.new(0.05, -8, 0.5, -8)
-transKnob.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
-transKnob.BackgroundTransparency = 0
-transKnob.Text = ""
-transKnob.Parent = transSlider
-
-local knobCorners = Instance.new("UICorner")
-knobCorners.CornerRadius = UDim.new(1, 0)
-knobCorners.Parent = transKnob
-
-local dragging = false
-
-transKnob.MouseButton1Down:Connect(function()
-    dragging = true
-end)
-
-game:GetService("UserInputService").InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = false
-    end
-end)
-
-game:GetService("RunService").RenderStepped:Connect(function()
-    if not dragging then return end
-    local mouse = player:GetMouse()
-    if not mouse then return end
-    local relX = (mouse.X - transSlider.AbsolutePosition.X) / transSlider.AbsoluteSize.X
-    local val = math.clamp(relX, 0, 1)
-    currentTransparency = val  -- 👈 СРАЗУ МЕНЯЕМ, БЕЗ СОХРАНЕНИЯ
-    transFill.Size = UDim2.new(val, 0, 1, 0)
-    transKnob.Position = UDim2.new(val, -8, 0.5, -8)
-    transValue.Text = math.round(val * 100) .. "%"
-    applyAllSettings()  -- 👈 ПРИМЕНЯЕМ СРАЗУ
-end)
-
--- ЯЗЫК
+-- ЯЗЫК (без подсветки при выборе)
 local langLabel = Instance.new("TextLabel")
 langLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
-langLabel.Position = UDim2.new(0.05, 0, 0.32, 0)
+langLabel.Position = UDim2.new(0.05, 0, 0.22, 0)
 langLabel.BackgroundTransparency = 1
 langLabel.Text = "🌍 Язык:"
 langLabel.TextColor3 = Color3.fromRGB(220, 230, 240)
@@ -495,14 +405,14 @@ langLabel.Parent = settingsContent
 
 local langContainer = Instance.new("Frame")
 langContainer.Size = UDim2.new(0.3, 0, 0.06, 0)
-langContainer.Position = UDim2.new(0.35, 0, 0.32, 0)
+langContainer.Position = UDim2.new(0.35, 0, 0.22, 0)
 langContainer.BackgroundTransparency = 1
 langContainer.Parent = settingsContent
 
 local langRu = Instance.new("TextButton")
 langRu.Size = UDim2.new(0.45, 0, 1, 0)
 langRu.Position = UDim2.new(0, 0, 0, 0)
-langRu.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+langRu.BackgroundColor3 = Color3.fromRGB(22, 26, 34)  -- нейтральный
 langRu.BackgroundTransparency = 0.1
 langRu.Text = "🇷🇺 Рус"
 langRu.TextColor3 = Color3.fromRGB(220, 230, 240)
@@ -513,7 +423,7 @@ langRu.Parent = langContainer
 local langEn = Instance.new("TextButton")
 langEn.Size = UDim2.new(0.45, 0, 1, 0)
 langEn.Position = UDim2.new(0.55, 0, 0, 0)
-langEn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
+langEn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)  -- нейтральный
 langEn.BackgroundTransparency = 0.1
 langEn.Text = "🇬🇧 Eng"
 langEn.TextColor3 = Color3.fromRGB(220, 230, 240)
@@ -523,37 +433,32 @@ langEn.Parent = langContainer
 
 local langValue = Instance.new("TextLabel")
 langValue.Size = UDim2.new(0.2, 0, 0.06, 0)
-langValue.Position = UDim2.new(0.7, 0, 0.32, 0)
+langValue.Position = UDim2.new(0.7, 0, 0.22, 0)
 langValue.BackgroundTransparency = 1
-langValue.Text = "🇷🇺 Русский"
+langValue.Text = "🇬🇧 English"
 langValue.TextColor3 = Color3.fromRGB(100, 180, 255)
 langValue.TextSize = 14
 langValue.Font = Enum.Font.SourceSansBold
 langValue.TextXAlignment = Enum.TextXAlignment.Right
 langValue.Parent = settingsContent
 
+-- ВЫБОР ЯЗЫКА (БЕЗ ПОДСВЕТКИ И ПРИМЕНЕНИЯ)
 langRu.MouseButton1Click:Connect(function()
-    currentLang = "ru"  -- 👈 СРАЗУ МЕНЯЕМ
+    tempLang = "ru"
     langValue.Text = "🇷🇺 Русский"
-    langRu.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
-    langEn.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
-    applyAllSettings()
-    print("🌍 Язык: Русский")
+    print("🌍 Выбран русский (нажми Сохранить)")
 end)
 
 langEn.MouseButton1Click:Connect(function()
-    currentLang = "en"  -- 👈 СРАЗУ МЕНЯЕМ
+    tempLang = "en"
     langValue.Text = "🇬🇧 English"
-    langEn.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
-    langRu.BackgroundColor3 = Color3.fromRGB(22, 26, 34)
-    applyAllSettings()
-    print("🌍 Язык: English")
+    print("🌍 Выбран английский (нажми Сохранить)")
 end)
 
--- КНОПКА СОХРАНИТЬ (теперь просто показывает что настройки применены)
+-- КНОПКА СОХРАНИТЬ (применяет язык)
 local saveBtn = Instance.new("TextButton")
 saveBtn.Size = UDim2.new(0.25, 0, 0.07, 0)
-saveBtn.Position = UDim2.new(0.35, 0, 0.45, 0)
+saveBtn.Position = UDim2.new(0.35, 0, 0.35, 0)
 saveBtn.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 saveBtn.BackgroundTransparency = 0.15
 saveBtn.Text = "💾 Сохранить"
@@ -567,11 +472,9 @@ saveCorners.CornerRadius = UDim.new(0, 10)
 saveCorners.Parent = saveBtn
 
 saveBtn.MouseButton1Click:Connect(function()
+    currentLang = tempLang
     applyAllSettings()
-    print("✅ Настройки сохранены!")
-    print("🎨 Тема: " .. currentTheme)
-    print("🔲 Прозрачность: " .. math.round(currentTransparency * 100) .. "%")
-    print("🌍 Язык: " .. (currentLang == "ru" and "Русский" or "English"))
+    print("✅ Язык сохранён: " .. (currentLang == "ru" and "Русский" or "English"))
 end)
 
 -- ============================================================
@@ -620,3 +523,4 @@ applyAllSettings()
 
 print("✅ Muslim Menu v14.4 загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
+print("🌍 Язык по умолчанию: Английский")
