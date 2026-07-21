@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v12.8 - FIXED TABS
+--  MUSLIM MENU v12.9 - TWO TABS WORKING
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v12.8 (FIXED TABS)...")
+print("🚀 Загрузка Muslim Menu v12.9...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.3
-versionBadge.Text = "v12.8"
+versionBadge.Text = "v12.9"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -159,7 +159,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКИ (ESP И БОЙ)
+--  ВКЛАДКИ (ТЕПЕРЬ ДВЕ!)
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -176,7 +176,7 @@ contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- КНОПКИ ВКЛАДОК
+-- ===== КНОПКИ ВКЛАДОК (ДВЕ ШТУКИ) =====
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -202,8 +202,8 @@ local function createTabButton(name, yPos)
 end
 
 -- СОЗДАЁМ ДВЕ ВКЛАДКИ
-local tabESP = createTabButton("ESP", 0)
-local tabCombat = createTabButton("Бой", 45)  -- ТЕПЕРЬ ЕСТЬ КНОПКА "БОЙ"
+local tab1 = createTabButton("ESP", 0)      -- Первая кнопка
+local tab2 = createTabButton("Бой", 45)     -- Вторая кнопка (ТЕПЕРЬ ЕСТЬ!)
 
 -- ============================================================
 --  КОНТЕНТ ВКЛАДОК
@@ -265,13 +265,13 @@ local function createToggleInContainer(parent, label, pos, callback)
     end)
 end
 
--- КОНТЕНТ ESP
+-- === КОНТЕНТ ESP ===
 local espContent = Instance.new("Frame")
 espContent.Size = UDim2.new(1, 0, 1, 0)
 espContent.BackgroundTransparency = 1
 espContent.Parent = contentContainer
 
--- КОНТЕНТ БОЙ
+-- === КОНТЕНТ БОЙ ===
 local combatContent = Instance.new("Frame")
 combatContent.Size = UDim2.new(1, 0, 1, 0)
 combatContent.BackgroundTransparency = 1
@@ -279,15 +279,12 @@ combatContent.Visible = false
 combatContent.Parent = contentContainer
 
 -- ============================================================
---  ПЕРЕМЕННЫЕ ESP
+--  ESP (ФУНКЦИИ)
 -- ============================================================
 local ESP_MURDER = false
 local ESP_SHERIFF = false
 local ESP_INNOCENT = false
 
--- ============================================================
---  ESP
--- ============================================================
 local espList = {}
 
 local function createESPForPlayer(plr)
@@ -385,7 +382,7 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
     createESPForPlayer(plr)
 end)
 
--- КНОПКИ ESP
+-- Кнопки ESP
 createToggleInContainer(espContent, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.05, 0), function(state)
     ESP_MURDER = state
     updateAllESP()
@@ -402,7 +399,7 @@ createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25
 end)
 
 -- ============================================================
---  SHOOT MURDERER (В КОНТЕНТЕ БОЙ)
+--  SHOOT MURDERER (В БОЙ)
 -- ============================================================
 local shootMode = false
 local shootFrame = nil
@@ -825,7 +822,7 @@ for i, themeName in ipairs(themeNames) do
 end
 
 print("========================================")
-print("  MUSLIM MENU v12.8 - FIXED TABS")
+print("  MUSLIM MENU v12.9 - TWO TABS WORKING")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
