@@ -1,5 +1,5 @@
 -- ============================================================
---  MUSLIM MENU v14.4 - FULL FEATURES
+--  MUSLIM MENU v14.4 - FULLY WORKING
 --  by Tormentor412
 -- ============================================================
 
@@ -28,10 +28,10 @@ local themeDisplay = {"MIDNIGHT", "EMERALD", "RUBY", "ROYAL", "GOLD"}
 
 -- ТЕКУЩИЕ НАСТРОЙКИ
 local currentTheme = "midnight"
-local currentTransparency = 0.05  -- 5%
+local currentTransparency = 0.05  -- 5% (почти матовое)
 local currentLang = "ru"
 
--- ВРЕМЕННЫЕ НАСТРОЙКИ (ДЛЯ СОХРАНЕНИЯ)
+-- ВРЕМЕННЫЕ НАСТРОЙКИ
 local tempTheme = "midnight"
 local tempTransparency = 0.05
 local tempLang = "ru"
@@ -71,22 +71,23 @@ local LANG = {
 }
 
 -- ============================================================
---  [3] ФУНКЦИИ ОБНОВЛЕНИЯ
+--  [3] ФУНКЦИЯ ОБНОВЛЕНИЯ ВСЕГО UI
 -- ============================================================
 local function updateUI()
     local theme = THEMES[currentTheme]
     local lang = LANG[currentLang]
     
-    -- ОБНОВЛЯЕМ ЦВЕТА
+    -- ===== ОСНОВНОЕ МЕНЮ =====
     frame.BackgroundColor3 = theme.main
-    frame.BackgroundTransparency = currentTransparency
+    frame.BackgroundTransparency = currentTransparency  -- 👈 ПРОЗРАЧНОСТЬ
     frame.BorderColor3 = theme.accent
     
+    -- ===== ЗАГОЛОВОК =====
     header.BackgroundColor3 = theme.header
-    title.TextColor3 = theme.accent
     title.Text = lang.title
+    title.TextColor3 = theme.accent
     
-    -- INFO
+    -- ===== INFO =====
     infoTitle.Text = lang.info
     infoTitle.TextColor3 = theme.accent
     infoHello.Text = lang.info_hello
@@ -97,10 +98,13 @@ local function updateUI()
     infoNick.TextColor3 = theme.accent
     infoFooter.Text = lang.info_footer
     infoFooter.TextColor3 = theme.text
+    lineInfo.BackgroundColor3 = theme.accent
     
-    -- SETTINGS
+    -- ===== SETTINGS =====
     settingsTitle.Text = lang.settings
     settingsTitle.TextColor3 = theme.accent
+    settingsBorder.BorderColor3 = theme.accent
+    
     themeLabel.Text = lang.theme
     themeLabel.TextColor3 = theme.text
     transLabel.Text = lang.transparency
@@ -111,27 +115,65 @@ local function updateUI()
     saveBtn.TextColor3 = theme.text
     saveBtn.BackgroundColor3 = theme.accent
     
-    -- ВОДЯНОЙ ЗНАК
+    -- ===== ВОДЯНОЙ ЗНАК =====
     watermark.Text = lang.watermark
     watermark.TextColor3 = theme.accent
     
-    -- КНОПКИ ВКЛАДОК
-    infoBtn.BackgroundColor3 = theme.btn
-    settingsBtn.BackgroundColor3 = theme.btn
+    -- ===== КНОПКИ ВКЛАДОК =====
+    if infoContent.Visible then
+        infoBtn.BackgroundColor3 = theme.accent
+        infoBtn.TextColor3 = theme.main
+        settingsBtn.BackgroundColor3 = theme.btn
+        settingsBtn.TextColor3 = theme.text
+    else
+        settingsBtn.BackgroundColor3 = theme.accent
+        settingsBtn.TextColor3 = theme.main
+        infoBtn.BackgroundColor3 = theme.btn
+        infoBtn.TextColor3 = theme.text
+    end
+    
+    -- ОБНОВЛЯЕМ ПОЛЗУНОК
+    transSlider.BorderColor3 = theme.accent
+    transFill.BackgroundColor3 = theme.accent
+    transKnob.BackgroundColor3 = theme.accent
+    
+    -- ОБНОВЛЯЕМ КНОПКИ ТЕМ
+    for i, child in pairs(themeContainer:GetChildren()) do
+        if child:IsA("TextButton") then
+            local themeName = themeNames[i]
+            if themeName then
+                child.BackgroundColor3 = THEMES[themeName].accent
+            end
+        end
+    end
     
     -- ОБНОВЛЯЕМ ЗНАЧЕНИЯ
     updateValues()
 end
 
 local function updateValues()
-    -- ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ ТЕКУЩИХ ЗНАЧЕНИЙ
+    -- ТЕМА
     for i, name in ipairs(themeNames) do
         if name == currentTheme then
             themeValue.Text = themeIcons[i] .. " " .. themeDisplay[i]
         end
     end
-    transValue.Text = math.round(currentTransparency * 100) .. "%"
+    
+    -- ПРОЗРАЧНОСТЬ
+    local percent = math.round(currentTransparency * 100)
+    transValue.Text = percent .. "%"
+    transFill.Size = UDim2.new(currentTransparency, 0, 1, 0)
+    transKnob.Position = UDim2.new(currentTransparency, -8, 0.5, -8)
+    
+    -- ЯЗЫК
     langValue.Text = currentLang == "ru" and "🇷🇺 Русский" or "🇬🇧 English"
+    if currentLang == "ru" then
+        langRu.BackgroundColor3 = THEMES[currentTheme].accent
+        langEn.BackgroundColor3 = THEMES[currentTheme].btn
+    else
+        langEn.BackgroundColor3 = THEMES[currentTheme].accent
+        langRu.BackgroundColor3 = THEMES[currentTheme].btn
+    end
 end
 
 -- ============================================================
@@ -275,12 +317,12 @@ infoNick.TextSize = 20
 infoNick.Font = Enum.Font.SourceSansBold
 infoNick.Parent = infoContent
 
-local line = Instance.new("Frame")
-line.Size = UDim2.new(0.9, 0, 0.002, 0)
-line.Position = UDim2.new(0.05, 0, 0.8, 0)
-line.BackgroundColor3 = THEMES.midnight.accent
-line.BackgroundTransparency = 0.5
-line.Parent = infoContent
+local lineInfo = Instance.new("Frame")
+lineInfo.Size = UDim2.new(0.9, 0, 0.002, 0)
+lineInfo.Position = UDim2.new(0.05, 0, 0.8, 0)
+lineInfo.BackgroundColor3 = THEMES.midnight.accent
+lineInfo.BackgroundTransparency = 0.5
+lineInfo.Parent = infoContent
 
 local infoFooter = Instance.new("TextLabel")
 infoFooter.Size = UDim2.new(1, 0, 0.1, 0)
@@ -297,12 +339,10 @@ infoFooter.Parent = infoContent
 -- ============================================================
 local settingsContent = Instance.new("Frame")
 settingsContent.Size = UDim2.new(1, 0, 1, 0)
-settingsContent.BackgroundTransparency = 0.1
-settingsContent.BackgroundColor3 = Color3.fromRGB(15, 15, 30)
+settingsContent.BackgroundTransparency = 1
 settingsContent.Visible = false
 settingsContent.Parent = contentContainer
 
--- РАМКА
 local settingsBorder = Instance.new("Frame")
 settingsBorder.Size = UDim2.new(1, 0, 1, 0)
 settingsBorder.BackgroundTransparency = 1
@@ -332,7 +372,6 @@ themeLabel.Font = Enum.Font.SourceSansBold
 themeLabel.TextXAlignment = Enum.TextXAlignment.Left
 themeLabel.Parent = settingsContent
 
--- КНОПКИ ТЕМ
 local themeContainer = Instance.new("Frame")
 themeContainer.Size = UDim2.new(0.6, 0, 0.06, 0)
 themeContainer.Position = UDim2.new(0.35, 0, 0.12, 0)
@@ -502,16 +541,16 @@ langValue.Parent = settingsContent
 langRu.MouseButton1Click:Connect(function()
     tempLang = "ru"
     langValue.Text = "🇷🇺 Русский"
-    langRu.BackgroundColor3 = THEMES.midnight.accent
-    langEn.BackgroundColor3 = THEMES.midnight.btn
+    langRu.BackgroundColor3 = THEMES[currentTheme].accent
+    langEn.BackgroundColor3 = THEMES[currentTheme].btn
     print("🌍 Выбран русский")
 end)
 
 langEn.MouseButton1Click:Connect(function()
     tempLang = "en"
     langValue.Text = "🇬🇧 English"
-    langEn.BackgroundColor3 = THEMES.midnight.accent
-    langRu.BackgroundColor3 = THEMES.midnight.btn
+    langEn.BackgroundColor3 = THEMES[currentTheme].accent
+    langRu.BackgroundColor3 = THEMES[currentTheme].btn
     print("🌍 Выбран английский")
 end)
 
@@ -532,12 +571,10 @@ saveCorners.CornerRadius = UDim.new(0, 10)
 saveCorners.Parent = saveBtn
 
 saveBtn.MouseButton1Click:Connect(function()
-    -- СОХРАНЯЕМ НАСТРОЙКИ
     currentTheme = tempTheme
     currentTransparency = tempTransparency
     currentLang = tempLang
     
-    -- ОБНОВЛЯЕМ UI
     updateUI()
     updateValues()
     
@@ -567,23 +604,13 @@ watermark.Parent = frame
 infoBtn.MouseButton1Click:Connect(function()
     infoContent.Visible = true
     settingsContent.Visible = false
-    infoBtn.BackgroundColor3 = THEMES[currentTheme].accent
-    infoBtn.BackgroundTransparency = 0.15
-    infoBtn.TextColor3 = THEMES[currentTheme].main
-    settingsBtn.BackgroundColor3 = THEMES[currentTheme].btn
-    settingsBtn.BackgroundTransparency = 0.15
-    settingsBtn.TextColor3 = THEMES[currentTheme].text
+    updateUI()
 end)
 
 settingsBtn.MouseButton1Click:Connect(function()
     infoContent.Visible = false
     settingsContent.Visible = true
-    settingsBtn.BackgroundColor3 = THEMES[currentTheme].accent
-    settingsBtn.BackgroundTransparency = 0.15
-    settingsBtn.TextColor3 = THEMES[currentTheme].main
-    infoBtn.BackgroundColor3 = THEMES[currentTheme].btn
-    infoBtn.BackgroundTransparency = 0.15
-    infoBtn.TextColor3 = THEMES[currentTheme].text
+    updateUI()
 end)
 
 -- ============================================================
