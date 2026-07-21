@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v9.8 - SHOOT MURDERER
+--  MUSLIM MENU v10.0 - SHOOT MURDERER ULTIMATE
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v9.8 (SHOOT MURDERER)...")
+print("🚀 Загрузка Muslim Menu v10.0 (SHOOT MURDERER ULTIMATE)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -45,8 +45,8 @@ wait(1.5)
 --  ОСНОВНОЕ МЕНЮ
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 460, 0, 620)
-frame.Position = UDim2.new(0.5, -230, 0.5, -310)
+frame.Size = UDim2.new(0, 460, 0, 650)
+frame.Position = UDim2.new(0.5, -230, 0.5, -325)
 frame.BackgroundColor3 = THEMES[currentTheme].main
 frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 2
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v9.8"
+versionBadge.Text = "v10.0"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -389,11 +389,12 @@ createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.38, 0), function(stat
 end)
 
 -- ============================================================
---  SHOOT MURDERER (КВАДРАТНАЯ КНОПКА)
+--  SHOOT MURDERER (КРАСИВЫЙ КВАДРАТ)
 -- ============================================================
 local shootMode = false
 local shootButton = nil
 local shootFrame = nil
+local animConnection = nil
 
 local function toggleShootMode(state)
     shootMode = state
@@ -407,29 +408,106 @@ local function toggleShootMode(state)
             screenGui.Parent = player:WaitForChild("PlayerGui")
         end
         
+        -- Стеклянный квадрат
         shootFrame = Instance.new("Frame")
-        shootFrame.Size = UDim2.new(0, 120, 0, 120)
-        shootFrame.Position = UDim2.new(0.5, -60, 0.7, -60)
-        shootFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        shootFrame.BackgroundTransparency = 0.6
+        shootFrame.Size = UDim2.new(0, 160, 0, 160)
+        shootFrame.Position = UDim2.new(0.5, -80, 0.7, -80)
+        shootFrame.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+        shootFrame.BackgroundTransparency = 0.85
         shootFrame.BorderSizePixel = 3
-        shootFrame.BorderColor3 = Color3.fromRGB(255, 50, 50)
+        shootFrame.BorderColor3 = Color3.fromRGB(255, 20, 147)
         shootFrame.Active = true
         shootFrame.Draggable = true
         shootFrame.Parent = screenGui
         
-        local corners = Instance.new("UICorner")
-        corners.CornerRadius = UDim.new(0, 15)
-        corners.Parent = shootFrame
+        local corners2 = Instance.new("UICorner")
+        corners2.CornerRadius = UDim.new(0, 20)
+        corners2.Parent = shootFrame
         
+        -- Блеск
+        local glassShine = Instance.new("Frame")
+        glassShine.Size = UDim2.new(0.8, 0, 0.3, 0)
+        glassShine.Position = UDim2.new(0.1, 0, 0.05, 0)
+        glassShine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        glassShine.BackgroundTransparency = 0.6
+        glassShine.BorderSizePixel = 0
+        glassShine.Parent = shootFrame
+        
+        local shineCorners = Instance.new("UICorner")
+        shineCorners.CornerRadius = UDim.new(0, 15)
+        shineCorners.Parent = glassShine
+        
+        -- Текст
         local shootText = Instance.new("TextLabel")
-        shootText.Size = UDim2.new(1, 0, 1, 0)
+        shootText.Size = UDim2.new(1, 0, 0.3, 0)
+        shootText.Position = UDim2.new(0, 0, 0.35, 0)
         shootText.BackgroundTransparency = 1
         shootText.Text = "🔫 SHOOT"
         shootText.TextColor3 = Color3.fromRGB(255, 255, 255)
         shootText.TextSize = 28
         shootText.Font = Enum.Font.SourceSansBold
+        shootText.TextStrokeTransparency = 0.3
         shootText.Parent = shootFrame
+        
+        -- Прицел
+        local crosshairContainer = Instance.new("Frame")
+        crosshairContainer.Size = UDim2.new(0.4, 0, 0.4, 0)
+        crosshairContainer.Position = UDim2.new(0.3, 0, 0.7, 0)
+        crosshairContainer.BackgroundTransparency = 1
+        crosshairContainer.Parent = shootFrame
+        
+        local crosshairCircle = Instance.new("Frame")
+        crosshairCircle.Size = UDim2.new(1, 0, 1, 0)
+        crosshairCircle.BackgroundTransparency = 1
+        crosshairCircle.BorderSizePixel = 3
+        crosshairCircle.BorderColor3 = Color3.fromRGB(255, 255, 255)
+        crosshairCircle.Parent = crosshairContainer
+        
+        local circleCorners2 = Instance.new("UICorner")
+        circleCorners2.CornerRadius = UDim.new(1, 0)
+        circleCorners2.Parent = crosshairCircle
+        
+        local line1 = Instance.new("Frame")
+        line1.Size = UDim2.new(1, 0, 0.1, 0)
+        line1.Position = UDim2.new(0, 0, 0.45, 0)
+        line1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        line1.BackgroundTransparency = 0.3
+        line1.BorderSizePixel = 0
+        line1.Parent = crosshairContainer
+        
+        local line2 = Instance.new("Frame")
+        line2.Size = UDim2.new(0.1, 0, 1, 0)
+        line2.Position = UDim2.new(0.45, 0, 0, 0)
+        line2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        line2.BackgroundTransparency = 0.3
+        line2.BorderSizePixel = 0
+        line2.Parent = crosshairContainer
+        
+        local dot = Instance.new("Frame")
+        dot.Size = UDim2.new(0.12, 0, 0.12, 0)
+        dot.Position = UDim2.new(0.44, 0, 0.44, 0)
+        dot.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+        dot.BackgroundTransparency = 0.2
+        dot.BorderSizePixel = 0
+        dot.Parent = crosshairContainer
+        
+        local dotCorners = Instance.new("UICorner")
+        dotCorners.CornerRadius = UDim.new(1, 0)
+        dotCorners.Parent = dot
+        
+        -- Анимация
+        local angle = 0
+        animConnection = game:GetService("RunService").RenderStepped:Connect(function()
+            if not shootFrame or not shootFrame.Parent then
+                if animConnection then
+                    animConnection:Disconnect()
+                    animConnection = nil
+                end
+                return
+            end
+            angle = angle + 0.02
+            crosshairContainer.Rotation = math.deg(angle)
+        end)
         
         shootButton = Instance.new("TextButton")
         shootButton.Size = UDim2.new(1, 0, 1, 0)
@@ -437,13 +515,46 @@ local function toggleShootMode(state)
         shootButton.Text = ""
         shootButton.Parent = shootFrame
         
+        -- Крестик закрытия
+        local closeBtnShoot = Instance.new("TextButton")
+        closeBtnShoot.Size = UDim2.new(0, 35, 0, 35)
+        closeBtnShoot.Position = UDim2.new(0.78, 0, -0.12, 0)
+        closeBtnShoot.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+        closeBtnShoot.BackgroundTransparency = 0.1
+        closeBtnShoot.Text = "✕"
+        closeBtnShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeBtnShoot.TextSize = 20
+        closeBtnShoot.Font = Enum.Font.SourceSansBold
+        closeBtnShoot.Parent = shootFrame
+        
+        local closeCornersShoot = Instance.new("UICorner")
+        closeCornersShoot.CornerRadius = UDim.new(0, 10)
+        closeCornersShoot.Parent = closeBtnShoot
+        
+        closeBtnShoot.MouseButton1Click:Connect(function()
+            shootMode = false
+            if shootFrame then
+                shootFrame:Destroy()
+                shootFrame = nil
+            end
+            if animConnection then
+                animConnection:Disconnect()
+                animConnection = nil
+            end
+            shootButton = nil
+            print("🔫 Shoot Murderer выключён!")
+        end)
+        
+        -- ЛОГИКА ВЫСТРЕЛА
         shootButton.MouseButton1Click:Connect(function()
             if not shootMode then return end
             
             local char = player.Character
-            if not char then return end
+            if not char then
+                print("❌ Персонаж не найден!")
+                return
+            end
             
-            -- Проверяем пистолет
             local gun = nil
             for _, tool in pairs(char:GetChildren()) do
                 if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
@@ -453,11 +564,13 @@ local function toggleShootMode(state)
             end
             
             if not gun then
-                local backpack = player.Backpack
-                for _, tool in pairs(backpack:GetChildren()) do
-                    if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
-                        gun = tool
-                        break
+                local backpack = player:FindFirstChild("Backpack")
+                if backpack then
+                    for _, tool in pairs(backpack:GetChildren()) do
+                        if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
+                            gun = tool
+                            break
+                        end
                     end
                 end
             end
@@ -467,7 +580,6 @@ local function toggleShootMode(state)
                 return
             end
             
-            -- Ищем убийцу
             local murderer = nil
             for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
                 if plr ~= player and plr.Character then
@@ -484,7 +596,6 @@ local function toggleShootMode(state)
                 return
             end
             
-            -- Наводимся и стреляем
             local root = murderer.Character:FindFirstChild("HumanoidRootPart")
             local myRoot = char:FindFirstChild("HumanoidRootPart")
             if root and myRoot then
@@ -503,39 +614,17 @@ local function toggleShootMode(state)
             end
         end)
         
-        -- Крестик закрытия
-        local closeBtnShoot = Instance.new("TextButton")
-        closeBtnShoot.Size = UDim2.new(0, 30, 0, 30)
-        closeBtnShoot.Position = UDim2.new(0.75, 0, -0.25, 0)
-        closeBtnShoot.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
-        closeBtnShoot.BackgroundTransparency = 0
-        closeBtnShoot.Text = "✕"
-        closeBtnShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
-        closeBtnShoot.TextSize = 18
-        closeBtnShoot.Font = Enum.Font.SourceSansBold
-        closeBtnShoot.Parent = shootFrame
-        
-        local closeCornersShoot = Instance.new("UICorner")
-        closeCornersShoot.CornerRadius = UDim.new(0, 8)
-        closeCornersShoot.Parent = closeBtnShoot
-        
-        closeBtnShoot.MouseButton1Click:Connect(function()
-            shootMode = false
-            if shootFrame then
-                shootFrame:Destroy()
-                shootFrame = nil
-            end
-            shootButton = nil
-            print("🔫 Shoot Murderer выключён!")
-        end)
-        
     else
         if shootFrame then
             shootFrame:Destroy()
             shootFrame = nil
         end
+        if animConnection then
+            animConnection:Disconnect()
+            animConnection = nil
+        end
         shootButton = nil
-        print("🔫 Shoot Murderer выключн!")
+        print("🔫 Shoot Murderer выключён!")
     end
 end
 
@@ -721,7 +810,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v9.8 - SHOOT MURDERER")
+print("  MUSLIM MENU v10.0 - SHOOT MURDERER ULTIMATE")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
