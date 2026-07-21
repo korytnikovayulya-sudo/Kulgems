@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - КРАСНОЕ МЕНЮ С БЕЛОЙ ПОДСВЕТКОЙ
+--  WERTIUM HUB - БОЛЬШОЕ МЕНЮ, ЧЁРНЫЕ ПРИЦЕЛЫ
 -- ============================================================
 
 print("🚀 Загрузка...")
@@ -25,36 +25,36 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 
 wait(1.5)
 
--- ОСНОВНОЕ ОКНО (КРАСНОЕ)
+-- ОСНОВНОЕ ОКНО (БОЛЬШОЕ, КРАСНОЕ)
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 600, 0, 400)
-frame.Position = UDim2.new(0.5, -300, 0.5, -200)
-frame.BackgroundColor3 = Color3.fromRGB(140, 20, 20)  -- КРАСНЫЙ
+frame.Size = UDim2.new(0, 800, 0, 500)           -- УВЕЛИЧЕНО
+frame.Position = UDim2.new(0.5, -400, 0.5, -250)
+frame.BackgroundColor3 = Color3.fromRGB(140, 20, 20)
 frame.BackgroundTransparency = 0.05
 frame.BorderSizePixel = 2
-frame.BorderColor3 = Color3.fromRGB(200, 50, 50)      -- РАМКА ТОЖЕ КРАСНАЯ
+frame.BorderColor3 = Color3.fromRGB(200, 50, 50)
 frame.Active = true
 frame.Draggable = true
 frame.ClipsDescendants = true
 frame.Parent = gui
 
--- МЯГКИЕ УГЛЫ
+-- УГЛЫ
 local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
--- БЕЛАЯ ЗАМЕТНАЯ ПОДСВЕТКА
+-- БЕЛАЯ ПОДСВЕТКА
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 4
 stroke.Color = Color3.fromRGB(255, 255, 255)
-stroke.Transparency = 0.1   -- ПОЧТИ НЕПРОЗРАЧНАЯ
+stroke.Transparency = 0.1
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = frame
 
 -- ЗАГОЛОВОК
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 70)
-header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)  -- ТЕМНЕЕ КРАСНЫЙ
+header.Size = UDim2.new(1, 0, 0, 80)             -- ЧУТЬ ВЫШЕ
+header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)
 header.BackgroundTransparency = 0.15
 header.Parent = frame
 
@@ -62,10 +62,10 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- ЛЕВЫЙ ПРИЦЕЛ (ГОЛУБОЙ)
+-- ЛЕВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
 local crosshairL = Instance.new("Frame")
-crosshairL.Size = UDim2.new(0, 40, 0.8, 0)
-crosshairL.Position = UDim2.new(0.02, 0, 0.1, 0)
+crosshairL.Size = UDim2.new(0, 45, 0.7, 0)       -- ЧУТЬ БОЛЬШЕ
+crosshairL.Position = UDim2.new(0.02, 0, 0.15, 0)
 crosshairL.BackgroundTransparency = 1
 crosshairL.Parent = header
 
@@ -73,7 +73,7 @@ local circleL = Instance.new("Frame")
 circleL.Size = UDim2.new(1, 0, 1, 0)
 circleL.BackgroundTransparency = 1
 circleL.BorderSizePixel = 2
-circleL.BorderColor3 = Color3.fromRGB(100, 200, 255)   -- ГОЛУБОЙ
+circleL.BorderColor3 = Color3.fromRGB(0, 0, 0)     -- ЧЁРНЫЙ
 circleL.Parent = crosshairL
 local circleLc = Instance.new("UICorner")
 circleLc.CornerRadius = UDim.new(1, 0)
@@ -82,7 +82,7 @@ circleLc.Parent = circleL
 local hL = Instance.new("Frame")
 hL.Size = UDim2.new(0.8, 0, 0.08, 0)
 hL.Position = UDim2.new(0.1, 0, 0.46, 0)
-hL.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+hL.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 hL.BackgroundTransparency = 0.3
 hL.BorderSizePixel = 0
 hL.Parent = crosshairL
@@ -90,7 +90,7 @@ hL.Parent = crosshairL
 local vL = Instance.new("Frame")
 vL.Size = UDim2.new(0.08, 0, 0.8, 0)
 vL.Position = UDim2.new(0.46, 0, 0.1, 0)
-vL.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+vL.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 vL.BackgroundTransparency = 0.3
 vL.BorderSizePixel = 0
 vL.Parent = crosshairL
@@ -98,7 +98,7 @@ vL.Parent = crosshairL
 local dotL = Instance.new("Frame")
 dotL.Size = UDim2.new(0.15, 0, 0.15, 0)
 dotL.Position = UDim2.new(0.425, 0, 0.425, 0)
-dotL.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+dotL.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 dotL.BackgroundTransparency = 0.2
 dotL.BorderSizePixel = 0
 dotL.Parent = crosshairL
@@ -106,10 +106,10 @@ local dotLc = Instance.new("UICorner")
 dotLc.CornerRadius = UDim.new(1, 0)
 dotLc.Parent = dotL
 
--- ПРАВЫЙ ПРИЦЕЛ (ГОЛУБОЙ)
+-- ПРАВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
 local crosshairR = Instance.new("Frame")
-crosshairR.Size = UDim2.new(0, 40, 0.8, 0)
-crosshairR.Position = UDim2.new(0.88, 0, 0.1, 0)
+crosshairR.Size = UDim2.new(0, 45, 0.7, 0)
+crosshairR.Position = UDim2.new(0.88, 0, 0.15, 0)
 crosshairR.BackgroundTransparency = 1
 crosshairR.Parent = header
 
@@ -117,7 +117,7 @@ local circleR = Instance.new("Frame")
 circleR.Size = UDim2.new(1, 0, 1, 0)
 circleR.BackgroundTransparency = 1
 circleR.BorderSizePixel = 2
-circleR.BorderColor3 = Color3.fromRGB(100, 200, 255)
+circleR.BorderColor3 = Color3.fromRGB(0, 0, 0)
 circleR.Parent = crosshairR
 local circleRc = Instance.new("UICorner")
 circleRc.CornerRadius = UDim.new(1, 0)
@@ -126,7 +126,7 @@ circleRc.Parent = circleR
 local hR = Instance.new("Frame")
 hR.Size = UDim2.new(0.8, 0, 0.08, 0)
 hR.Position = UDim2.new(0.1, 0, 0.46, 0)
-hR.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+hR.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 hR.BackgroundTransparency = 0.3
 hR.BorderSizePixel = 0
 hR.Parent = crosshairR
@@ -134,7 +134,7 @@ hR.Parent = crosshairR
 local vR = Instance.new("Frame")
 vR.Size = UDim2.new(0.08, 0, 0.8, 0)
 vR.Position = UDim2.new(0.46, 0, 0.1, 0)
-vR.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+vR.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 vR.BackgroundTransparency = 0.3
 vR.BorderSizePixel = 0
 vR.Parent = crosshairR
@@ -142,7 +142,7 @@ vR.Parent = crosshairR
 local dotR = Instance.new("Frame")
 dotR.Size = UDim2.new(0.15, 0, 0.15, 0)
 dotR.Position = UDim2.new(0.425, 0, 0.425, 0)
-dotR.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+dotR.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 dotR.BackgroundTransparency = 0.2
 dotR.BorderSizePixel = 0
 dotR.Parent = crosshairR
@@ -164,21 +164,21 @@ title.Size = UDim2.new(0.5, 0, 1, 0)
 title.Position = UDim2.new(0.25, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "WERTIUM HUB"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)   -- БЕЛЫЙ ТЕКСТ
-title.TextSize = 34
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 38                     -- КРУПНЕЕ
 title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = header
 
 -- КНОПКА ЗАКРЫТИЯ
 local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(0.95, 0, 0.5, -15)
+closeBtn.Size = UDim2.new(0, 35, 0, 35)
+closeBtn.Position = UDim2.new(0.95, 0, 0.5, -17)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
 closeBtn.BackgroundTransparency = 0.1
 closeBtn.Text = "✕"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.TextSize = 18
+closeBtn.TextSize = 20
 closeBtn.Font = Enum.Font.SourceSansBold
 closeBtn.Parent = header
 
@@ -206,5 +206,5 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ Красное меню с белой подсветкой и голубыми прицелами загружено!")
+print("✅ Меню увеличено, прицелы чёрные!")
 print("🔑 F1 - открыть/закрыть")
