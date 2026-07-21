@@ -133,17 +133,19 @@ local function updateContent()
         settingsContent.Visible = (activeTab == "SETTINGS")
     end
     
-    -- ОБНОВЛЯЕМ ЦВЕТА КНОПОК ВКЛАДОК
-    for _, btn in pairs(tabContainer:GetChildren()) do
-        if btn:IsA("TextButton") then
-            if btn.Text == activeTab then
-                btn.BackgroundColor3 = THEMES[currentTheme].accent
-                btn.BackgroundTransparency = 0.15
-                btn.TextColor3 = THEMES[currentTheme].main
-            else
-                btn.BackgroundColor3 = THEMES[currentTheme].btn
-                btn.BackgroundTransparency = 0.15
-                btn.TextColor3 = THEMES[currentTheme].text
+    -- ОБНОВЛЯЕМ ЦВЕТА КНОПОК ВКЛАДОК (С ПРОВЕРКОЙ)
+    if tabContainer then
+        for _, btn in pairs(tabContainer:GetChildren()) do
+            if btn:IsA("TextButton") then
+                if btn.Text == activeTab then
+                    btn.BackgroundColor3 = THEMES[currentTheme].accent
+                    btn.BackgroundTransparency = 0.15
+                    btn.TextColor3 = THEMES[currentTheme].main
+                else
+                    btn.BackgroundColor3 = THEMES[currentTheme].btn
+                    btn.BackgroundTransparency = 0.15
+                    btn.TextColor3 = THEMES[currentTheme].text
+                end
             end
         end
     end
@@ -369,11 +371,34 @@ local function createTabButton(name, yPos)
     btnCorners.CornerRadius = UDim.new(0, 0)
     btnCorners.Parent = btn
     
-    -- ГЛАВНОЕ ИСПРАВЛЕНИЕ: ДОБАВЛЕН ВЫЗОВ updateContent()
+    -- ГЛАВНОЕ ИСПРАВЛЕНИЕ: ПРЯМОЕ ПЕРЕКЛЮЧЕНИЕ
     btn.MouseButton1Click:Connect(function()
         activeTab = name
-        updateContent()
         print("🔄 Вкладка: " .. name)
+        
+        -- ПРЯМОЕ ПЕРЕКЛЮЧЕНИЕ БЕЗ ФУНКЦИИ
+        if name == "INFO" then
+            infoContent.Visible = true
+            settingsContent.Visible = false
+        elseif name == "SETTINGS" then
+            infoContent.Visible = false
+            settingsContent.Visible = true
+        end
+        
+        -- ЦВЕТА КНОПОК
+        for _, b in pairs(tabContainer:GetChildren()) do
+            if b:IsA("TextButton") then
+                if b.Text == name then
+                    b.BackgroundColor3 = THEMES[currentTheme].accent
+                    b.BackgroundTransparency = 0.15
+                    b.TextColor3 = THEMES[currentTheme].main
+                else
+                    b.BackgroundColor3 = THEMES[currentTheme].btn
+                    b.BackgroundTransparency = 0.15
+                    b.TextColor3 = THEMES[currentTheme].text
+                end
+            end
+        end
     end)
     
     return btn
@@ -514,7 +539,7 @@ for i, themeName in ipairs(themeNamesSettings) do
     
     btn.MouseButton1Click:Connect(function()
         tempTheme = themeName
-        print("🎨 Выбрана тема: " .. themeName)  -- ИСПРАВЛЕНО
+        print("🎨 Выбрана тема: " .. themeName)
     end)
 end
 
@@ -696,9 +721,28 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
 end)
 
 -- ============================================================
---  [12] ИНИЦИАЛИЗАЦИЯ
+--  [12] ИНИЦИАЛИЗАЦИЯ (ИСПРАВЛЕНО)
 -- ============================================================
-updateContent()
+-- ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ INFO ПРИ СТАРТЕ
+infoContent.Visible = true
+settingsContent.Visible = false
+
+-- НАСТРАИВАЕМ ЦВЕТА КНОПОК ВРУЧНУЮ
+if tabContainer then
+    for _, btn in pairs(tabContainer:GetChildren()) do        if btn:IsA("TextButton") then
+            if btn.Text == "INFO" then
+                btn.BackgroundColor3 = THEMES[currentTheme].accent
+                btn.BackgroundTransparency = 0.15
+                btn.TextColor3 = THEMES[currentTheme].main
+            else
+                btn.BackgroundColor3 = THEMES[currentTheme].btn
+                btn.BackgroundTransparency = 0.15
+                btn.TextColor3 = THEMES[currentTheme].text
+            end
+        end
+    end
+end
+
 print("✅ Muslim Menu v14.4 загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("🔑 M - открыть/закрыть (когда меню скрыто)")
