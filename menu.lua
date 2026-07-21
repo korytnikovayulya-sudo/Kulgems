@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v9.4 - ULTIMATE ESP
+--  MUSLIM MENU v9.5 - СЛИЯНИЕ С ТВОИМ КОДОМ
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v9.4 (ULTIMATE ESP)...")
+print("🚀 Загрузка Muslim Menu v9.5...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v9.4"
+versionBadge.Text = "v9.5"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,119 +219,95 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP через BillboardGui (РАБОТАЕТ ВСЕГДА)
+--  ESP (ТВОЙ КОД — РАБОТАЕТ 100%)
 -- ============================================================
-local espData = {} -- {plr = BillboardGui}
+local ESP_ENABLED = false
+local espList = {}
 
-local function clearESP()
-    for _, data in pairs(espData) do
-        if data and data.Parent then
-            data:Destroy()
+local function createESPForPlayer(plr)
+    if plr == player then return end
+    if espList[plr] then return end
+    
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = plr.Name .. "_ESP"
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true  -- ВИДНО СКВОЗЬ СТЕНЫ!
+    
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.TextSize = 14
+    textLabel.Font = Enum.Font.SourceSansBold
+    textLabel.Parent = billboard
+    
+    billboard.Parent = game:GetService("CoreGui")
+    espList[plr] = {
+        billboard = billboard,
+        label = textLabel,
+        connection = nil
+    }
+    
+    -- Обновление позиции и роли
+    local conn
+    conn = game:GetService("RunService").RenderStepped:Connect(function()
+        if not plr or not plr.Parent or not plr.Character or not plr.Character:FindFirstChild("Head") then
+            billboard:Destroy()
+            espList[plr] = nil
+            conn:Disconnect()
+            return
+        end
+        
+        billboard.Adornee = plr.Character.Head
+        
+        if ESP_ENABLED then
+            -- Проверяем наличие ножа
+            local isMurder = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
+            if isMurder then
+                textLabel.Text = "🔴 УБИЙЦА " .. plr.Name
+                textLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+            else
+                textLabel.Text = ""
+            end
+        else
+            textLabel.Text = ""
+        end
+    end)
+    
+    espList[plr].connection = conn
+end
+
+local function updateAllESP()
+    -- Удаляем старые ESP
+    for plr, data in pairs(espList) do
+        if data.billboard then
+            data.billboard:Destroy()
+        end
+        if data.connection then
+            data.connection:Disconnect()
         end
     end
-    espData = {}
-end
-
-local function createESP(plr, text, bgColor)
-    if not plr or not plr.Character then return nil end
+    espList = {}
     
-    -- Привязываем к голове, а не к HumanoidRootPart
-    local head = plr.Character:FindFirstChild("Head")
-    if not head then return nil end
-    
-    local bill = Instance.new("BillboardGui")
-    bill.Size = UDim2.new(0, 200, 0, 50)
-    bill.AlwaysOnTop = true  -- ВИДЕН СКВОЗЬ СТЕНЫ!
-    bill.Adornee = head      -- Привязываем к голове
-    bill.Parent = gui        -- Родитель в PlayerGui, а не в персонаже
-    
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, 0, 1, 0)
-    label.BackgroundTransparency = 0.2
-    label.BackgroundColor3 = bgColor
-    label.Text = text
-    label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.TextSize = 22
-    label.Font = Enum.Font.SourceSansBold
-    label.TextStrokeTransparency = 0.2
-    label.Parent = bill
-    
-    return bill
-end
-
-local function updateESP()
-    clearESP()
-    
-    for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-        if plr ~= player then
-            local weaponType = "innocent"
-            
-            -- Проверяем наличие оружия
-            if plr.Character then
-                for _, tool in pairs(plr.Character:GetChildren()) do
-                    if tool:IsA("Tool") then
-                        if tool.Name == "Knife" then
-                            weaponType = "murderer"
-                            print("🔴 УБИЙЦА: " .. plr.Name)
-                        elseif tool.Name == "Gun" then
-                            weaponType = "sheriff"
-                            print("🔵 ШЕРИФ: " .. plr.Name)
-                        end
-                    end
-                end
-            end
-            
-            local bill = nil
-            if espMurderState and weaponType == "murderer" then
-                bill = createESP(plr, "🔴 УБИЙЦА", Color3.fromRGB(255, 0, 0))
-            elseif espSheriffState and weaponType == "sheriff" then
-                bill = createESP(plr, "🔵 ШЕРИФ", Color3.fromRGB(0, 100, 255))
-            elseif espInnocentState and weaponType == "innocent" then
-                bill = createESP(plr, "🟢 НЕВИННЫЙ", Color3.fromRGB(0, 200, 0))
-            end
-            
-            if bill then
-                espData[plr] = bill
-            end
+    -- Создаём новые
+    if ESP_ENABLED then
+        for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+            createESPForPlayer(plr)
         end
     end
 end
 
-local espMurderState = false
-local espSheriffState = false
-local espInnocentState = false
-
-createToggle(frame, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.14, 0), function(state)
-    espMurderState = state
-    updateESP()
+-- Кнопка включения ESP
+createToggle(frame, "🔴 ESP Murder (вкл/выкл)", UDim2.new(0.05, 0, 0.14, 0), function(state)
+    ESP_ENABLED = state
+    updateAllESP()
 end)
 
-createToggle(frame, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.22, 0), function(state)
-    espSheriffState = state
-    updateESP()
-end)
-
-createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.30, 0), function(state)
-    espInnocentState = state
-    updateESP()
-end)
-
--- ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ ПЕРСОНАЖА =====
-local function onCharacterAdded()
-    wait(1)
-    if espMurderState or espSheriffState or espInnocentState then
-        updateESP()
-    end
-end
-
-player.CharacterAdded:Connect(onCharacterAdded)
-
--- Автообновление каждые 2 секунды (для надёжности)
-spawn(function()
-    while wait(2) do
-        if espMurderState or espSheriffState or espInnocentState then
-            updateESP()
-        end
+-- Новые игроки
+game:GetService("Players").PlayerAdded:Connect(function(plr)
+    if ESP_ENABLED then
+        createESPForPlayer(plr)
     end
 end)
 
@@ -380,7 +356,7 @@ local function toggleBunnyHop(state)
     end
 end
 
-createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.38, 0), function(state)
+createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.28, 0), function(state)
     toggleBunnyHop(state)
 end)
 
@@ -389,7 +365,7 @@ end)
 -- ============================================================
 local themeContainer = Instance.new("Frame")
 themeContainer.Size = UDim2.new(0.9, 0, 0, 42)
-themeContainer.Position = UDim2.new(0.05, 0, 0.60, 0)
+themeContainer.Position = UDim2.new(0.05, 0, 0.55, 0)
 themeContainer.BackgroundColor3 = THEMES[currentTheme].btn
 themeContainer.BackgroundTransparency = 0
 themeContainer.BorderSizePixel = 1
@@ -562,7 +538,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v9.4 - ULTIMATE ESP")
+print("  MUSLIM MENU v9.5 - С ТВОИМ ESP")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
