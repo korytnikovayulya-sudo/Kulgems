@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v12.1 - FULL FIXED
+--  MUSLIM MENU v12.2 - ESP FIXED
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v12.1 (FULL FIXED)...")
+print("🚀 Загрузка Muslim Menu v12.2 (ESP FIXED)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v12.1"
+versionBadge.Text = "v12.2"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -159,7 +159,7 @@ mButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ВКЛАДКИ (СЛЕВА)
+--  ВКЛАДКИ
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
@@ -176,7 +176,6 @@ contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- Функция создания кнопок вкладок
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -201,16 +200,12 @@ local function createTabButton(name, yPos)
     return btn
 end
 
-local tabESP = createTabButton("ESP", 0)
-local tabCombat = createTabButton("Combat", 45)
+createTabButton("ESP", 0)
+createTabButton("Combat", 45)
 
 -- ============================================================
 --  КОНТЕНТ ВКЛАДОК
 -- ============================================================
-local ESP_MURDER = false
-local ESP_SHERIFF = false
-local ESP_INNOCENT = false
-
 local function createToggleInContainer(parent, label, pos, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.9, 0, 0, 44)
@@ -268,48 +263,28 @@ local function createToggleInContainer(parent, label, pos, callback)
     end)
 end
 
--- Контент для вкладки ESP
+-- ESP
 local espContent = Instance.new("Frame")
 espContent.Size = UDim2.new(1, 0, 1, 0)
 espContent.BackgroundTransparency = 1
 espContent.Parent = contentContainer
 
-createToggleInContainer(espContent, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.05, 0), function(state)
-    ESP_MURDER = state
-    updateAllESP()
-end)
-
-createToggleInContainer(espContent, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.15, 0), function(state)
-    ESP_SHERIFF = state
-    updateAllESP()
-end)
-
-createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25, 0), function(state)
-    ESP_INNOCENT = state
-    updateAllESP()
-end)
-
--- Контент для вкладки Combat
+-- Combat
 local combatContent = Instance.new("Frame")
 combatContent.Size = UDim2.new(1, 0, 1, 0)
 combatContent.BackgroundTransparency = 1
 combatContent.Visible = false
 combatContent.Parent = contentContainer
 
-createToggleInContainer(combatContent, "⬜ Shoot Murderer", UDim2.new(0.05, 0, 0.05, 0), function(state)
-    toggleShootMode(state)
-end)
+-- ============================================================
+--  ПЕРЕМЕННЫЕ ESP
+-- ============================================================
+local ESP_MURDER = false
+local ESP_SHERIFF = false
+local ESP_INNOCENT = false
 
 -- ============================================================
---  ОБНОВЛЕНИЕ ВКЛАДОК
--- ============================================================
-local function updateContent()
-    espContent.Visible = (activeTab == "ESP")
-    combatContent.Visible = (activeTab == "Combat")
-end
-
--- ============================================================
---  ESP (BILLBOARD)
+--  ESP (РАБОЧАЯ ВЕРСИЯ — BILLBOARD)
 -- ============================================================
 local espList = {}
 
@@ -336,7 +311,8 @@ local function createESPForPlayer(plr)
     espList[plr] = {
         billboard = billboard,
         label = textLabel,
-        connection = nil
+        connection = nil,
+        player = plr
     }
     
     local conn
@@ -351,12 +327,12 @@ local function createESPForPlayer(plr)
         billboard.Adornee = plr.Character.Head
         
         local role = "innocent"
-        local isMurder = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
-        local isSheriff = plr.Backpack:FindFirstChild("Gun") or plr.Character:FindFirstChild("Gun")
+        local hasKnife = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
+        local hasGun = plr.Backpack:FindFirstChild("Gun") or plr.Character:FindFirstChild("Gun")
         
-        if isMurder then
+        if hasKnife then
             role = "murderer"
-        elseif isSheriff then
+        elseif hasGun then
             role = "sheriff"
         end
         
@@ -408,6 +384,22 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
     createESPForPlayer(plr)
 end)
 
+-- Кнопки ESP
+createToggleInContainer(espContent, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.05, 0), function(state)
+    ESP_MURDER = state
+    updateAllESP()
+end)
+
+createToggleInContainer(espContent, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.15, 0), function(state)
+    ESP_SHERIFF = state
+    updateAllESP()
+end)
+
+createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25, 0), function(state)
+    ESP_INNOCENT = state
+    updateAllESP()
+end)
+
 -- ============================================================
 --  SHOOT MURDERER (КВАДРАТ С ПОЛЗУНКОМ)
 -- ============================================================
@@ -438,7 +430,6 @@ local function toggleShootMode(state)
             screenGui.Parent = player:WaitForChild("PlayerGui")
         end
         
-        -- Квадрат
         shootFrame = Instance.new("Frame")
         shootFrame.Size = UDim2.new(0, 160, 0, 160)
         shootFrame.Position = UDim2.new(0.5, -80, 0.7, -80)
@@ -454,7 +445,6 @@ local function toggleShootMode(state)
         corners2.CornerRadius = UDim.new(0, 20)
         corners2.Parent = shootFrame
         
-        -- Блеск
         local glassShine = Instance.new("Frame")
         glassShine.Size = UDim2.new(0.8, 0, 0.3, 0)
         glassShine.Position = UDim2.new(0.1, 0, 0.05, 0)
@@ -467,7 +457,6 @@ local function toggleShootMode(state)
         shineCorners.CornerRadius = UDim.new(0, 15)
         shineCorners.Parent = glassShine
         
-        -- Текст SHOOT
         local shootText = Instance.new("TextLabel")
         shootText.Size = UDim2.new(1, 0, 0.3, 0)
         shootText.Position = UDim2.new(0, 0, 0.35, 0)
@@ -479,7 +468,6 @@ local function toggleShootMode(state)
         shootText.TextStrokeTransparency = 0.3
         shootText.Parent = shootFrame
         
-        -- Прицел (анимированный)
         local crosshairContainer = Instance.new("Frame")
         crosshairContainer.Size = UDim2.new(0.4, 0, 0.4, 0)
         crosshairContainer.Position = UDim2.new(0.3, 0, 0.7, 0)
@@ -525,7 +513,6 @@ local function toggleShootMode(state)
         dotCorners.CornerRadius = UDim.new(1, 0)
         dotCorners.Parent = dot
         
-        -- Анимация
         local angle = 0
         animConnection = game:GetService("RunService").RenderStepped:Connect(function()
             if not shootFrame or not shootFrame.Parent then
@@ -539,7 +526,6 @@ local function toggleShootMode(state)
             crosshairContainer.Rotation = math.deg(angle)
         end)
         
-        -- Кнопка выстрела
         shootButton = Instance.new("TextButton")
         shootButton.Size = UDim2.new(1, 0, 1, 0)
         shootButton.BackgroundTransparency = 1
@@ -614,7 +600,6 @@ local function toggleShootMode(state)
             end
         end)
         
-        -- Крестик закрытия
         local closeBtnShoot = Instance.new("TextButton")
         closeBtnShoot.Size = UDim2.new(0, 35, 0, 35)
         closeBtnShoot.Position = UDim2.new(0.78, 0, -0.12, 0)
@@ -647,7 +632,7 @@ local function toggleShootMode(state)
             print("⬜ Shoot Murderer выключён!")
         end)
         
-        -- ПОЛЗУНОК РАЗМЕРА
+        -- ПОЛЗУНОК
         sliderContainer = Instance.new("Frame")
         sliderContainer.Size = UDim2.new(0.6, 0, 0, 40)
         sliderContainer.Position = UDim2.new(0.2, 0, 0.15, 0)
@@ -731,6 +716,18 @@ local function toggleShootMode(state)
         shootButton = nil
         print("⬜ Shoot Murderer выключён!")
     end
+end
+
+createToggleInContainer(combatContent, "⬜ Shoot Murderer", UDim2.new(0.05, 0, 0.35, 0), function(state)
+    toggleShootMode(state)
+end)
+
+-- ============================================================
+--  ОБНОВЛЕНИЕ ВКЛАДОК
+-- ============================================================
+local function updateContent()
+    espContent.Visible = (activeTab == "ESP")
+    combatContent.Visible = (activeTab == "Combat")
 end
 
 -- ============================================================
@@ -911,7 +908,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v12.1 - FULL FIXED")
+print("  MUSLIM MENU v12.2 - ESP FIXED")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
