@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v13.0 - INFO + ESP + COMBAT
+--  MUSLIM MENU v13.2 - THEMES IN HEADER
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v13.0...")
+print("🚀 Загрузка Muslim Menu v13.2...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -60,7 +60,7 @@ local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
--- ===== ЗАГОЛОВОК =====
+-- ===== ЗАГОЛОВОК (С ТЕМАМИ) =====
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 50)
 header.BackgroundColor3 = THEMES[currentTheme].header
@@ -71,6 +71,7 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
+-- Иконка
 local icon = Instance.new("TextLabel")
 icon.Size = UDim2.new(0, 35, 1, 0)
 icon.Position = UDim2.new(0.02, 0, 0, 0)
@@ -81,9 +82,10 @@ icon.TextSize = 22
 icon.Font = Enum.Font.SourceSansBold
 icon.Parent = header
 
+-- Название
 local title = Instance.new("TextLabel")
 title.Name = "Title"
-title.Size = UDim2.new(0.5, 0, 1, 0)
+title.Size = UDim2.new(0.3, 0, 1, 0)
 title.Position = UDim2.new(0.08, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "MUSLIM MENU"
@@ -93,12 +95,54 @@ title.Font = Enum.Font.SourceSansBold
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
+-- ===== ТЕМЫ (В ЗАГОЛОВКЕ) =====
+local themeContainer = Instance.new("Frame")
+themeContainer.Size = UDim2.new(0.35, 0, 1, 0)
+themeContainer.Position = UDim2.new(0.4, 0, 0, 0)
+themeContainer.BackgroundTransparency = 1
+themeContainer.Parent = header
+
+local themeColors = {
+    midnight = Color3.fromRGB(100, 180, 255),
+    emerald = Color3.fromRGB(80, 220, 140),
+    ruby = Color3.fromRGB(255, 70, 70),
+    royal = Color3.fromRGB(200, 120, 255),
+    gold = Color3.fromRGB(255, 215, 0)
+}
+
+local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
+local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
+
+for i, themeName in ipairs(themeNames) do
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 30, 0, 30)
+    btn.Position = UDim2.new(0.05 + (i-1) * 0.16, 0, 0.5, -15)
+    btn.BackgroundColor3 = themeColors[themeName]
+    btn.BackgroundTransparency = 0
+    btn.Text = themeIcons[i]
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 14
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Parent = themeContainer
+    
+    local btnCorners = Instance.new("UICorner")
+    btnCorners.CornerRadius = UDim.new(0, 8)
+    btnCorners.Parent = btn
+    
+    btn.MouseButton1Click:Connect(function()
+        currentTheme = themeName
+        updateTheme(themeName)
+        print("✅ Тема изменена на: " .. THEMES[themeName].name)
+    end)
+end
+
+-- Версия
 local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
-versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
+versionBadge.Position = UDim2.new(0.85, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.3
-versionBadge.Text = "v13.0"
+versionBadge.Text = "v13.2"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -109,10 +153,11 @@ local versionCorners = Instance.new("UICorner")
 versionCorners.CornerRadius = UDim.new(0, 8)
 versionCorners.Parent = versionBadge
 
+-- Кнопка закрытия
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseBtn"
 closeBtn.Size = UDim2.new(0, 32, 0, 32)
-closeBtn.Position = UDim2.new(0.92, 0, 0.5, -16)
+closeBtn.Position = UDim2.new(0.94, 0, 0.5, -16)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
 closeBtn.BackgroundTransparency = 0.1
 closeBtn.Text = "✕"
@@ -176,7 +221,7 @@ contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- ===== КНОПКИ ВКЛАДОК =====
+-- Кнопки вкладок
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
@@ -201,21 +246,19 @@ local function createTabButton(name, yPos)
     return btn
 end
 
--- ТРИ ВКЛАДКИ
-local tabInfo = createTabButton("INFO", 0)
-local tabESP = createTabButton("ESP", 45)
-local tabCombat = createTabButton("COMBAT", 90)
+createTabButton("INFO", 0)
+createTabButton("ESP", 45)
+createTabButton("COMBAT", 90)
 
 -- ============================================================
 --  КОНТЕНТ ВКЛАДОК
 -- ============================================================
--- === INFO ===
+-- INFO
 local infoContent = Instance.new("Frame")
 infoContent.Size = UDim2.new(1, 0, 1, 0)
 infoContent.BackgroundTransparency = 1
 infoContent.Parent = contentContainer
 
--- Заголовок INFO
 local infoTitle = Instance.new("TextLabel")
 infoTitle.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoTitle.Position = UDim2.new(0.1, 0, 0.05, 0)
@@ -226,7 +269,6 @@ infoTitle.TextSize = 28
 infoTitle.Font = Enum.Font.SourceSansBold
 infoTitle.Parent = infoContent
 
--- Приветствие
 local infoHello = Instance.new("TextLabel")
 infoHello.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoHello.Position = UDim2.new(0.1, 0, 0.2, 0)
@@ -237,7 +279,6 @@ infoHello.TextSize = 22
 infoHello.Font = Enum.Font.SourceSansBold
 infoHello.Parent = infoContent
 
--- Просьба оценить
 local infoRate = Instance.new("TextLabel")
 infoRate.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoRate.Position = UDim2.new(0.1, 0, 0.4, 0)
@@ -248,7 +289,6 @@ infoRate.TextSize = 18
 infoRate.Font = Enum.Font.SourceSansBold
 infoRate.Parent = infoContent
 
--- Ник
 local infoNick = Instance.new("TextLabel")
 infoNick.Size = UDim2.new(0.8, 0, 0.15, 0)
 infoNick.Position = UDim2.new(0.1, 0, 0.6, 0)
@@ -259,7 +299,6 @@ infoNick.TextSize = 20
 infoNick.Font = Enum.Font.SourceSansBold
 infoNick.Parent = infoContent
 
--- Разделительная линия
 local line = Instance.new("Frame")
 line.Size = UDim2.new(0.8, 0, 0.002, 0)
 line.Position = UDim2.new(0.1, 0, 0.8, 0)
@@ -267,7 +306,6 @@ line.BackgroundColor3 = THEMES[currentTheme].accent
 line.BackgroundTransparency = 0.5
 line.Parent = infoContent
 
--- ---
 local infoFooter = Instance.new("TextLabel")
 infoFooter.Size = UDim2.new(0.8, 0, 0.1, 0)
 infoFooter.Position = UDim2.new(0.1, 0, 0.85, 0)
@@ -278,14 +316,14 @@ infoFooter.TextSize = 16
 infoFooter.Font = Enum.Font.SourceSansBold
 infoFooter.Parent = infoContent
 
--- === ESP ===
+-- ESP
 local espContent = Instance.new("Frame")
 espContent.Size = UDim2.new(1, 0, 1, 0)
 espContent.BackgroundTransparency = 1
 espContent.Visible = false
 espContent.Parent = contentContainer
 
--- === COMBAT ===
+-- COMBAT
 local combatContent = Instance.new("Frame")
 combatContent.Size = UDim2.new(1, 0, 1, 0)
 combatContent.BackgroundTransparency = 1
@@ -293,7 +331,7 @@ combatContent.Visible = false
 combatContent.Parent = contentContainer
 
 -- ============================================================
---  ФУНКЦИЯ СОЗДАНИЯ КНОПОК-ПЕРЕКЛЮЧАТЕЛЕЙ
+--  ФУНКЦИЯ КНОПОК-ПЕРЕКЛЮЧАТЕЛЕЙ
 -- ============================================================
 local function createToggleInContainer(parent, label, pos, callback)
     local container = Instance.new("Frame")
@@ -353,7 +391,7 @@ local function createToggleInContainer(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP (ФУНКЦИИ)
+--  ESP
 -- ============================================================
 local ESP_MURDER = false
 local ESP_SHERIFF = false
@@ -456,7 +494,7 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
     createESPForPlayer(plr)
 end)
 
--- Кнопки ESP в вкладке ESP
+-- Кнопки ESP
 createToggleInContainer(espContent, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.05, 0), function(state)
     ESP_MURDER = state
     updateAllESP()
@@ -473,7 +511,7 @@ createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25
 end)
 
 -- ============================================================
---  SHOOT MURDERER (COMBAT)
+--  SHOOT MURDERER
 -- ============================================================
 local shootMode = false
 local shootFrame = nil
@@ -798,44 +836,8 @@ local function toggleShootMode(state)
 end
 
 -- ============================================================
---  ОБНОВЛЕНИЕ ВКЛАДОК
+--  ОБНОВЛЕНИЕ ТЕМЫ
 -- ============================================================
-local function updateContent()
-    if activeTab == "INFO" then
-        infoContent.Visible = true
-        espContent.Visible = false
-        combatContent.Visible = false
-    elseif activeTab == "ESP" then
-        infoContent.Visible = false
-        espContent.Visible = true
-        combatContent.Visible = false
-    elseif activeTab == "COMBAT" then
-        infoContent.Visible = false
-        espContent.Visible = false
-        combatContent.Visible = true
-    end
-end
-
--- ============================================================
---  ТЕМЫ (ТОЛЬКО ИКОНКИ)
--- ============================================================
-local themeContainer = Instance.new("Frame")
-themeContainer.Size = UDim2.new(0.5, 0, 0, 42)
-themeContainer.Position = UDim2.new(0.25, 0, 0.52, 0)
-themeContainer.BackgroundTransparency = 1
-themeContainer.Parent = frame
-
-local themeColors = {
-    midnight = Color3.fromRGB(100, 180, 255),
-    emerald = Color3.fromRGB(80, 220, 140),
-    ruby = Color3.fromRGB(255, 70, 70),
-    royal = Color3.fromRGB(200, 120, 255),
-    gold = Color3.fromRGB(255, 215, 0)
-}
-
-local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
-local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
-
 local function updateTheme(themeName)
     local theme = THEMES[themeName]
     if not theme then return end
@@ -858,7 +860,7 @@ local function updateTheme(themeName)
             child.BackgroundTransparency = 0.2
             child.TextColor3 = theme.accent
         end
-        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= icon and child ~= infoTitle then
+        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= icon then
             child.TextColor3 = theme.text
         end
     end
@@ -878,31 +880,17 @@ local function updateTheme(themeName)
     end
 end
 
-for i, themeName in ipairs(themeNames) do
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 34, 0, 34)
-    btn.Position = UDim2.new(0.1 + (i-1) * 0.15, 0, 0.5, -17)
-    btn.BackgroundColor3 = themeColors[themeName]
-    btn.BackgroundTransparency = 0
-    btn.Text = themeIcons[i]
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 14
-    btn.Font = Enum.Font.SourceSansBold
-    btn.Parent = themeContainer
-    
-    local btnCorners = Instance.new("UICorner")
-    btnCorners.CornerRadius = UDim.new(0, 8)
-    btnCorners.Parent = btn
-    
-    btn.MouseButton1Click:Connect(function()
-        currentTheme = themeName
-        updateTheme(themeName)
-        print("✅ Тема изменена на: " .. THEMES[themeName].name)
-    end)
+-- ============================================================
+--  ОБНОВЛЕНИЕ ВКЛАДОК
+-- ============================================================
+local function updateContent()
+    infoContent.Visible = (activeTab == "INFO")
+    espContent.Visible = (activeTab == "ESP")
+    combatContent.Visible = (activeTab == "COMBAT")
 end
 
 print("========================================")
-print("  MUSLIM MENU v13.0 - INFO + ESP + COMBAT")
+print("  MUSLIM MENU v13.2 - THEMES IN HEADER")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
