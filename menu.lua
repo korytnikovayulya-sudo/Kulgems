@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v9.5 - СЛИЯНИЕ С ТВОИМ КОДОМ
+--  MUSLIM MENU v9.7 - ВСЕ РОЛИ (BILLBOARD)
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v9.5...")
+print("🚀 Загрузка Muslim Menu v9.7 (ВСЕ РОЛИ)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -98,7 +98,7 @@ versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.65, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
 versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v9.5"
+versionBadge.Text = "v9.7"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -219,10 +219,13 @@ local function createToggle(parent, label, pos, callback)
 end
 
 -- ============================================================
---  ESP (ТВОЙ КОД — РАБОТАЕТ 100%)
+--  BILLBOARD ESP ДЛЯ ВСЕХ РОЛЕЙ
 -- ============================================================
-local ESP_ENABLED = false
 local espList = {}
+
+local ESP_MURDER = false
+local ESP_SHERIFF = false
+local ESP_INNOCENT = false
 
 local function createESPForPlayer(plr)
     if plr == player then return end
@@ -230,26 +233,26 @@ local function createESPForPlayer(plr)
     
     local billboard = Instance.new("BillboardGui")
     billboard.Name = plr.Name .. "_ESP"
-    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.Size = UDim2.new(0, 200, 0, 40)
     billboard.StudsOffset = Vector3.new(0, 3, 0)
-    billboard.AlwaysOnTop = true  -- ВИДНО СКВОЗЬ СТЕНЫ!
+    billboard.AlwaysOnTop = true
+    billboard.Parent = game:GetService("CoreGui")
     
     local textLabel = Instance.new("TextLabel")
     textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.BackgroundTransparency = 1
+    textLabel.BackgroundTransparency = 0.3
+    textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    textLabel.TextSize = 14
+    textLabel.TextSize = 16
     textLabel.Font = Enum.Font.SourceSansBold
     textLabel.Parent = billboard
     
-    billboard.Parent = game:GetService("CoreGui")
     espList[plr] = {
         billboard = billboard,
         label = textLabel,
         connection = nil
     }
     
-    -- Обновление позиции и роли
     local conn
     conn = game:GetService("RunService").RenderStepped:Connect(function()
         if not plr or not plr.Parent or not plr.Character or not plr.Character:FindFirstChild("Head") then
@@ -261,17 +264,42 @@ local function createESPForPlayer(plr)
         
         billboard.Adornee = plr.Character.Head
         
-        if ESP_ENABLED then
-            -- Проверяем наличие ножа
-            local isMurder = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
-            if isMurder then
-                textLabel.Text = "🔴 УБИЙЦА " .. plr.Name
-                textLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-            else
-                textLabel.Text = ""
-            end
+        local role = "innocent"
+        local isMurder = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
+        local isSheriff = plr.Backpack:FindFirstChild("Gun") or plr.Character:FindFirstChild("Gun")
+        
+        if isMurder then
+            role = "murderer"
+        elseif isSheriff then
+            role = "sheriff"
+        end
+        
+        local show = false
+        local color = Color3.fromRGB(255, 255, 255)
+        local text = ""
+        
+        if role == "murderer" and ESP_MURDER then
+            show = true
+            color = Color3.fromRGB(255, 0, 0)
+            text = "🔴 УБИЙЦА " .. plr.Name
+        elseif role == "sheriff" and ESP_SHERIFF then
+            show = true
+            color = Color3.fromRGB(0, 100, 255)
+            text = "🔵 ШЕРИФ " .. plr.Name
+        elseif role == "innocent" and ESP_INNOCENT then
+            show = true
+            color = Color3.fromRGB(0, 255, 0)
+            text = "🟢 НЕВИННЫЙ " .. plr.Name
+        end
+        
+        if show then
+            textLabel.Text = text
+            textLabel.TextColor3 = color
+            textLabel.BackgroundTransparency = 0.3
+            textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         else
             textLabel.Text = ""
+            textLabel.BackgroundTransparency = 1
         end
     end)
     
@@ -279,36 +307,36 @@ local function createESPForPlayer(plr)
 end
 
 local function updateAllESP()
-    -- Удаляем старые ESP
     for plr, data in pairs(espList) do
-        if data.billboard then
-            data.billboard:Destroy()
-        end
-        if data.connection then
-            data.connection:Disconnect()
-        end
+        if data.billboard then data.billboard:Destroy() end
+        if data.connection then data.connection:Disconnect() end
     end
     espList = {}
     
-    -- Создаём новые
-    if ESP_ENABLED then
-        for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-            createESPForPlayer(plr)
-        end
+    for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+        createESPForPlayer(plr)
     end
 end
 
--- Кнопка включения ESP
-createToggle(frame, "🔴 ESP Murder (вкл/выкл)", UDim2.new(0.05, 0, 0.14, 0), function(state)
-    ESP_ENABLED = state
+-- КНОПКИ ESP
+createToggle(frame, "🔴 ESP Murder", UDim2.new(0.05, 0, 0.14, 0), function(state)
+    ESP_MURDER = state
+    updateAllESP()
+end)
+
+createToggle(frame, "🔵 ESP Sheriff", UDim2.new(0.05, 0, 0.22, 0), function(state)
+    ESP_SHERIFF = state
+    updateAllESP()
+end)
+
+createToggle(frame, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.30, 0), function(state)
+    ESP_INNOCENT = state
     updateAllESP()
 end)
 
 -- Новые игроки
 game:GetService("Players").PlayerAdded:Connect(function(plr)
-    if ESP_ENABLED then
-        createESPForPlayer(plr)
-    end
+    createESPForPlayer(plr)
 end)
 
 -- ============================================================
@@ -356,7 +384,7 @@ local function toggleBunnyHop(state)
     end
 end
 
-createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.28, 0), function(state)
+createToggle(frame, "🐰 Bunny Hop", UDim2.new(0.05, 0, 0.38, 0), function(state)
     toggleBunnyHop(state)
 end)
 
@@ -365,7 +393,7 @@ end)
 -- ============================================================
 local themeContainer = Instance.new("Frame")
 themeContainer.Size = UDim2.new(0.9, 0, 0, 42)
-themeContainer.Position = UDim2.new(0.05, 0, 0.55, 0)
+themeContainer.Position = UDim2.new(0.05, 0, 0.60, 0)
 themeContainer.BackgroundColor3 = THEMES[currentTheme].btn
 themeContainer.BackgroundTransparency = 0
 themeContainer.BorderSizePixel = 1
@@ -538,7 +566,7 @@ watermark.TextTransparency = 0.3
 watermark.Parent = profileContainer
 
 print("========================================")
-print("  MUSLIM MENU v9.5 - С ТВОИМ ESP")
+print("  MUSLIM MENU v9.7 - ВСЕ РОЛИ")
 print("  Developer: Tormentor412")
 print("  Theme: " .. THEMES[currentTheme].name)
 print("  Loaded successfully! ✦")
