@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - БОЛЬШОЕ МЕНЮ, ЧЁРНЫЕ ПРИЦЕЛЫ
+--  WERTIUM HUB - С ВЕРСИЕЙ VD
 -- ============================================================
 
 print("🚀 Загрузка...")
@@ -27,7 +27,7 @@ wait(1.5)
 
 -- ОСНОВНОЕ ОКНО (БОЛЬШОЕ, КРАСНОЕ)
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 800, 0, 500)           -- УВЕЛИЧЕНО
+frame.Size = UDim2.new(0, 800, 0, 500)
 frame.Position = UDim2.new(0.5, -400, 0.5, -250)
 frame.BackgroundColor3 = Color3.fromRGB(140, 20, 20)
 frame.BackgroundTransparency = 0.05
@@ -53,7 +53,7 @@ stroke.Parent = frame
 
 -- ЗАГОЛОВОК
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 80)             -- ЧУТЬ ВЫШЕ
+header.Size = UDim2.new(1, 0, 0, 90)             -- ВЫШЕ, ЧТОБЫ ВМЕСТИТЬ "VD"
 header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)
 header.BackgroundTransparency = 0.15
 header.Parent = frame
@@ -64,8 +64,8 @@ headerCorners.Parent = header
 
 -- ЛЕВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
 local crosshairL = Instance.new("Frame")
-crosshairL.Size = UDim2.new(0, 45, 0.7, 0)       -- ЧУТЬ БОЛЬШЕ
-crosshairL.Position = UDim2.new(0.02, 0, 0.15, 0)
+crosshairL.Size = UDim2.new(0, 45, 0.6, 0)
+crosshairL.Position = UDim2.new(0.02, 0, 0.2, 0)
 crosshairL.BackgroundTransparency = 1
 crosshairL.Parent = header
 
@@ -73,7 +73,7 @@ local circleL = Instance.new("Frame")
 circleL.Size = UDim2.new(1, 0, 1, 0)
 circleL.BackgroundTransparency = 1
 circleL.BorderSizePixel = 2
-circleL.BorderColor3 = Color3.fromRGB(0, 0, 0)     -- ЧЁРНЫЙ
+circleL.BorderColor3 = Color3.fromRGB(0, 0, 0)
 circleL.Parent = crosshairL
 local circleLc = Instance.new("UICorner")
 circleLc.CornerRadius = UDim.new(1, 0)
@@ -108,8 +108,8 @@ dotLc.Parent = dotL
 
 -- ПРАВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
 local crosshairR = Instance.new("Frame")
-crosshairR.Size = UDim2.new(0, 45, 0.7, 0)
-crosshairR.Position = UDim2.new(0.88, 0, 0.15, 0)
+crosshairR.Size = UDim2.new(0, 45, 0.6, 0)
+crosshairR.Position = UDim2.new(0.88, 0, 0.2, 0)
 crosshairR.BackgroundTransparency = 1
 crosshairR.Parent = header
 
@@ -158,17 +158,29 @@ game:GetService("RunService").RenderStepped:Connect(function()
     crosshairR.Rotation = math.deg(-angle2)
 end)
 
--- НАЗВАНИЕ
+-- НАЗВАНИЕ (WERTIUM HUB)
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(0.5, 0, 1, 0)
+title.Size = UDim2.new(0.5, 0, 0.6, 0)
 title.Position = UDim2.new(0.25, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "WERTIUM HUB"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 38                     -- КРУПНЕЕ
+title.TextSize = 38
 title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = header
+
+-- ВЕРСИЯ "VD" ПОД НАЗВАНИЕМ
+local version = Instance.new("TextLabel")
+version.Size = UDim2.new(0.5, 0, 0.25, 0)
+version.Position = UDim2.new(0.25, 0, 0.6, 0)
+version.BackgroundTransparency = 1
+version.Text = "VD"
+version.TextColor3 = Color3.fromRGB(200, 200, 200)
+version.TextSize = 18
+version.Font = Enum.Font.SourceSansBold
+version.TextXAlignment = Enum.TextXAlignment.Center
+version.Parent = header
 
 -- КНОПКА ЗАКРЫТИЯ
 local closeBtn = Instance.new("TextButton")
@@ -206,5 +218,5 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ Меню увеличено, прицелы чёрные!")
+print("✅ Меню с версией VD загружено!")
 print("🔑 F1 - открыть/закрыть")
