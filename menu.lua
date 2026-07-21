@@ -1,9 +1,9 @@
 -- ============================================================
---  MUSLIM MENU v12.2 - ESP FIXED + COMBAT FIX
+--  MUSLIM MENU v12.4 - GLASS EDITION
 --  by Tormentor412
 -- ============================================================
 
-print("🚀 Загрузка Muslim Menu v12.2 (ESP + COMBAT FIXED)...")
+print("🚀 Загрузка Muslim Menu v12.4 (GLASS EDITION)...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -42,13 +42,13 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  ОСНОВНОЕ МЕНЮ
+--  ОСНОВНОЕ МЕНЮ (СТЕКЛЯННОЕ)
 -- ============================================================
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 700, 0, 480)
-frame.Position = UDim2.new(0.5, -350, 0.5, -240)
+frame.Size = UDim2.new(0, 700, 0, 450)
+frame.Position = UDim2.new(0.5, -350, 0.5, -225)
 frame.BackgroundColor3 = THEMES[currentTheme].main
-frame.BackgroundTransparency = 0
+frame.BackgroundTransparency = 0.15  -- СТЕКЛЯННЫЙ ЭФФЕКТ
 frame.BorderSizePixel = 2
 frame.BorderColor3 = THEMES[currentTheme].accent
 frame.Active = true
@@ -60,11 +60,37 @@ local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
+-- Стеклянный блеск (сверху)
+local glassShineMain = Instance.new("Frame")
+glassShineMain.Size = UDim2.new(0.9, 0, 0.15, 0)
+glassShineMain.Position = UDim2.new(0.05, 0, 0.02, 0)
+glassShineMain.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+glassShineMain.BackgroundTransparency = 0.7
+glassShineMain.BorderSizePixel = 0
+glassShineMain.Parent = frame
+
+local glassShineCorners = Instance.new("UICorner")
+glassShineCorners.CornerRadius = UDim.new(0, 15)
+glassShineCorners.Parent = glassShineMain
+
+-- Второй блеск (снизу)
+local glassShineBottom = Instance.new("Frame")
+glassShineBottom.Size = UDim2.new(0.7, 0, 0.08, 0)
+glassShineBottom.Position = UDim2.new(0.15, 0, 0.9, 0)
+glassShineBottom.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+glassShineBottom.BackgroundTransparency = 0.8
+glassShineBottom.BorderSizePixel = 0
+glassShineBottom.Parent = frame
+
+local glassShineBottomCorners = Instance.new("UICorner")
+glassShineBottomCorners.CornerRadius = UDim.new(0, 10)
+glassShineBottomCorners.Parent = glassShineBottom
+
 -- ===== ЗАГОЛОВОК =====
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 50)
 header.BackgroundColor3 = THEMES[currentTheme].header
-header.BackgroundTransparency = 0
+header.BackgroundTransparency = 0.3  -- Стеклянный
 header.Parent = frame
 
 local headerCorners = Instance.new("UICorner")
@@ -97,8 +123,8 @@ local versionBadge = Instance.new("TextLabel")
 versionBadge.Size = UDim2.new(0, 60, 0, 22)
 versionBadge.Position = UDim2.new(0.6, 0, 0.5, -11)
 versionBadge.BackgroundColor3 = THEMES[currentTheme].accent
-versionBadge.BackgroundTransparency = 0.15
-versionBadge.Text = "v12.2"
+versionBadge.BackgroundTransparency = 0.3
+versionBadge.Text = "v12.4"
 versionBadge.TextColor3 = THEMES[currentTheme].accent
 versionBadge.TextSize = 11
 versionBadge.Font = Enum.Font.SourceSansBold
@@ -114,7 +140,7 @@ closeBtn.Name = "CloseBtn"
 closeBtn.Size = UDim2.new(0, 32, 0, 32)
 closeBtn.Position = UDim2.new(0.92, 0, 0.5, -16)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
-closeBtn.BackgroundTransparency = 0
+closeBtn.BackgroundTransparency = 0.1
 closeBtn.Text = "✕"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.TextSize = 18
@@ -133,7 +159,7 @@ mButton.Name = "FloatBtn"
 mButton.Size = UDim2.new(0, 60, 0, 60)
 mButton.Position = UDim2.new(0.5, -30, 0.85, 0)
 mButton.BackgroundColor3 = THEMES[currentTheme].main
-mButton.BackgroundTransparency = 0
+mButton.BackgroundTransparency = 0.15
 mButton.Text = "M"
 mButton.TextColor3 = THEMES[currentTheme].accent
 mButton.TextSize = 30
@@ -165,7 +191,7 @@ local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 100, 1, -50)
 tabContainer.Position = UDim2.new(0, 0, 0, 50)
 tabContainer.BackgroundColor3 = THEMES[currentTheme].btn
-tabContainer.BackgroundTransparency = 0
+tabContainer.BackgroundTransparency = 0.3
 tabContainer.BorderSizePixel = 0
 tabContainer.Parent = frame
 
@@ -176,13 +202,12 @@ contentContainer.Position = UDim2.new(0, 100, 0, 50)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
-local tabButtons = {}
 local function createTabButton(name, yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
     btn.Position = UDim2.new(0, 0, 0, yPos)
     btn.BackgroundColor3 = THEMES[currentTheme].btn
-    btn.BackgroundTransparency = 0
+    btn.BackgroundTransparency = 0.3
     btn.Text = name
     btn.TextColor3 = THEMES[currentTheme].text
     btn.TextSize = 14
@@ -194,22 +219,15 @@ local function createTabButton(name, yPos)
     btnCorners.Parent = btn
     
     btn.MouseButton1Click:Connect(function()
-        for _, tb in pairs(tabButtons) do
-            tb.BackgroundColor3 = THEMES[currentTheme].btn
-            tb.TextColor3 = THEMES[currentTheme].text
-        end
-        btn.BackgroundColor3 = THEMES[currentTheme].accent
-        btn.TextColor3 = THEMES[currentTheme].main
         activeTab = name
         updateContent()
     end)
     
-    tabButtons[name] = btn
     return btn
 end
 
 createTabButton("ESP", 0)
-createTabButton("COMBAT", 45)
+createTabButton("Combat", 45)
 
 -- ============================================================
 --  КОНТЕНТ ВКЛАДОК
@@ -219,7 +237,7 @@ local function createToggleInContainer(parent, label, pos, callback)
     container.Size = UDim2.new(0.9, 0, 0, 44)
     container.Position = pos
     container.BackgroundColor3 = THEMES[currentTheme].btn
-    container.BackgroundTransparency = 0
+    container.BackgroundTransparency = 0.2
     container.BorderSizePixel = 1
     container.BorderColor3 = THEMES[currentTheme].accent
     container.Parent = parent
@@ -243,7 +261,7 @@ local function createToggleInContainer(parent, label, pos, callback)
     toggle.Size = UDim2.new(0, 50, 0, 28)
     toggle.Position = UDim2.new(0.82, 0, 0.5, -14)
     toggle.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-    toggle.BackgroundTransparency = 0
+    toggle.BackgroundTransparency = 0.2
     toggle.Text = ""
     toggle.Parent = container
     
@@ -277,7 +295,7 @@ espContent.Size = UDim2.new(1, 0, 1, 0)
 espContent.BackgroundTransparency = 1
 espContent.Parent = contentContainer
 
--- COMBAT
+-- Combat
 local combatContent = Instance.new("Frame")
 combatContent.Size = UDim2.new(1, 0, 1, 0)
 combatContent.BackgroundTransparency = 1
@@ -292,7 +310,7 @@ local ESP_SHERIFF = false
 local ESP_INNOCENT = false
 
 -- ============================================================
---  ESP (РАБОЧАЯ ВЕРСИЯ — BILLBOARD)
+--  ESP
 -- ============================================================
 local espList = {}
 
@@ -319,8 +337,7 @@ local function createESPForPlayer(plr)
     espList[plr] = {
         billboard = billboard,
         label = textLabel,
-        connection = nil,
-        player = plr
+        connection = nil
     }
     
     local conn
@@ -409,16 +426,27 @@ createToggleInContainer(espContent, "🟢 ESP Innocent", UDim2.new(0.05, 0, 0.25
 end)
 
 -- ============================================================
---  COMBAT ВКЛАДКА (ФИКС + SHOOT MURDERER)
+--  SHOOT MURDERER
 -- ============================================================
 local shootMode = false
 local shootFrame = nil
+local shootButton = nil
 local animConnection = nil
+local sliderContainer = nil
+local shootSize = 100
+
+local function updateShootSize()
+    if shootFrame then
+        local size = 60 + (shootSize - 1) * 6
+        shootFrame.Size = UDim2.new(0, size, 0, size)
+        shootFrame.Position = UDim2.new(0.5, -size/2, 0.7, -size/2)
+    end
+end
 
 local function toggleShootMode(state)
     shootMode = state
     if state then
-        print("✅ COMBAT - Shoot Murderer включён!")
+        print("⬜ Shoot Murderer включён!")
         
         local screenGui = player:WaitForChild("PlayerGui"):FindFirstChild("ShootGui")
         if not screenGui then
@@ -523,7 +551,7 @@ local function toggleShootMode(state)
             crosshairContainer.Rotation = math.deg(angle)
         end)
         
-        local shootButton = Instance.new("TextButton")
+        shootButton = Instance.new("TextButton")
         shootButton.Size = UDim2.new(1, 0, 1, 0)
         shootButton.BackgroundTransparency = 1
         shootButton.Text = ""
@@ -538,7 +566,6 @@ local function toggleShootMode(state)
                 return
             end
             
-            -- Ищем оружие
             local gun = nil
             for _, tool in pairs(char:GetChildren()) do
                 if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
@@ -548,45 +575,161 @@ local function toggleShootMode(state)
             end
             
             if not gun then
-                for _, tool in pairs(player.Backpack:GetChildren()) do
-                    if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
-                        gun = tool
-                        break
+                local backpack = player:FindFirstChild("Backpack")
+                if backpack then
+                    for _, tool in pairs(backpack:GetChildren()) do
+                        if tool:IsA("Tool") and (tool.Name == "Gun" or tool.Name:lower():find("gun") or tool.Name:lower():find("pistol")) then
+                            gun = tool
+                            break
+                        end
                     end
                 end
             end
             
             if not gun then
-                print("❌ Оружие не найдено!")
+                print("❌ Нет пистолета!")
                 return
             end
             
-            -- Активируем оружие
-            if gun.Parent ~= char then
-                gun.Parent = char
-            end
-            
-            -- Ждём активации и стреляем
-            wait(0.1)
-            
-            if gun:FindFirstChild("RemoteEvent") then
-                gun.RemoteEvent:FireServer("Shoot")
-                print("🔫 Выстрел!")
-            elseif gun:FindFirstChild("Fire") then
-                gun.Fire:FireServer()
-                print("🔫 Выстрел!")
-            else
-                -- Пробуем через Character
-                local humanoid = char:FindFirstChild("Humanoid")
-                if humanoid then
-                    humanoid:EquipTool(gun)
-                    wait(0.1)
-                    if gun:FindFirstChild("RemoteEvent") then
-                        gun.RemoteEvent:FireServer("Shoot")
-                        print("🔫 Выстрел через RemoteEvent!")
+            local murderer = nil
+            for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+                if plr ~= player and plr.Character then
+                    local hasKnife = plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")
+                    if hasKnife then
+                        murderer = plr
+                        break
                     end
                 end
             end
+            
+            if not murderer then
+                print("❌ Убийца не найден!")
+                return
+            end
+            
+            local root = murderer.Character:FindFirstChild("HumanoidRootPart")
+            local myRoot = char:FindFirstChild("HumanoidRootPart")
+            if root and myRoot then
+                myRoot.CFrame = CFrame.new(myRoot.Position, root.Position)
+                print("🎯 Наведено на убийцу: " .. murderer.Name)
+                
+                gun.Parent = char
+                wait(0.1)
+                
+                local virtualInput = game:GetService("VirtualInputManager")
+                virtualInput:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+                wait(0.05)
+                virtualInput:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+                
+                print("🔫 Выстрел произведён в убийцу!")
+            end
+        end)
+        
+        local closeBtnShoot = Instance.new("TextButton")
+        closeBtnShoot.Size = UDim2.new(0, 35, 0, 35)
+        closeBtnShoot.Position = UDim2.new(0.78, 0, -0.12, 0)
+        closeBtnShoot.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+        closeBtnShoot.BackgroundTransparency = 0.1
+        closeBtnShoot.Text = "✕"
+        closeBtnShoot.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeBtnShoot.TextSize = 20
+        closeBtnShoot.Font = Enum.Font.SourceSansBold
+        closeBtnShoot.Parent = shootFrame
+        
+        local closeCornersShoot = Instance.new("UICorner")
+        closeCornersShoot.CornerRadius = UDim.new(0, 10)
+        closeCornersShoot.Parent = closeBtnShoot
+        
+        closeBtnShoot.MouseButton1Click:Connect(function()
+            shootMode = false
+            if shootFrame then
+                shootFrame:Destroy()
+                shootFrame = nil
+            end
+            if animConnection then
+                animConnection:Disconnect()
+                animConnection = nil
+            end
+            if sliderContainer then
+                sliderContainer.Visible = false
+            end
+            shootButton = nil
+            print("⬜ Shoot Murderer выключён!")
+        end)
+        
+        -- ПОЛЗУНОК
+        sliderContainer = Instance.new("Frame")
+        sliderContainer.Size = UDim2.new(0.6, 0, 0, 40)
+        sliderContainer.Position = UDim2.new(0.2, 0, 0.15, 0)
+        sliderContainer.BackgroundColor3 = THEMES[currentTheme].btn
+        sliderContainer.BackgroundTransparency = 0.2
+        sliderContainer.BorderSizePixel = 1
+        sliderContainer.BorderColor3 = THEMES[currentTheme].accent
+        sliderContainer.Visible = true
+        sliderContainer.Parent = combatContent
+        
+        local sliderCorners = Instance.new("UICorner")
+        sliderCorners.CornerRadius = UDim.new(0, 10)
+        sliderCorners.Parent = sliderContainer
+        
+        local sliderLabel = Instance.new("TextLabel")
+        sliderLabel.Size = UDim2.new(0.3, 0, 1, 0)
+        sliderLabel.Position = UDim2.new(0.05, 0, 0, 0)
+        sliderLabel.BackgroundTransparency = 1
+        sliderLabel.Text = "Размер: 100"
+        sliderLabel.TextColor3 = THEMES[currentTheme].text
+        sliderLabel.TextSize = 14
+        sliderLabel.Font = Enum.Font.SourceSansBold
+        sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+        sliderLabel.Parent = sliderContainer
+        
+        local minusBtn = Instance.new("TextButton")
+        minusBtn.Size = UDim2.new(0, 30, 0, 30)
+        minusBtn.Position = UDim2.new(0.5, 0, 0.5, -15)
+        minusBtn.BackgroundColor3 = THEMES[currentTheme].accent
+        minusBtn.BackgroundTransparency = 0.2
+        minusBtn.Text = "-"
+        minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        minusBtn.TextSize = 20
+        minusBtn.Font = Enum.Font.SourceSansBold
+        minusBtn.Parent = sliderContainer
+        
+        local minusCorners = Instance.new("UICorner")
+        minusCorners.CornerRadius = UDim.new(0, 8)
+        minusCorners.Parent = minusBtn
+        
+        local plusBtn = Instance.new("TextButton")
+        plusBtn.Size = UDim2.new(0, 30, 0, 30)
+        plusBtn.Position = UDim2.new(0.7, 0, 0.5, -15)
+        plusBtn.BackgroundColor3 = THEMES[currentTheme].accent
+        plusBtn.BackgroundTransparency = 0.2
+        plusBtn.Text = "+"
+        plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        plusBtn.TextSize = 20
+        plusBtn.Font = Enum.Font.SourceSansBold
+        plusBtn.Parent = sliderContainer
+        
+        local plusCorners = Instance.new("UICorner")
+        plusCorners.CornerRadius = UDim.new(0, 8)
+        plusCorners.Parent = plusBtn
+        
+        minusBtn.MouseButton1Click:Connect(function()
+            shootSize = math.max(1, shootSize - 1)
+            sliderLabel.Text = "Размер: " .. tostring(shootSize)
+            updateShootSize()
+        end)
+        
+        plusBtn.MouseButton1Click:Connect(function()
+            shootSize = math.min(100, shootSize + 1)
+            sliderLabel.Text = "Размер: " .. tostring(shootSize)
+            updateShootSize()
+        end)
+        
+        updateShootSize()
+        
+        -- КНОПКА SHOOT MURDERER
+        createToggleInContainer(combatContent, "⬜ Shoot Murderer", UDim2.new(0.05, 0, 0.35, 0), function(state)
+            toggleShootMode(state)
         end)
         
     else
@@ -598,50 +741,211 @@ local function toggleShootMode(state)
             animConnection:Disconnect()
             animConnection = nil
         end
-        print("⬜ Shoot Murderer выключен!")
+        if sliderContainer then
+            sliderContainer:Destroy()
+            sliderContainer = nil
+        end
+        shootButton = nil
+        print("⬜ Shoot Murderer выключён!")
     end
 end
 
--- Кнопки COMBAT
-createToggleInContainer(combatContent, "⚔️ Shoot Murderer", UDim2.new(0.05, 0, 0.05, 0), function(state)
-    toggleShootMode(state)
-end)
-
 -- ============================================================
---  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+--  ОБНОВЛЕНИЕ ВКЛАДОК
 -- ============================================================
 local function updateContent()
     espContent.Visible = (activeTab == "ESP")
-    combatContent.Visible = (activeTab == "COMBAT")
+    combatContent.Visible = (activeTab == "Combat")
 end
 
-updateContent()
+-- ============================================================
+--  ТЕМЫ
+-- ============================================================
+local themeContainer = Instance.new("Frame")
+themeContainer.Size = UDim2.new(0.9, 0, 0, 42)
+themeContainer.Position = UDim2.new(0.05, 0, 0.52, 0)
+themeContainer.BackgroundColor3 = THEMES[currentTheme].btn
+themeContainer.BackgroundTransparency = 0.2
+themeContainer.BorderSizePixel = 1
+themeContainer.BorderColor3 = THEMES[currentTheme].accent
+themeContainer.Parent = frame
 
--- ============================================================
---  ОБНОВЛЕНИЕ ТЕМЫ (ПО УМОЛЧАНИЮ)
--- ============================================================
+local themeCorners = Instance.new("UICorner")
+themeCorners.CornerRadius = UDim.new(0, 10)
+themeCorners.Parent = themeContainer
+
+local themeLabel = Instance.new("TextLabel")
+themeLabel.Size = UDim2.new(0.3, 0, 1, 0)
+themeLabel.Position = UDim2.new(0.05, 0, 0, 0)
+themeLabel.BackgroundTransparency = 1
+themeLabel.Text = "✦ Тема:"
+themeLabel.TextColor3 = THEMES[currentTheme].text
+themeLabel.TextSize = 14
+themeLabel.Font = Enum.Font.SourceSansBold
+themeLabel.TextXAlignment = Enum.TextXAlignment.Left
+themeLabel.Parent = themeContainer
+
+local themeColors = {
+    midnight = Color3.fromRGB(100, 180, 255),
+    emerald = Color3.fromRGB(80, 220, 140),
+    ruby = Color3.fromRGB(255, 70, 70),
+    royal = Color3.fromRGB(200, 120, 255),
+    gold = Color3.fromRGB(255, 215, 0)
+}
+
+local themeNames = {"midnight", "emerald", "ruby", "royal", "gold"}
+local themeIcons = {"🌙", "🌿", "♦", "👑", "★"}
+
 local function updateTheme(themeName)
-    currentTheme = themeName
     local theme = THEMES[themeName]
+    if not theme then return end
     
     frame.BackgroundColor3 = theme.main
+    frame.BackgroundTransparency = 0.15
     frame.BorderColor3 = theme.accent
+    
     header.BackgroundColor3 = theme.header
+    header.BackgroundTransparency = 0.3
     title.TextColor3 = theme.accent
     icon.TextColor3 = theme.accent
     versionBadge.BackgroundColor3 = theme.accent
+    versionBadge.BackgroundTransparency = 0.3
     versionBadge.TextColor3 = theme.accent
-    tabContainer.BackgroundColor3 = theme.btn
     
-    for _, btn in pairs(tabButtons) do
-        btn.BackgroundColor3 = theme.btn
-        btn.TextColor3 = theme.text
+    for _, child in pairs(frame:GetDescendants()) do
+        if child:IsA("TextButton") and child.Name ~= "CloseBtn" and child.Name ~= "FloatBtn" then
+            child.BackgroundColor3 = theme.btn
+            child.BackgroundTransparency = 0.2
+            child.TextColor3 = theme.accent
+        end
+        if child:IsA("TextLabel") and child.Name ~= "Title" and child.Name ~= "Watermark" and child ~= icon then
+            child.TextColor3 = theme.text
+        end
+    end
+    
+    for _, container in pairs(frame:GetChildren()) do
+        if container:IsA("Frame") and container ~= header and container ~= themeContainer then
+            container.BackgroundColor3 = theme.btn
+            container.BackgroundTransparency = 0.2
+            container.BorderColor3 = theme.accent
+        end
+    end
+    
+    themeContainer.BackgroundColor3 = theme.btn
+    themeContainer.BackgroundTransparency = 0.2
+    themeContainer.BorderColor3 = theme.accent
+    themeLabel.TextColor3 = theme.text
+    
+    if mButton then
+        mButton.BackgroundColor3 = theme.main
+        mButton.BackgroundTransparency = 0.15
+        mButton.TextColor3 = theme.accent
     end
 end
 
--- Применяем стартовую тему
-updateTheme("midnight")
+for i, themeName in ipairs(themeNames) do
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 34, 0, 34)
+    btn.Position = UDim2.new(0.33 + (i-1) * 0.1, 0, 0.5, -17)
+    btn.BackgroundColor3 = themeColors[themeName]
+    btn.BackgroundTransparency = 0
+    btn.Text = themeIcons[i]
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 14
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Parent = themeContainer
+    
+    local btnCorners = Instance.new("UICorner")
+    btnCorners.CornerRadius = UDim.new(0, 8)
+    btnCorners.Parent = btn
+    
+    btn.MouseButton1Click:Connect(function()
+        currentTheme = themeName
+        updateTheme(themeName)
+        print("✅ Тема изменена на: " .. THEMES[themeName].name)
+    end)
+end
 
-print("✅ Muslim Menu v12.2 полностью загружен!")
-print("📌 ESP работает (торец murderer/sheriff/innocent)")
-print("📌 COMBAT вкладка открывается и работает!")
+-- ============================================================
+--  КНОПКИ
+-- ============================================================
+local restartBtn = Instance.new("TextButton")
+restartBtn.Size = UDim2.new(0.4, 0, 0, 40)
+restartBtn.Position = UDim2.new(0.05, 0, 0.78, 0)
+restartBtn.BackgroundColor3 = THEMES[currentTheme].btn
+restartBtn.BackgroundTransparency = 0.2
+restartBtn.Text = "⟳ Перезапустить"
+restartBtn.TextColor3 = THEMES[currentTheme].accent
+restartBtn.TextSize = 16
+restartBtn.Font = Enum.Font.SourceSansBold
+restartBtn.Parent = frame
+
+local restartCorners = Instance.new("UICorner")
+restartCorners.CornerRadius = UDim.new(0, 10)
+restartCorners.Parent = restartBtn
+
+restartBtn.MouseButton1Click:Connect(function()
+    frame.Visible = false
+    wait(0.3)
+    frame.Visible = true
+end)
+
+local siteBtn = Instance.new("TextButton")
+siteBtn.Size = UDim2.new(0.4, 0, 0, 40)
+siteBtn.Position = UDim2.new(0.55, 0, 0.78, 0)
+siteBtn.BackgroundColor3 = THEMES[currentTheme].btn
+siteBtn.BackgroundTransparency = 0.2
+siteBtn.Text = "🌐 Сайт"
+siteBtn.TextColor3 = THEMES[currentTheme].accent
+siteBtn.TextSize = 16
+siteBtn.Font = Enum.Font.SourceSansBold
+siteBtn.Parent = frame
+
+local siteCorners = Instance.new("UICorner")
+siteCorners.CornerRadius = UDim.new(0, 10)
+siteCorners.Parent = siteBtn
+
+siteBtn.MouseButton1Click:Connect(function()
+    setclipboard("https://korytnikovayulya-sudo.github.io/muslim-menu-site/")
+    print("🌐 Ссылка скопирована!")
+end)
+
+-- ============================================================
+--  ПРОФИЛЬ
+-- ============================================================
+local profileContainer = Instance.new("Frame")
+profileContainer.Size = UDim2.new(0.5, 0, 0, 30)
+profileContainer.Position = UDim2.new(0.05, 0, 0.90, 0)
+profileContainer.BackgroundTransparency = 1
+profileContainer.Parent = frame
+
+local profileIcon = Instance.new("TextLabel")
+profileIcon.Size = UDim2.new(0, 25, 1, 0)
+profileIcon.Position = UDim2.new(0, 0, 0, 0)
+profileIcon.BackgroundTransparency = 1
+profileIcon.Text = "👤"
+profileIcon.TextColor3 = THEMES[currentTheme].accent
+profileIcon.TextSize = 18
+profileIcon.Font = Enum.Font.SourceSansBold
+profileIcon.TextXAlignment = Enum.TextXAlignment.Center
+profileIcon.Parent = profileContainer
+
+local watermark = Instance.new("TextLabel")
+watermark.Name = "Watermark"
+watermark.Size = UDim2.new(0.8, 0, 1, 0)
+watermark.Position = UDim2.new(0.15, 0, 0, 0)
+watermark.BackgroundTransparency = 1
+watermark.Text = "Tormentor412"
+watermark.TextColor3 = THEMES[currentTheme].accent
+watermark.TextSize = 14
+watermark.Font = Enum.Font.SourceSansBold
+watermark.TextXAlignment = Enum.TextXAlignment.Left
+watermark.TextTransparency = 0.3
+watermark.Parent = profileContainer
+
+print("========================================")
+print("  MUSLIM MENU v12.4 - GLASS EDITION")
+print("  Developer: Tormentor412")
+print("  Theme: " .. THEMES[currentTheme].name)
+print("  Loaded successfully! ✦")
+print("========================================")
