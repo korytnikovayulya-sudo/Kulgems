@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - FINAL (BEAUTIFUL TITLE)
+--  WERTIUM HUB - ANIMATED GRADIENT
 --  by Tormentor412
 -- ============================================================
 
@@ -177,7 +177,7 @@ local animConnection = game:GetService("RunService").RenderStepped:Connect(funct
 end)
 
 -- ============================================================
---  НАЗВАНИЕ С ГРАДИЕНТОМ, СВЕЧЕНИЕМ И ПУЛЬСАЦИЕЙ
+--  НАЗВАНИЕ С ПЕРЕЛИВАЮЩИМСЯ ГРАДИЕНТОМ
 -- ============================================================
 local titleContainer = Instance.new("Frame")
 titleContainer.Size = UDim2.new(0.6, 0, 1, 0)
@@ -214,14 +214,14 @@ title.TextXAlignment = Enum.TextXAlignment.Center
 title.TextYAlignment = Enum.TextYAlignment.Center
 title.Parent = titleContainer
 
--- Градиент
+-- Градиент (будет анимироваться)
 local gradient = Instance.new("UIGradient")
 gradient.Color = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 180, 255)),
     ColorSequenceKeypoint.new(0.5, Color3.fromRGB(200, 120, 255)),
     ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 180, 255))
 })
-gradient.Rotation = 45
+gradient.Rotation = 0
 gradient.Parent = title
 
 -- Обводка
@@ -237,6 +237,21 @@ local pulse = tweenService:Create(title, TweenInfo.new(1.5, Enum.EasingStyle.Sin
     TextSize = 44
 })
 pulse:Play()
+
+-- АНИМАЦИЯ ПЕРЕЛИВА ГРАДИЕНТА
+local gradientAngle = 0
+local gradientAnimConnection = game:GetService("RunService").RenderStepped:Connect(function()
+    if not gradient or not gradient.Parent then
+        if gradientAnimConnection then
+            gradientAnimConnection:Disconnect()
+            gradientAnimConnection = nil
+        end
+        return
+    end
+    gradientAngle = gradientAngle + 0.5
+    if gradientAngle >= 360 then gradientAngle = 0 end
+    gradient.Rotation = gradientAngle
+end)
 
 -- ============================================================
 --  КНОПКА ЗАКРЫТИЯ
@@ -280,5 +295,5 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ Wertium Hub (beautiful title) загружен успешно!")
+print("✅ Wertium Hub с переливающимся градиентом загружен!")
 print("🔑 F1 - открыть/закрыть")
