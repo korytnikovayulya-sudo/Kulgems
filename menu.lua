@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - SHOOT MURDERER (ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ)
+--  WERTIUM HUB - SHOOT MURDERER (ПРОСТОЙ КВАДРАТ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -10,9 +10,7 @@ gui.Name = "WertiumHub"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- ============================================================
---  ПРИВЕТСТВИЕ HELLO
--- ============================================================
+-- ПРИВЕТСТВИЕ HELLO
 local hello = Instance.new("TextLabel")
 hello.Size = UDim2.new(1, 0, 1, 0)
 hello.BackgroundTransparency = 1
@@ -29,9 +27,7 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 
 wait(1.5)
 
--- ============================================================
---  КНОПКА W
--- ============================================================
+-- КНОПКА W
 local wButton = Instance.new("TextButton")
 wButton.Size = UDim2.new(0, 60, 0, 60)
 wButton.Position = UDim2.new(1, -80, 1, -80)
@@ -55,9 +51,7 @@ wStroke.Transparency = 0.3
 wStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 wStroke.Parent = wButton
 
--- ============================================================
---  ОСНОВНОЕ ОКНО
--- ============================================================
+-- ОСНОВНОЕ ОКНО
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 900, 0, 500)
 frame.Position = UDim2.new(0.5, -450, 0.5, -250)
@@ -81,9 +75,7 @@ stroke.Transparency = 0.1
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = frame
 
--- ============================================================
---  ЗАГОЛОВОК
--- ============================================================
+-- ЗАГОЛОВОК
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 80)
 header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)
@@ -94,7 +86,7 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- ЛЕВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
+-- ЛЕВЫЙ ПРИЦЕЛ
 local crosshairL = Instance.new("Frame")
 crosshairL.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairL.Position = UDim2.new(0.02, 0, 0.2, 0)
@@ -138,7 +130,7 @@ local dotLc = Instance.new("UICorner")
 dotLc.CornerRadius = UDim.new(1, 0)
 dotLc.Parent = dotL
 
--- ПРАВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
+-- ПРАВЫЙ ПРИЦЕЛ
 local crosshairR = Instance.new("Frame")
 crosshairR.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairR.Position = UDim2.new(0.88, 0, 0.2, 0)
@@ -238,9 +230,7 @@ wButton.MouseButton1Click:Connect(function()
     wButton.Visible = false
 end)
 
--- ============================================================
---  ЛЕВАЯ ПАНЕЛЬ С ВКЛАДКАМИ
--- ============================================================
+-- ВКЛАДКИ
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 140, 1, -80)
 tabContainer.Position = UDim2.new(0, 0, 0, 80)
@@ -258,9 +248,6 @@ contentContainer.Position = UDim2.new(0, 145, 0, 85)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- ============================================================
---  ВКЛАДКИ
--- ============================================================
 local tabs = {}
 local currentTab = "VISUALS"
 local tweenService = game:GetService("TweenService")
@@ -290,7 +277,7 @@ createTab("AIM", 55)
 createTab("MISC", 105)
 
 -- ============================================================
---  VISUALS (ESP)
+--  ESP
 -- ============================================================
 local visualsContent = Instance.new("Frame")
 visualsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -534,7 +521,7 @@ aimTitle.Font = Enum.Font.SourceSansBold
 aimTitle.TextXAlignment = Enum.TextXAlignment.Left
 aimTitle.Parent = aimContent
 
--- Camlock Toggle
+-- CAMLOCK
 local camlockBtn = Instance.new("TextButton")
 camlockBtn.Size = UDim2.new(0, 200, 0, 40)
 camlockBtn.Position = UDim2.new(0, 0, 0.12, 0)
@@ -550,7 +537,7 @@ local camlockCorners = Instance.new("UICorner")
 camlockCorners.CornerRadius = UDim.new(0, 10)
 camlockCorners.Parent = camlockBtn
 
--- Shoot Murderer Toggle
+-- SHOOT MURDERER
 local shootBtn = Instance.new("TextButton")
 shootBtn.Size = UDim2.new(0, 200, 0, 40)
 shootBtn.Position = UDim2.new(0, 0, 0.22, 0)
@@ -566,7 +553,7 @@ local shootCorners = Instance.new("UICorner")
 shootCorners.CornerRadius = UDim.new(0, 10)
 shootCorners.Parent = shootBtn
 
--- Размер квадрата
+-- РАЗМЕР
 local sizeLabel = Instance.new("TextLabel")
 sizeLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
 sizeLabel.Position = UDim2.new(0, 0, 0.32, 0)
@@ -607,7 +594,7 @@ sizeKnobCorners.CornerRadius = UDim.new(1, 0)
 sizeKnobCorners.Parent = sizeKnob
 
 -- ============================================================
---  CAMLOCK ЛОГИКА
+--  CAMLOCK
 -- ============================================================
 local camlockEnabled = false
 local camera = workspace.CurrentCamera
@@ -647,7 +634,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURDERER (ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ)
+--  SHOOT MURDERER (ПРОСТОЙ КВАДРАТ)
 -- ============================================================
 local shootEnabled = false
 local shootFrame = nil
@@ -657,15 +644,13 @@ local shootAngle = 0
 local shootSize = 50
 local isDragging = false
 local dragOffset = nil
-local shootConnections = {}  -- для хранения подключений
 
--- ГЛАВНАЯ ФУНКЦИЯ СОЗДАНИЯ КВАДРАТА
+-- СОЗДАНИЕ КВАДРАТА
 local function createShootUI()
     if shootFrame then return end
     
-    local size = 60 + shootSize * 1.2
+    local size = 80 + shootSize * 1.5
     
-    -- ОСНОВНОЙ КВАДРАТ
     shootFrame = Instance.new("Frame")
     shootFrame.Size = UDim2.new(0, size, 0, size)
     shootFrame.Position = UDim2.new(0.5, -size/2, 0.5, -size/2)
@@ -681,7 +666,7 @@ local function createShootUI()
     shootCorners.CornerRadius = UDim.new(0, 12)
     shootCorners.Parent = shootFrame
     
-    -- АНИМИРОВАННЫЙ ПРИЦЕЛ (БЕЛЫЙ)
+    -- ПРИЦЕЛ
     local crosshairContainer = Instance.new("Frame")
     crosshairContainer.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
     crosshairContainer.Position = UDim2.new(0.5, -size * 0.25, 0.35, -size * 0.25)
@@ -700,7 +685,7 @@ local function createShootUI()
     circleCorners2.CornerRadius = UDim.new(1, 0)
     circleCorners2.Parent = circle
     
-    -- ГОРИЗОНТАЛЬНАЯ ЛИНИЯ
+    -- ЛИНИИ
     local hLine = Instance.new("Frame")
     hLine.Size = UDim2.new(0.8, 0, 0.08, 0)
     hLine.Position = UDim2.new(0.1, 0, 0.46, 0)
@@ -709,7 +694,6 @@ local function createShootUI()
     hLine.BorderSizePixel = 0
     hLine.Parent = crosshairContainer
     
-    -- ВЕРТИКАЛЬНАЯ ЛИНИЯ
     local vLine = Instance.new("Frame")
     vLine.Size = UDim2.new(0.08, 0, 0.8, 0)
     vLine.Position = UDim2.new(0.46, 0, 0.1, 0)
@@ -718,17 +702,16 @@ local function createShootUI()
     vLine.BorderSizePixel = 0
     vLine.Parent = crosshairContainer
     
-    -- ТОЧКА
-    local dot2 = Instance.new("Frame")
-    dot2.Size = UDim2.new(0.15, 0, 0.15, 0)
-    dot2.Position = UDim2.new(0.425, 0, 0.425, 0)
-    dot2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    dot2.BackgroundTransparency = 0.2
-    dot2.BorderSizePixel = 0
-    dot2.Parent = crosshairContainer
-    local dotCorners2 = Instance.new("UICorner")
-    dotCorners2.CornerRadius = UDim.new(1, 0)
-    dotCorners2.Parent = dot2
+    local dot = Instance.new("Frame")
+    dot.Size = UDim2.new(0.15, 0, 0.15, 0)
+    dot.Position = UDim2.new(0.425, 0, 0.425, 0)
+    dot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    dot.BackgroundTransparency = 0.2
+    dot.BorderSizePixel = 0
+    dot.Parent = crosshairContainer
+    local dotCorners = Instance.new("UICorner")
+    dotCorners.CornerRadius = UDim.new(1, 0)
+    dotCorners.Parent = dot
     
     -- НАДПИСЬ SHOOT
     shootLabel = Instance.new("TextLabel")
@@ -741,97 +724,29 @@ local function createShootUI()
     shootLabel.Font = Enum.Font.GothamBold
     shootLabel.TextXAlignment = Enum.TextXAlignment.Center
     shootLabel.Parent = shootFrame
-    
-    -- ПЕРЕТАСКИВАНИЕ И КЛИК
-    local function onInputBegan(input, gameProcessed)
-        if gameProcessed then return end
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local mousePos = Vector2.new(input.Position.X, input.Position.Y)
-            local framePos = Vector2.new(shootFrame.AbsolutePosition.X, shootFrame.AbsolutePosition.Y)
-            local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
-            
-            -- ПРОВЕРКА: КЛИКНУЛИ ЛИ ПО КВАДРАТУ
-            if mousePos.X >= framePos.X and mousePos.X <= framePos.X + frameSize.X and
-               mousePos.Y >= framePos.Y and mousePos.Y <= framePos.Y + frameSize.Y then
-                -- УБИВАЕМ УБИЙЦУ
-                local target = findMurderer()
-                if not target then
-                    print("❌ Убийца не найден!")
-                    return
-                end
-                local humanoid = target.Character:FindFirstChild("Humanoid")
-                if humanoid then
-                    humanoid.Health = 0
-                    print("🔫 Убийца уничтожен!")
-                end
-                return
-            end
-            
-            -- НАЧАЛО ПЕРЕТАСКИВАНИЯ
-            isDragging = true
-            dragOffset = mousePos - framePos
-        end
-    end
-    
-    local function onInputChanged(input, gameProcessed)
-        if gameProcessed then return end
-        if input.UserInputType == Enum.UserInputType.MouseMovement and isDragging then
-            local mousePos = Vector2.new(input.Position.X, input.Position.Y)
-            local newPos = mousePos - dragOffset
-            local parentSize = gui.AbsoluteSize
-            local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
-            
-            newPos = Vector2.new(
-                math.clamp(newPos.X, 0, parentSize.X - frameSize.X),
-                math.clamp(newPos.Y, 0, parentSize.Y - frameSize.Y)
-            )
-            
-            shootFrame.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
-        end
-    end
-    
-    local function onInputEnded(input, gameProcessed)
-        if gameProcessed then return end
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            isDragging = false
-        end
-    end
-    
-    -- СОХРАНЯЕМ ПОДКЛЮЧЕНИЯ В ТАБЛИЦУ
-    shootConnections[1] = game:GetService("UserInputService").InputBegan:Connect(onInputBegan)
-    shootConnections[2] = game:GetService("UserInputService").InputChanged:Connect(onInputChanged)
-    shootConnections[3] = game:GetService("UserInputService").InputEnded:Connect(onInputEnded)
 end
 
 -- ОБНОВЛЕНИЕ РАЗМЕРА
 local function updateShootSize()
     if not shootFrame then return end
-    local size = 60 + shootSize * 1.2
+    local size = 80 + shootSize * 1.5
     shootFrame.Size = UDim2.new(0, size, 0, size)
     
-    local crosshair = shootFrame:FindFirstChildOfClass("Frame")
-    if crosshair and crosshair ~= shootFrame then
-        crosshair.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
-        crosshair.Position = UDim2.new(0.5, -size * 0.25, 0.35, -size * 0.25)
-        shootCrosshair = crosshair
-    end
-    
-    local label = shootFrame:FindFirstChildOfClass("TextLabel")
-    if label then
-        label.TextSize = size * 0.14
+    for _, child in pairs(shootFrame:GetChildren()) do
+        if child:IsA("Frame") and child ~= shootFrame then
+            child.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
+            child.Position = UDim2.new(0.5, -size * 0.25, 0.35, -size * 0.25)
+            shootCrosshair = child
+        end
+        if child:IsA("TextLabel") then
+            child.TextSize = size * 0.14
+        end
     end
 end
 
--- УНИЧТОЖЕНИЕ КВАДРАТА
+-- УНИЧТОЖЕНИЕ
 local function destroyShootUI()
     if shootFrame then
-        -- ОТКЛЮЧАЕМ ВСЕ ПОДКЛЮЧЕНИЯ
-        for i, conn in pairs(shootConnections) do
-            if conn then 
-                pcall(function() conn:Disconnect() end)
-                shootConnections[i] = nil
-            end
-        end
         shootFrame:Destroy()
         shootFrame = nil
         shootCrosshair = nil
@@ -848,13 +763,11 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
--- ПОЛЗУНОК РАЗМЕРА
+-- ПОЛЗУНОК
 local sizeDragging = false
 sizeKnob.MouseButton1Down:Connect(function() sizeDragging = true end)
 game:GetService("UserInputService").InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
-        sizeDragging = false 
-    end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then sizeDragging = false end
 end)
 
 game:GetService("RunService").RenderStepped:Connect(function()
@@ -874,7 +787,62 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
--- ВКЛЮЧЕНИЕ/ВЫКЛЮЧЕНИЕ SHOOT
+-- ПЕРЕТАСКИВАНИЕ
+local function onInputBegan(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 and shootFrame then
+        local mousePos = Vector2.new(input.Position.X, input.Position.Y)
+        local framePos = Vector2.new(shootFrame.AbsolutePosition.X, shootFrame.AbsolutePosition.Y)
+        local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
+        
+        if mousePos.X >= framePos.X and mousePos.X <= framePos.X + frameSize.X and
+           mousePos.Y >= framePos.Y and mousePos.Y <= framePos.Y + frameSize.Y then
+            local target = findMurderer()
+            if target then
+                local humanoid = target.Character:FindFirstChild("Humanoid")
+                if humanoid then
+                    humanoid.Health = 0
+                    print("🔫 Убийца уничтожен!")
+                end
+            else
+                print("❌ Убийца не найден!")
+            end
+            return
+        end
+        
+        isDragging = true
+        dragOffset = mousePos - framePos
+    end
+end
+
+local function onInputChanged(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseMovement and isDragging and shootFrame then
+        local mousePos = Vector2.new(input.Position.X, input.Position.Y)
+        local newPos = mousePos - dragOffset
+        local parentSize = gui.AbsoluteSize
+        local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
+        
+        newPos = Vector2.new(
+            math.clamp(newPos.X, 0, parentSize.X - frameSize.X),
+            math.clamp(newPos.Y, 0, parentSize.Y - frameSize.Y)
+        )
+        shootFrame.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
+    end
+end
+
+local function onInputEnded(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        isDragging = false
+    end
+end
+
+game:GetService("UserInputService").InputBegan:Connect(onInputBegan)
+game:GetService("UserInputService").InputChanged:Connect(onInputChanged)
+game:GetService("UserInputService").InputEnded:Connect(onInputEnded)
+
+-- ВКЛЮЧЕНИЕ/ВЫКЛЮЧЕНИЕ
 shootBtn.MouseButton1Click:Connect(function()
     shootEnabled = not shootEnabled
     if shootEnabled then
@@ -889,7 +857,7 @@ shootBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  MISC (ПУСТО)
+--  MISC
 -- ============================================================
 local miscContent = Instance.new("Frame")
 miscContent.Size = UDim2.new(1, 0, 1, 0)
