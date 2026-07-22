@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - SHOOT MURDERER (ИСПРАВЛЕННЫЙ)
+--  WERTIUM HUB - SHOOT MURDERER (ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -647,7 +647,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURDERER (ИСПРАВЛЕННЫЙ)
+--  SHOOT MURDERER (ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ)
 -- ============================================================
 local shootEnabled = false
 local shootFrame = nil
@@ -657,6 +657,7 @@ local shootAngle = 0
 local shootSize = 50
 local isDragging = false
 local dragOffset = nil
+local shootConnections = {}  -- для хранения подключений
 
 -- ГЛАВНАЯ ФУНКЦИЯ СОЗДАНИЯ КВАДРАТА
 local function createShootUI()
@@ -741,16 +742,15 @@ local function createShootUI()
     shootLabel.TextXAlignment = Enum.TextXAlignment.Center
     shootLabel.Parent = shootFrame
     
-    -- ПЕРЕТАСКИВАНИЕ И КЛИК ЧЕРЕЗ UserInputService
+    -- ПЕРЕТАСКИВАНИЕ И КЛИК
     local function onInputBegan(input, gameProcessed)
         if gameProcessed then return end
-        
-        -- КЛИК ПО КВАДРАТУ (УБИЙСТВО)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             local mousePos = Vector2.new(input.Position.X, input.Position.Y)
             local framePos = Vector2.new(shootFrame.AbsolutePosition.X, shootFrame.AbsolutePosition.Y)
             local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
             
+            -- ПРОВЕРКА: КЛИКНУЛИ ЛИ ПО КВАДРАТУ
             if mousePos.X >= framePos.X and mousePos.X <= framePos.X + frameSize.X and
                mousePos.Y >= framePos.Y and mousePos.Y <= framePos.Y + frameSize.Y then
                 -- УБИВАЕМ УБИЙЦУ
@@ -797,12 +797,10 @@ local function createShootUI()
         end
     end
     
-    -- ПОДПИСКИ
-    shootFrame._connections = {
-        game:GetService("UserInputService").InputBegan:Connect(onInputBegan),
-        game:GetService("UserInputService").InputChanged:Connect(onInputChanged),
-        game:GetService("UserInputService").InputEnded:Connect(onInputEnded)
-    }
+    -- СОХРАНЯЕМ ПОДКЛЮЧЕНИЯ В ТАБЛИЦУ
+    shootConnections[1] = game:GetService("UserInputService").InputBegan:Connect(onInputBegan)
+    shootConnections[2] = game:GetService("UserInputService").InputChanged:Connect(onInputChanged)
+    shootConnections[3] = game:GetService("UserInputService").InputEnded:Connect(onInputEnded)
 end
 
 -- ОБНОВЛЕНИЕ РАЗМЕРА
@@ -824,12 +822,14 @@ local function updateShootSize()
     end
 end
 
--- УНИЧТОЖЕНИЕ
+-- УНИЧТОЖЕНИЕ КВАДРАТА
 local function destroyShootUI()
     if shootFrame then
-        if shootFrame._connections then
-            for _, conn in pairs(shootFrame._connections) do
-                if conn then conn:Disconnect() end
+        -- ОТКЛЮЧАЕМ ВСЕ ПОДКЛЮЧЕНИЯ
+        for i, conn in pairs(shootConnections) do
+            if conn then 
+                pcall(function() conn:Disconnect() end)
+                shootConnections[i] = nil
             end
         end
         shootFrame:Destroy()
@@ -998,6 +998,6 @@ end)
 print("✅ WERTIUM HUB загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("🎯 Camlock - наводится на убийцу")
-print("🔫 Shoot Murderer - квадрат с прицелом (белый), убивает убийцу по нажатию")
+print("🔫 Shoot Murderer - квадрат с прицелом, убивает убийцу по нажатию")
 print("📐 Размер квадрата регулируется ползунком (0-100)")
 print("🖱️ Квадрат можно перетаскивать мышкой")
