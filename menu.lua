@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - С CAMLOCK (AUTO-AIM НА MURDERER)
+--  WERTIUM HUB - CAMLOCK ТОЛЬКО НА MURDERER (РЕЗКО)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -515,7 +515,7 @@ end
 espBtn.MouseButton1Click:Connect(toggleESP)
 
 -- ============================================================
---  AIM (CAMLOCK НА MURDERER)
+--  AIM (CAMLOCK ТОЛЬКО НА MURDERER, РЕЗКО)
 -- ============================================================
 local aimContent = Instance.new("Frame")
 aimContent.Size = UDim2.new(1, 0, 1, 0)
@@ -536,13 +536,13 @@ aimTitle.Parent = aimContent
 
 -- Camlock Toggle
 local camlockBtn = Instance.new("TextButton")
-camlockBtn.Size = UDim2.new(0, 200, 0, 40)
+camlockBtn.Size = UDim2.new(0, 200, 0, 45)
 camlockBtn.Position = UDim2.new(0, 0, 0.12, 0)
 camlockBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 camlockBtn.BackgroundTransparency = 0.3
 camlockBtn.Text = "Camlock: Выкл"
 camlockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-camlockBtn.TextSize = 18
+camlockBtn.TextSize = 20
 camlockBtn.Font = Enum.Font.SourceSansBold
 camlockBtn.Parent = aimContent
 
@@ -550,238 +550,50 @@ local camlockCorners = Instance.new("UICorner")
 camlockCorners.CornerRadius = UDim.new(0, 10)
 camlockCorners.Parent = camlockBtn
 
--- FOV Label
-local fovLabel = Instance.new("TextLabel")
-fovLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
-fovLabel.Position = UDim2.new(0, 0, 0.22, 0)
-fovLabel.BackgroundTransparency = 1
-fovLabel.Text = "FOV: 90°"
-fovLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-fovLabel.TextSize = 16
-fovLabel.Font = Enum.Font.SourceSansBold
-fovLabel.TextXAlignment = Enum.TextXAlignment.Left
-fovLabel.Parent = aimContent
-
--- FOV Slider
-local fovSlider = Instance.new("Frame")
-fovSlider.Size = UDim2.new(0.4, 0, 0.035, 0)
-fovSlider.Position = UDim2.new(0.35, 0, 0.235, 0)
-fovSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
-fovSlider.BackgroundTransparency = 0.3
-fovSlider.BorderSizePixel = 1
-fovSlider.BorderColor3 = Color3.fromRGB(200, 50, 50)
-fovSlider.Parent = aimContent
-
-local fovFill = Instance.new("Frame")
-fovFill.Size = UDim2.new(0.5, 0, 1, 0)
-fovFill.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-fovFill.BackgroundTransparency = 0.5
-fovFill.BorderSizePixel = 0
-fovFill.Parent = fovSlider
-
-local fovKnob = Instance.new("TextButton")
-fovKnob.Size = UDim2.new(0, 16, 0, 16)
-fovKnob.Position = UDim2.new(0.5, -8, 0.5, -8)
-fovKnob.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-fovKnob.BackgroundTransparency = 0
-fovKnob.Text = ""
-fovKnob.Parent = fovSlider
-
-local fovKnobCorners = Instance.new("UICorner")
-fovKnobCorners.CornerRadius = UDim.new(1, 0)
-fovKnobCorners.Parent = fovKnob
-
--- Smoothness Label
-local smoothLabel = Instance.new("TextLabel")
-smoothLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
-smoothLabel.Position = UDim2.new(0, 0, 0.32, 0)
-smoothLabel.BackgroundTransparency = 1
-smoothLabel.Text = "Smooth: 50"
-smoothLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-smoothLabel.TextSize = 16
-smoothLabel.Font = Enum.Font.SourceSansBold
-smoothLabel.TextXAlignment = Enum.TextXAlignment.Left
-smoothLabel.Parent = aimContent
-
--- Smoothness Slider
-local smoothSlider = Instance.new("Frame")
-smoothSlider.Size = UDim2.new(0.4, 0, 0.035, 0)
-smoothSlider.Position = UDim2.new(0.35, 0, 0.335, 0)
-smoothSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
-smoothSlider.BackgroundTransparency = 0.3
-smoothSlider.BorderSizePixel = 1
-smoothSlider.BorderColor3 = Color3.fromRGB(200, 50, 50)
-smoothSlider.Parent = aimContent
-
-local smoothFill = Instance.new("Frame")
-smoothFill.Size = UDim2.new(0.5, 0, 1, 0)
-smoothFill.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-smoothFill.BackgroundTransparency = 0.5
-smoothFill.BorderSizePixel = 0
-smoothFill.Parent = smoothSlider
-
-local smoothKnob = Instance.new("TextButton")
-smoothKnob.Size = UDim2.new(0, 16, 0, 16)
-smoothKnob.Position = UDim2.new(0.5, -8, 0.5, -8)
-smoothKnob.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-smoothKnob.BackgroundTransparency = 0
-smoothKnob.Text = ""
-smoothKnob.Parent = smoothSlider
-
-local smoothKnobCorners = Instance.new("UICorner")
-smoothKnobCorners.CornerRadius = UDim.new(1, 0)
-smoothKnobCorners.Parent = smoothKnob
-
--- Aim Part Label
-local aimPartLabel = Instance.new("TextLabel")
-aimPartLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
-aimPartLabel.Position = UDim2.new(0, 0, 0.42, 0)
-aimPartLabel.BackgroundTransparency = 1
-aimPartLabel.Text = "Aim Part: Head"
-aimPartLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-aimPartLabel.TextSize = 16
-aimPartLabel.Font = Enum.Font.SourceSansBold
-aimPartLabel.TextXAlignment = Enum.TextXAlignment.Left
-aimPartLabel.Parent = aimContent
-
--- Aim Part Button
-local aimPartBtn = Instance.new("TextButton")
-aimPartBtn.Size = UDim2.new(0, 120, 0, 30)
-aimPartBtn.Position = UDim2.new(0.35, 0, 0.425, 0)
-aimPartBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-aimPartBtn.BackgroundTransparency = 0.3
-aimPartBtn.Text = "Head"
-aimPartBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-aimPartBtn.TextSize = 14
-aimPartBtn.Font = Enum.Font.SourceSansBold
-aimPartBtn.Parent = aimContent
-
-local aimPartCorners = Instance.new("UICorner")
-aimPartCorners.CornerRadius = UDim.new(0, 8)
-aimPartCorners.Parent = aimPartBtn
-
 -- ============================================================
---  CAMLOCK ЛОГИКА
+--  CAMLOCK ЛОГИКА (ТОЛЬКО НА MURDERER)
 -- ============================================================
 local camlockEnabled = false
-local camlockFOV = 90
-local camlockSmooth = 50
-local aimPart = "Head"
-local camlockTarget = nil
+local camera = workspace.CurrentCamera
 
--- Переключение Camlock
 camlockBtn.MouseButton1Click:Connect(function()
     camlockEnabled = not camlockEnabled
     if camlockEnabled then
         camlockBtn.Text = "Camlock: Вкл"
-        print("✅ Camlock включен")
+        print("✅ Camlock включен, ищем убийцу...")
     else
         camlockBtn.Text = "Camlock: Выкл"
-        camlockTarget = nil
         print("❌ Camlock выключен")
     end
 end)
 
--- FOV Slider Drag
-local fovDragging = false
-fovKnob.MouseButton1Down:Connect(function() fovDragging = true end)
-game:GetService("UserInputService").InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then fovDragging = false end
-end)
-
-game:GetService("RunService").RenderStepped:Connect(function()
-    if fovDragging then
-        local mouse = player:GetMouse()
-        if mouse then
-            local relX = (mouse.X - fovSlider.AbsolutePosition.X) / fovSlider.AbsoluteSize.X
-            local val = math.clamp(relX, 0, 1)
-            camlockFOV = math.round(val * 180)
-            fovFill.Size = UDim2.new(val, 0, 1, 0)
-            fovKnob.Position = UDim2.new(val, -8, 0.5, -8)
-            fovLabel.Text = "FOV: " .. camlockFOV .. "°"
-        end
-    end
-end)
-
--- Smoothness Slider Drag
-local smoothDragging = false
-smoothKnob.MouseButton1Down:Connect(function() smoothDragging = true end)
-game:GetService("UserInputService").InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then smoothDragging = false end
-end)
-
-game:GetService("RunService").RenderStepped:Connect(function()
-    if smoothDragging then
-        local mouse = player:GetMouse()
-        if mouse then
-            local relX = (mouse.X - smoothSlider.AbsolutePosition.X) / smoothSlider.AbsoluteSize.X
-            local val = math.clamp(relX, 0, 1)
-            camlockSmooth = math.round(val * 100)
-            smoothFill.Size = UDim2.new(val, 0, 1, 0)
-            smoothKnob.Position = UDim2.new(val, -8, 0.5, -8)
-            smoothLabel.Text = "Smooth: " .. camlockSmooth
-        end
-    end
-end)
-
--- Aim Part Switch
-local aimParts = {"Head", "UpperTorso"}
-local aimPartIndex = 1
-aimPartBtn.MouseButton1Click:Connect(function()
-    aimPartIndex = aimPartIndex % 2 + 1
-    aimPart = aimParts[aimPartIndex]
-    aimPartBtn.Text = aimPart
-    print("🎯 Aim Part: " .. aimPart)
-end)
-
--- Получение убийцы
-local function getMurderer()
-    local murderer = nil
-    local minDist = math.huge
-    local mouse = player:GetMouse()
-    if not mouse then return nil end
-    
+-- ПОИСК ТОЛЬКО УБИЙЦЫ
+local function findMurderer()
     for _, p in pairs(game.Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("Head") then
-            local role = getRole(p)
-            if role == "murderer" then
-                local head = p.Character.Head
-                local screenPos, onScreen = camera:WorldToScreenPoint(head.Position)
-                if onScreen then
-                    local dist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(screenPos.X, screenPos.Y)).Magnitude
-                    if dist < minDist and dist < camlockFOV * 5 then
-                        minDist = dist
-                        murderer = p
-                    end
-                end
+            if getRole(p) == "murderer" then
+                return p
             end
         end
     end
-    return murderer
+    return nil
 end
 
--- Camlock Loop
-local camera = workspace.CurrentCamera
-
+-- НАВЕДЕНИЕ (РЕЗКОЕ, БЕЗ ПЛАВНОСТИ)
 game:GetService("RunService").RenderStepped:Connect(function()
     if not camlockEnabled then return end
     
-    local target = getMurderer()
+    local target = findMurderer()
     if not target then return end
     
-    local part = target.Character:FindFirstChild(aimPart)
-    if not part then return end
+    local head = target.Character:FindFirstChild("Head")
+    if not head then return end
     
-    -- Плавное наведение
-    local targetPos = part.Position
+    local targetPos = head.Position
     local currentPos = camera.CFrame.Position
-    local lookAt = (targetPos - currentPos).Unit
+    local direction = (targetPos - currentPos).Unit
     
-    local targetCFrame = CFrame.new(currentPos, currentPos + lookAt)
-    local smoothFactor = 1 - (camlockSmooth / 100)
-    local newCFrame = camera.CFrame:Lerp(targetCFrame, 1 - smoothFactor * 0.5)
-    
-    camera.CFrame = newCFrame
+    camera.CFrame = CFrame.new(currentPos, currentPos + direction)
 end)
 
 -- ============================================================
@@ -893,4 +705,4 @@ end)
 
 print("✅ WERTIUM HUB с Camlock загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
-print("🎯 Camlock вкладка AIM - наводится на Murderer")
+print("🎯 Camlock: наводится ТОЛЬКО на убийцу (MURDERER)")
