@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FINAL WORKING)
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FIXED)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -69,7 +69,7 @@ stroke.Transparency = 0.1
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = frame
 
--- ЗАГОЛОВОК (без изменений, оставлю как есть для краткости)
+-- ЗАГОЛОВОК (сокращён для читаемости)
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 80)
 header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)
@@ -79,7 +79,7 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- ЛЕВЫЙ ПРИЦЕЛ
+-- ЛЕВЫЙ ПРИЦЕЛ (как в меню)
 local crosshairL = Instance.new("Frame")
 crosshairL.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairL.Position = UDim2.new(0.02, 0, 0.2, 0)
@@ -227,7 +227,7 @@ contentContainer.Position = UDim2.new(0, 145, 0, 85)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- ВКЛАДКИ
+-- ВКЛАДКИ (создание)
 local tabs = {}
 local currentTab = "VISUALS"
 local tweenService = game:GetService("TweenService")
@@ -252,7 +252,7 @@ createTab("VISUALS", 5)
 createTab("AIM", 55)
 createTab("MISC", 105)
 
--- VISUALS (ESP)
+-- VISUALS (ESP) – сокращён, но рабочий
 local visualsContent = Instance.new("Frame")
 visualsContent.Size = UDim2.new(1, 0, 1, 0)
 visualsContent.BackgroundTransparency = 1
@@ -282,7 +282,7 @@ local espCorners = Instance.new("UICorner")
 espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
 
--- ESP ЛОГИКА (упрощённая, но рабочая)
+-- ESP LOGIC (упрощённая)
 local espEnabled = false
 local espLabels = {}
 
@@ -419,7 +419,9 @@ local function toggleESP()
 end
 espBtn.MouseButton1Click:Connect(toggleESP)
 
--- AIM (CAMLOCK + SHOOT SQUARE)
+-- ============================================================
+--  AIM (CAMLOCK + SHOOT SQUARE) – ИСПРАВЛЕННАЯ ВЕРСИЯ
+-- ============================================================
 local aimContent = Instance.new("Frame")
 aimContent.Size = UDim2.new(1, 0, 1, 0)
 aimContent.BackgroundTransparency = 1
@@ -475,6 +477,7 @@ camlockBtn.MouseButton1Click:Connect(function()
     print(camlockEnabled and "✅ Camlock включен" or "❌ Camlock выключен")
 end)
 
+-- ФУНКЦИЯ ПОИСКА УБИЙЦЫ (должна быть объявлена до использования)
 local function findMurderer()
     for _, p in pairs(game.Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -484,6 +487,7 @@ local function findMurderer()
     return nil
 end
 
+-- Camlock обновление
 game:GetService("RunService").RenderStepped:Connect(function()
     if not camlockEnabled then return end
     local target = findMurderer()
@@ -496,7 +500,112 @@ game:GetService("RunService").RenderStepped:Connect(function()
     camera.CFrame = CFrame.new(currentPos, currentPos + direction)
 end)
 
--- SHOOT SQUARE (перетаскиваемый + клик)
+-- ===== ФУНКЦИЯ ВЫСТРЕЛА (ОБЪЯВЛЕНА ПЕРЕД createShootSquare) =====
+local function shootMurderer()
+    print("🔫 Выстрел по убийце!")
+    local murderer = findMurderer()
+    if not murderer then
+        print("❌ Убийца не найден!")
+        return
+    end
+    local targetRoot = murderer.Character:FindFirstChild("HumanoidRootPart")
+    if not targetRoot then
+        print("❌ HumanoidRootPart отсутствует")
+        return
+    end
+    local targetPos = targetRoot.Position
+    print("📍 Позиция: " .. tostring(targetPos))
+
+    -- Поиск пистолета
+    local gun = player.Character:FindFirstChild("Gun") or
+                player.Character:FindFirstChild("Pistol") or
+                player.Character:FindFirstChild("Revolver") or
+                player.Backpack:FindFirstChild("Gun") or
+                player.Backpack:FindFirstChild("Pistol") or
+                player.Backpack:FindFirstChild("Revolver")
+    if not gun then
+        print("❌ Пистолет не найден!")
+        return
+    end
+    if gun.Parent ~= player.Character then
+        gun.Parent = player.Character
+        wait(0.1)
+    end
+
+    -- Попытки выстрела
+    local success = false
+
+    -- 1) RemoteEvent в ReplicatedStorage
+    local remote = game:GetService("ReplicatedStorage"):FindFirstChild("GunEvent") or
+                   game:GetService("ReplicatedStorage"):FindFirstChild("ShootEvent") or
+                   game:GetService("ReplicatedStorage"):FindFirstChild("FireGun") or
+                   game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvent")
+    if remote and remote:IsA("RemoteEvent") and type(remote.FireServer) == "function" then
+        local ok, err = pcall(function()
+            remote:FireServer(targetPos, targetPos + Vector3.new(0, 1, 0))
+        end)
+        if ok then
+            print("✅ Выстрел через RemoteEvent!")
+            success = true
+        else
+            warn("⚠️ RemoteEvent ошибка: " .. tostring(err))
+        end
+    end
+
+    -- 2) RemoteEvent в инструменте
+    if not success then
+        local toolRemote = gun:FindFirstChild("RemoteEvent")
+        if toolRemote and toolRemote:IsA("RemoteEvent") and type(toolRemote.FireServer) == "function" then
+            local ok, err = pcall(function()
+                toolRemote:FireServer(targetPos)
+            end)
+            if ok then
+                print("✅ Выстрел через Tool RemoteEvent!")
+                success = true
+            else
+                warn("⚠️ Tool RemoteEvent ошибка: " .. tostring(err))
+            end
+        end
+    end
+
+    -- 3) Activate
+    if not success then
+        local activate = gun:FindFirstChild("Activate")
+        if activate and activate:IsA("BindableEvent") and type(activate.Fire) == "function" then
+            local ok, err = pcall(function()
+                activate:Fire()
+            end)
+            if ok then
+                print("✅ Выстрел через Activate!")
+                success = true
+            else
+                warn("⚠️ Activate ошибка: " .. tostring(err))
+            end
+        end
+    end
+
+    -- 4) Любой другой RemoteEvent в инструменте
+    if not success then
+        for _, child in pairs(gun:GetChildren()) do
+            if child:IsA("RemoteEvent") and child.Name ~= "RemoteEvent" and type(child.FireServer) == "function" then
+                local ok, err = pcall(function()
+                    child:FireServer(targetPos)
+                end)
+                if ok then
+                    print("✅ Выстрел через " .. child.Name)
+                    success = true
+                    break
+                end
+            end
+        end
+    end
+
+    if not success then
+        print("❌ Все способы выстрела не удались!")
+    end
+end
+
+-- ===== СОЗДАНИЕ КВАДРАТА (после объявления shootMurderer) =====
 local shootSquareEnabled = false
 local shootSquare = nil
 local shootFrame = nil
@@ -539,7 +648,7 @@ local function createShootSquare()
     stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     stroke.Parent = shootFrame
 
-    -- Прицел
+    -- Прицел (белый, вращающийся)
     local crosshair = Instance.new("Frame")
     crosshair.Size = UDim2.new(0, 70, 0, 70)
     crosshair.Position = UDim2.new(0.5, -35, 0.5, -40)
@@ -600,7 +709,24 @@ local function createShootSquare()
         crosshair.Rotation = math.deg(angle)
     end)
 
-    -- Перетаскивание и клик
+    -- ===== ОБРАБОТЧИК КЛИКА (Mouse + Touch) =====
+    local function onShoot()
+        shootMurderer()
+        -- Вспышка
+        local flash = Instance.new("Frame")
+        flash.Size = UDim2.new(1, 0, 1, 0)
+        flash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        flash.BackgroundTransparency = 0.5
+        flash.BorderSizePixel = 0
+        flash.Parent = shootFrame
+        local flashCorner = Instance.new("UICorner")
+        flashCorner.CornerRadius = UDim.new(0, 12)
+        flashCorner.Parent = flash
+        game:GetService("TweenService"):Create(flash, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 1}):Play()
+        game:GetService("Debris"):AddItem(flash, 0.3)
+    end
+
+    -- Подключаем события клика на самом фрейме (без отдельной кнопки)
     shootFrame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             isDragging = true
@@ -616,7 +742,7 @@ local function createShootSquare()
             if isDragging and dragStart and frameStart then
                 local delta = input.Position - dragStart
                 if delta.Magnitude > 10 then
-                    isClick = false -- если двигаем, то не клик
+                    isClick = false
                 end
                 shootFrame.Position = UDim2.new(
                     frameStart.X.Scale, frameStart.X.Offset + delta.X,
@@ -631,21 +757,8 @@ local function createShootSquare()
             isDragging = false
             dragStart = nil
             frameStart = nil
-            -- Если это был клик (не перетаскивание) и прошло мало времени
             if isClick and (tick() - clickTime) < 0.3 then
-                shootMurderer()
-                -- Вспышка
-                local flash = Instance.new("Frame")
-                flash.Size = UDim2.new(1, 0, 1, 0)
-                flash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                flash.BackgroundTransparency = 0.5
-                flash.BorderSizePixel = 0
-                flash.Parent = shootFrame
-                local flashCorner = Instance.new("UICorner")
-                flashCorner.CornerRadius = UDim.new(0, 12)
-                flashCorner.Parent = flash
-                game:GetService("TweenService"):Create(flash, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 1}):Play()
-                game:GetService("Debris"):AddItem(flash, 0.3)
+                onShoot()
             end
             isClick = false
         end
@@ -658,43 +771,6 @@ local function removeShootSquare()
         shootSquare = nil
         shootFrame = nil
     end
-end
-
--- SHOOT MURDERER
-local function shootMurderer()
-    print("🔫 Выстрел по убийце!")
-    local murderer = findMurderer()
-    if not murderer then print("❌ Убийца не найден!") return end
-    local targetRoot = murderer.Character:FindFirstChild("HumanoidRootPart")
-    if not targetRoot then print("❌ HumanoidRootPart отсутствует") return end
-    local targetPos = targetRoot.Position
-
-    local gun = player.Character:FindFirstChild("Gun") or player.Character:FindFirstChild("Pistol") or player.Character:FindFirstChild("Revolver") or player.Backpack:FindFirstChild("Gun") or player.Backpack:FindFirstChild("Pistol") or player.Backpack:FindFirstChild("Revolver")
-    if not gun then print("❌ Пистолет не найден!") return end
-    if gun.Parent ~= player.Character then gun.Parent = player.Character wait(0.1) end
-
-    local remote = game:GetService("ReplicatedStorage"):FindFirstChild("GunEvent") or game:GetService("ReplicatedStorage"):FindFirstChild("ShootEvent") or game:GetService("ReplicatedStorage"):FindFirstChild("FireGun") or game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvent")
-    if remote and remote:IsA("RemoteEvent") then
-        local ok = pcall(function() remote:FireServer(targetPos, targetPos + Vector3.new(0,1,0)) end)
-        if ok then print("✅ Выстрел через RemoteEvent!") return end
-    end
-    local toolRemote = gun:FindFirstChild("RemoteEvent")
-    if toolRemote and toolRemote:IsA("RemoteEvent") then
-        local ok = pcall(function() toolRemote:FireServer(targetPos) end)
-        if ok then print("✅ Выстрел через Tool RemoteEvent!") return end
-    end
-    local activate = gun:FindFirstChild("Activate")
-    if activate and activate:IsA("BindableEvent") then
-        local ok = pcall(function() activate:Fire() end)
-        if ok then print("✅ Выстрел через Activate!") return end
-    end
-    for _, child in pairs(gun:GetChildren()) do
-        if child:IsA("RemoteEvent") and child.Name ~= "RemoteEvent" then
-            local ok = pcall(function() child:FireServer(targetPos) end)
-            if ok then print("✅ Выстрел через " .. child.Name) return end
-        end
-    end
-    print("❌ Все способы выстрела не удались!")
 end
 
 -- Toggle Shoot Square
