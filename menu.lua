@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - С ОКРУГЛЁННЫМИ ВКЛАДКАМИ И АНИМАЦИЕЙ
+--  WERTIUM HUB - ОКРУГЛЁННЫЕ ВКЛАДКИ + АНИМАЦИЯ (БЕЗ ПОДСКАЗКИ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -70,12 +70,10 @@ frame.Draggable = true
 frame.ClipsDescendants = true
 frame.Parent = gui
 
--- УГЛЫ
 local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
--- БЕЛАЯ ПОДСВЕТКА
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 4
 stroke.Color = Color3.fromRGB(255, 255, 255)
@@ -243,7 +241,7 @@ wButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ЛЕВАЯ ПАНЕЛЬ С ВКЛАДКАМИ (ОКРУГЛЁННЫЕ)
+--  ЛЕВАЯ ПАНЕЛЬ С ВКЛАДКАМИ
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 140, 1, -80)
@@ -252,9 +250,9 @@ tabContainer.BackgroundColor3 = Color3.fromRGB(100, 15, 15)
 tabContainer.BackgroundTransparency = 0.2
 tabContainer.Parent = frame
 
--- Углы у панели вкладок
+-- ОКРУГЛЕНИЕ ПАНЕЛИ ВКЛАДОК
 local tabContainerCorners = Instance.new("UICorner")
-tabContainerCorners.CornerRadius = UDim.new(0, 12)
+tabContainerCorners.CornerRadius = UDim.new(0, 20)
 tabContainerCorners.Parent = tabContainer
 
 local contentContainer = Instance.new("Frame")
@@ -264,7 +262,7 @@ contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
 -- ============================================================
---  ВКЛАДКИ (С АНИМАЦИЕЙ)
+--  ВКЛАДКИ С ОКРУГЛЕНИЕМ 20PX И АНИМАЦИЕЙ
 -- ============================================================
 local tabs = {}
 local currentTab = "VISUALS"
@@ -282,9 +280,9 @@ local function createTab(name, yPos)
     btn.Font = Enum.Font.SourceSansBold
     btn.Parent = tabContainer
     
-    -- ОКРУГЛЁННЫЕ УГЛЫ У КАЖДОЙ ВКЛАДКИ
+    -- ОКРУГЛЕНИЕ 20PX (КАК У ГЛАВНОГО ОКНА)
     local btnCorners = Instance.new("UICorner")
-    btnCorners.CornerRadius = UDim.new(0, 12)
+    btnCorners.CornerRadius = UDim.new(0, 20)
     btnCorners.Parent = btn
     
     tabs[name] = btn
@@ -584,9 +582,8 @@ local function switchTab(tabName)
     for name, btn in pairs(tabs) do
         local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
         if name == tabName then
-            -- АНИМАЦИЯ ПРИ ВЫБОРЕ: ярче, чуть больше
             tweenService:Create(btn, tweenInfo, {
-                BackgroundColor3 = Color3.fromRGB(180, 40, 40),
+                BackgroundColor3 = Color3.fromRGB(200, 50, 50),
                 BackgroundTransparency = 0.1,
                 TextColor3 = Color3.fromRGB(255, 255, 255),
                 Size = UDim2.new(1, -10, 0, 48)
