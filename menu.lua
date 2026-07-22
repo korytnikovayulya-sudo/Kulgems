@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FIXED CLICK)
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FIXED)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -784,7 +784,7 @@ local function removeShootSquare()
 end
 
 -- ============================================================
---  SHOOT MURDERER FUNCTION
+--  SHOOT MURDERER FUNCTION (С ЗАЩИТОЙ ОТ ОШИБОК)
 -- ============================================================
 local function shootMurderer()
     local murderer = findMurderer()
@@ -802,6 +802,7 @@ local function shootMurderer()
     local targetPos = targetRoot.Position
     print("🎯 Цель: " .. murderer.Name .. " | Позиция: " .. tostring(targetPos))
     
+    -- Поиск оружия (пистолет)
     local gun = player.Character:FindFirstChild("Gun") or 
                 player.Character:FindFirstChild("Pistol") or
                 player.Character:FindFirstChild("Revolver") or
@@ -814,34 +815,54 @@ local function shootMurderer()
         return
     end
     
+    -- Перемещаем оружие в руки, если его там нет
     if gun.Parent ~= player.Character then
         gun.Parent = player.Character
     end
     
+    -- Поиск RemoteEvent для выстрела (проверяем несколько вариантов)
     local remote = game:GetService("ReplicatedStorage"):FindFirstChild("GunEvent") or
                    game:GetService("ReplicatedStorage"):FindFirstChild("ShootEvent") or
                    game:GetService("ReplicatedStorage"):FindFirstChild("FireGun") or
                    game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvent")
     
-    if remote then
-        local args = {
-            Origin = targetPos + Vector3.new(0, 1, 0),
-            Target = targetPos,
-            Hit = targetPos
-        }
-        remote:FireServer(unpack(args))
-        print("✅ Выстрел отправлен через RemoteEvent!")
-    else
-        local tool = gun
-        if tool and tool:FindFirstChild("Activate") then
-            tool.Activate:Fire()
-            print("✅ Выстрел через Activate!")
-        elseif tool and tool:FindFirstChild("RemoteEvent") then
-            tool.RemoteEvent:FireServer(targetPos)
-            print("✅ Выстрел через Tool RemoteEvent!")
+    -- Безопасный вызов с pcall
+    local success, err = pcall(function()
+        if remote then
+            -- Если remote существует, пробуем вызвать FireServer
+            if remote:IsA("RemoteEvent") then
+                remote:FireServer(targetPos, targetPos + Vector3.new(0, 1, 0))
+                print("✅ Выстрел через RemoteEvent!")
+            else
+                -- Если это не RemoteEvent, пробуем другие методы
+                local tool = gun
+                if tool:FindFirstChild("Activate") and tool.Activate:IsA("BindableEvent") then
+                    tool.Activate:Fire()
+                    print("✅ Выстрел через Activate!")
+                elseif tool:FindFirstChild("RemoteEvent") and tool.RemoteEvent:IsA("RemoteEvent") then
+                    tool.RemoteEvent:FireServer(targetPos)
+                    print("✅ Выстрел через Tool RemoteEvent!")
+                else
+                    warn("⚠️ Неизвестный способ выстрела!")
+                end
+            end
         else
-            print("❌ Не удалось найти способ выстрела!")
+            -- Если RemoteEvent не найден, пробуем через инструмент
+            local tool = gun
+            if tool:FindFirstChild("Activate") and tool.Activate:IsA("BindableEvent") then
+                tool.Activate:Fire()
+                print("✅ Выстрел через Activate!")
+            elseif tool:FindFirstChild("RemoteEvent") and tool.RemoteEvent:IsA("RemoteEvent") then
+                tool.RemoteEvent:FireServer(targetPos)
+                print("✅ Выстрел через Tool RemoteEvent!")
+            else
+                warn("⚠️ Не удалось найти способ выстрела!")
+            end
         end
+    end)
+    
+    if not success then
+        warn("❌ Ошибка при выстреле: " .. tostring(err))
     end
 end
 
