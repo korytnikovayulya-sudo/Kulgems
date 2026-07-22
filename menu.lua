@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FIXED)
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (ОТЛАДОЧНАЯ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -515,7 +515,7 @@ end
 espBtn.MouseButton1Click:Connect(toggleESP)
 
 -- ============================================================
---  AIM (CAMLOCK + SHOOT MURD SQUARE) - ИСПРАВЛЕННЫЙ КЛИК
+--  AIM (CAMLOCK + SHOOT MURD SQUARE) - ОТЛАДОЧНАЯ ВЕРСИЯ
 -- ============================================================
 local aimContent = Instance.new("Frame")
 aimContent.Size = UDim2.new(1, 0, 1, 0)
@@ -784,25 +784,27 @@ local function removeShootSquare()
 end
 
 -- ============================================================
---  SHOOT MURDERER FUNCTION (С ЗАЩИТОЙ ОТ ОШИБОК)
+--  SHOOT MURDERER FUNCTION (ОТЛАДОЧНАЯ ВЕРСИЯ)
 -- ============================================================
 local function shootMurderer()
+    print("🔫 Запуск shootMurderer()")
+    
     local murderer = findMurderer()
     if not murderer then
         print("❌ Убийца не найден!")
         return
     end
+    print("🎯 Убийца найден: " .. murderer.Name)
     
     local targetRoot = murderer.Character:FindFirstChild("HumanoidRootPart")
     if not targetRoot then
         print("❌ HumanoidRootPart не найден!")
         return
     end
-    
     local targetPos = targetRoot.Position
-    print("🎯 Цель: " .. murderer.Name .. " | Позиция: " .. tostring(targetPos))
+    print("📍 Позиция убийцы: " .. tostring(targetPos))
     
-    -- Поиск оружия (пистолет)
+    -- Поиск оружия
     local gun = player.Character:FindFirstChild("Gun") or 
                 player.Character:FindFirstChild("Pistol") or
                 player.Character:FindFirstChild("Revolver") or
@@ -814,56 +816,97 @@ local function shootMurderer()
         print("❌ Пистолет не найден!")
         return
     end
+    print("🔫 Найден пистолет: " .. gun.Name .. " (в " .. gun.Parent.Name .. ")")
     
-    -- Перемещаем оружие в руки, если его там нет
+    -- Перемещаем в руки, если нужно
     if gun.Parent ~= player.Character then
+        print("⬆️ Перемещаем пистолет в руки")
         gun.Parent = player.Character
+        wait(0.2)
     end
     
-    -- Поиск RemoteEvent для выстрела (проверяем несколько вариантов)
-    local remote = game:GetService("ReplicatedStorage"):FindFirstChild("GunEvent") or
-                   game:GetService("ReplicatedStorage"):FindFirstChild("ShootEvent") or
-                   game:GetService("ReplicatedStorage"):FindFirstChild("FireGun") or
-                   game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvent")
+    -- ===== ПЫТАЕМСЯ НАЙТИ REMOTEEVENT =====
+    local remote = nil
+    local remoteNames = {"GunEvent", "ShootEvent", "FireGun", "RemoteEvent"}
+    for _, name in ipairs(remoteNames) do
+        local found = game:GetService("ReplicatedStorage"):FindFirstChild(name)
+        if found and found:IsA("RemoteEvent") then
+            remote = found
+            print("✅ Найден RemoteEvent: " .. name)
+            break
+        end
+    end
     
-    -- Безопасный вызов с pcall
-    local success, err = pcall(function()
-        if remote then
-            -- Если remote существует, пробуем вызвать FireServer
-            if remote:IsA("RemoteEvent") then
-                remote:FireServer(targetPos, targetPos + Vector3.new(0, 1, 0))
-                print("✅ Выстрел через RemoteEvent!")
-            else
-                -- Если это не RemoteEvent, пробуем другие методы
-                local tool = gun
-                if tool:FindFirstChild("Activate") and tool.Activate:IsA("BindableEvent") then
-                    tool.Activate:Fire()
-                    print("✅ Выстрел через Activate!")
-                elseif tool:FindFirstChild("RemoteEvent") and tool.RemoteEvent:IsA("RemoteEvent") then
-                    tool.RemoteEvent:FireServer(targetPos)
-                    print("✅ Выстрел через Tool RemoteEvent!")
-                else
-                    warn("⚠️ Неизвестный способ выстрела!")
-                end
-            end
+    if remote then
+        print("🔄 Пытаемся вызвать remote:FireServer()")
+        local success, err = pcall(function()
+            remote:FireServer(targetPos, targetPos + Vector3.new(0, 1, 0))
+        end)
+        if success then
+            print("✅ УСПЕШНЫЙ ВЫСТРЕЛ ЧЕРЕЗ REMOTEEVENT!")
+            return
         else
-            -- Если RemoteEvent не найден, пробуем через инструмент
-            local tool = gun
-            if tool:FindFirstChild("Activate") and tool.Activate:IsA("BindableEvent") then
-                tool.Activate:Fire()
-                print("✅ Выстрел через Activate!")
-            elseif tool:FindFirstChild("RemoteEvent") and tool.RemoteEvent:IsA("RemoteEvent") then
-                tool.RemoteEvent:FireServer(targetPos)
-                print("✅ Выстрел через Tool RemoteEvent!")
+            warn("❌ Ошибка FireServer: " .. tostring(err))
+            print("⚠️ Продолжаем пробовать альтернативы")
+        end
+    else
+        print("⚠️ RemoteEvent не найден в ReplicatedStorage")
+    end
+    
+    -- ===== АЛЬТЕРНАТИВА: ИЩЕМ REMOTEEVENT В ИНСТРУМЕНТЕ =====
+    print("🔍 Ищем RemoteEvent в инструменте")
+    local toolRemote = gun:FindFirstChild("RemoteEvent")
+    if toolRemote and toolRemote:IsA("RemoteEvent") then
+        print("🔄 Пытаемся вызвать toolRemote:FireServer()")
+        local success, err = pcall(function()
+            toolRemote:FireServer(targetPos)
+        end)
+        if success then
+            print("✅ УСПЕШНЫЙ ВЫСТРЕЛ ЧЕРЕЗ TOOL REMOTEEVENT!")
+            return
+        else
+            warn("❌ Ошибка toolRemote FireServer: " .. tostring(err))
+        end
+    else
+        print("⚠️ RemoteEvent не найден в инструменте")
+    end
+    
+    -- ===== АЛЬТЕРНАТИВА: ACTIVATE =====
+    print("🔍 Ищем Activate в инструменте")
+    local activate = gun:FindFirstChild("Activate")
+    if activate and activate:IsA("BindableEvent") then
+        print("🔄 Пытаемся вызвать activate:Fire()")
+        local success, err = pcall(function()
+            activate:Fire()
+        end)
+        if success then
+            print("✅ УСПЕШНЫЙ ВЫСТРЕЛ ЧЕРЕЗ ACTIVATE!")
+            return
+        else
+            warn("❌ Ошибка Activate: " .. tostring(err))
+        end
+    else
+        print("⚠️ Activate не найден в инструменте")
+    end
+    
+    -- ===== ПОСЛЕДНЯЯ ПОПЫТКА: ЛЮБОЙ ДРУГОЙ REMOTEEVENT =====
+    print("🔍 Ищем любой другой RemoteEvent в инструменте")
+    for _, child in pairs(gun:GetChildren()) do
+        if child:IsA("RemoteEvent") and child.Name ~= "RemoteEvent" then
+            print("🔄 Найден альтернативный RemoteEvent: " .. child.Name)
+            local success, err = pcall(function()
+                child:FireServer(targetPos)
+            end)
+            if success then
+                print("✅ УСПЕШНЫЙ ВЫСТРЕЛ ЧЕРЕЗ " .. child.Name)
+                return
             else
-                warn("⚠️ Не удалось найти способ выстрела!")
+                warn("❌ Ошибка " .. child.Name .. ": " .. tostring(err))
             end
         end
-    end)
-    
-    if not success then
-        warn("❌ Ошибка при выстреле: " .. tostring(err))
     end
+    
+    print("❌ ВСЕ СПОСОБЫ ВЫСТРЕЛА НЕ УДАЛИСЬ!")
 end
 
 -- ============================================================
@@ -993,4 +1036,4 @@ print("✅ WERTIUM HUB загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("👁️ ESP - показывает игроков сквозь стены")
 print("🎯 Camlock - наводится на убийцу")
-print("🔲 Shoot Square - клик по квадрату = выстрел в убийцу")
+print("🔲 Shoot Square - клик по квадрату (ОТЛАДКА)")
