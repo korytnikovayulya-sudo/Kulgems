@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FIXED)
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FIXED SHOOT)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -69,7 +69,7 @@ stroke.Transparency = 0.1
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = frame
 
--- ЗАГОЛОВОК (сокращён для читаемости)
+-- ЗАГОЛОВОК
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 80)
 header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)
@@ -79,7 +79,7 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- ЛЕВЫЙ ПРИЦЕЛ (как в меню)
+-- ЛЕВЫЙ ПРИЦЕЛ
 local crosshairL = Instance.new("Frame")
 crosshairL.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairL.Position = UDim2.new(0.02, 0, 0.2, 0)
@@ -252,7 +252,7 @@ createTab("VISUALS", 5)
 createTab("AIM", 55)
 createTab("MISC", 105)
 
--- VISUALS (ESP) – сокращён, но рабочий
+-- VISUALS (ESP)
 local visualsContent = Instance.new("Frame")
 visualsContent.Size = UDim2.new(1, 0, 1, 0)
 visualsContent.BackgroundTransparency = 1
@@ -282,7 +282,7 @@ local espCorners = Instance.new("UICorner")
 espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
 
--- ESP LOGIC (упрощённая)
+-- ESP LOGIC
 local espEnabled = false
 local espLabels = {}
 
@@ -420,7 +420,7 @@ end
 espBtn.MouseButton1Click:Connect(toggleESP)
 
 -- ============================================================
---  AIM (CAMLOCK + SHOOT SQUARE) – ИСПРАВЛЕННАЯ ВЕРСИЯ
+--  AIM (CAMLOCK + SHOOT SQUARE)
 -- ============================================================
 local aimContent = Instance.new("Frame")
 aimContent.Size = UDim2.new(1, 0, 1, 0)
@@ -477,7 +477,7 @@ camlockBtn.MouseButton1Click:Connect(function()
     print(camlockEnabled and "✅ Camlock включен" or "❌ Camlock выключен")
 end)
 
--- ФУНКЦИЯ ПОИСКА УБИЙЦЫ (должна быть объявлена до использования)
+-- ФУНКЦИЯ ПОИСКА УБИЙЦЫ
 local function findMurderer()
     for _, p in pairs(game.Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -500,9 +500,13 @@ game:GetService("RunService").RenderStepped:Connect(function()
     camera.CFrame = CFrame.new(currentPos, currentPos + direction)
 end)
 
--- ===== ФУНКЦИЯ ВЫСТРЕЛА (ОБЪЯВЛЕНА ПЕРЕД createShootSquare) =====
+-- ============================================================
+--  НОВАЯ ФУНКЦИЯ ВЫСТРЕЛА (АВТОМАТИЧЕСКИЙ ПЕРЕБОР)
+-- ============================================================
 local function shootMurderer()
     print("🔫 Выстрел по убийце!")
+
+    -- 1. Найти убийцу
     local murderer = findMurderer()
     if not murderer then
         print("❌ Убийца не найден!")
@@ -514,9 +518,9 @@ local function shootMurderer()
         return
     end
     local targetPos = targetRoot.Position
-    print("📍 Позиция: " .. tostring(targetPos))
+    print("📍 Позиция убийцы: " .. tostring(targetPos))
 
-    -- Поиск пистолета
+    -- 2. Найти пистолет
     local gun = player.Character:FindFirstChild("Gun") or
                 player.Character:FindFirstChild("Pistol") or
                 player.Character:FindFirstChild("Revolver") or
@@ -527,85 +531,95 @@ local function shootMurderer()
         print("❌ Пистолет не найден!")
         return
     end
+    print("🔫 Найден пистолет: " .. gun.Name)
+
+    -- 3. Экипировать
     if gun.Parent ~= player.Character then
         gun.Parent = player.Character
         wait(0.1)
     end
+    local hum = player.Character:FindFirstChild("Humanoid")
+    if hum then
+        hum:EquipTool(gun)
+        print("🔄 Пистолет активирован")
+    end
 
-    -- Попытки выстрела
+    -- 4. Собрать все RemoteEvent/RemoteFunction из ReplicatedStorage и из инструмента
+    local candidates = {}
+    for _, child in pairs(game:GetService("ReplicatedStorage"):GetChildren()) do
+        if child:IsA("RemoteEvent") or child:IsA("RemoteFunction") then
+            table.insert(candidates, child)
+        end
+    end
+    for _, child in pairs(gun:GetChildren()) do
+        if child:IsA("RemoteEvent") or child:IsA("RemoteFunction") then
+            table.insert(candidates, child)
+        end
+    end
+    print("🔍 Найдено RemoteEvent/RemoteFunction: " .. #candidates)
+
+    -- 5. Перебор кандидатов
     local success = false
-
-    -- 1) RemoteEvent в ReplicatedStorage
-    local remote = game:GetService("ReplicatedStorage"):FindFirstChild("GunEvent") or
-                   game:GetService("ReplicatedStorage"):FindFirstChild("ShootEvent") or
-                   game:GetService("ReplicatedStorage"):FindFirstChild("FireGun") or
-                   game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvent")
-    if remote and remote:IsA("RemoteEvent") and type(remote.FireServer) == "function" then
-        local ok, err = pcall(function()
-            remote:FireServer(targetPos, targetPos + Vector3.new(0, 1, 0))
-        end)
-        if ok then
-            print("✅ Выстрел через RemoteEvent!")
-            success = true
-        else
-            warn("⚠️ RemoteEvent ошибка: " .. tostring(err))
-        end
-    end
-
-    -- 2) RemoteEvent в инструменте
-    if not success then
-        local toolRemote = gun:FindFirstChild("RemoteEvent")
-        if toolRemote and toolRemote:IsA("RemoteEvent") and type(toolRemote.FireServer) == "function" then
-            local ok, err = pcall(function()
-                toolRemote:FireServer(targetPos)
-            end)
-            if ok then
-                print("✅ Выстрел через Tool RemoteEvent!")
-                success = true
-            else
-                warn("⚠️ Tool RemoteEvent ошибка: " .. tostring(err))
-            end
-        end
-    end
-
-    -- 3) Activate
-    if not success then
-        local activate = gun:FindFirstChild("Activate")
-        if activate and activate:IsA("BindableEvent") and type(activate.Fire) == "function" then
-            local ok, err = pcall(function()
-                activate:Fire()
-            end)
-            if ok then
-                print("✅ Выстрел через Activate!")
-                success = true
-            else
-                warn("⚠️ Activate ошибка: " .. tostring(err))
-            end
-        end
-    end
-
-    -- 4) Любой другой RemoteEvent в инструменте
-    if not success then
-        for _, child in pairs(gun:GetChildren()) do
-            if child:IsA("RemoteEvent") and child.Name ~= "RemoteEvent" and type(child.FireServer) == "function" then
+    for _, remote in ipairs(candidates) do
+        if remote:IsA("RemoteEvent") and type(remote.FireServer) == "function" then
+            print("🔍 Пробуем RemoteEvent: " .. remote.Name)
+            local argSets = {
+                {targetPos},
+                {targetPos, targetPos + Vector3.new(0,1,0)},
+                {targetPos, (targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
+                {workspace.CurrentCamera.CFrame},
+                {}
+            }
+            for i, args in ipairs(argSets) do
                 local ok, err = pcall(function()
-                    child:FireServer(targetPos)
+                    remote:FireServer(unpack(args))
                 end)
                 if ok then
-                    print("✅ Выстрел через " .. child.Name)
+                    print("   ✅ Успешно вызван " .. remote.Name .. " (аргументы #" .. i .. ")")
                     success = true
                     break
                 end
             end
+        elseif remote:IsA("RemoteFunction") and type(remote.InvokeServer) == "function" then
+            print("🔍 Пробуем RemoteFunction: " .. remote.Name)
+            local ok, err = pcall(function()
+                remote:InvokeServer(targetPos)
+            end)
+            if ok then
+                print("   ✅ Успешно вызван " .. remote.Name)
+                success = true
+            end
+        end
+        if success then break end
+    end
+
+    -- 6. Запасной вариант: симуляция клика мыши
+    if not success then
+        print("🔍 Пробуем симуляцию клика через VirtualInputManager")
+        local vim = game:GetService("VirtualInputManager")
+        if vim then
+            local ok = pcall(function()
+                vim:SendMouseButtonEvent(0, 0, 0, true, Enum.UserInputType.MouseButton1, 0)
+                wait(0.05)
+                vim:SendMouseButtonEvent(0, 0, 0, false, Enum.UserInputType.MouseButton1, 0)
+            end)
+            if ok then
+                print("   ✅ Симуляция клика выполнена")
+                success = true
+            end
         end
     end
 
-    if not success then
-        print("❌ Все способы выстрела не удались!")
+    if success then
+        print("✅ Выстрел успешно отправлен!")
+    else
+        print("❌ НИ ОДИН СПОСОБ НЕ СРАБОТАЛ. Проверьте консоль выше.")
     end
 end
 
--- ===== СОЗДАНИЕ КВАДРАТА (после объявления shootMurderer) =====
+-- ============================================================
+--  SHOOT SQUARE (СОЗДАНИЕ И УПРАВЛЕНИЕ)
+-- ============================================================
 local shootSquareEnabled = false
 local shootSquare = nil
 local shootFrame = nil
@@ -709,7 +723,7 @@ local function createShootSquare()
         crosshair.Rotation = math.deg(angle)
     end)
 
-    -- ===== ОБРАБОТЧИК КЛИКА (Mouse + Touch) =====
+    -- Обработка клика и перетаскивания
     local function onShoot()
         shootMurderer()
         -- Вспышка
@@ -726,7 +740,6 @@ local function createShootSquare()
         game:GetService("Debris"):AddItem(flash, 0.3)
     end
 
-    -- Подключаем события клика на самом фрейме (без отдельной кнопки)
     shootFrame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             isDragging = true
