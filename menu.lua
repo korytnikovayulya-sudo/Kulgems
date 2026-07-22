@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - С КРАСНОЙ КНОПКОЙ СВЕРХУ И W
+--  WERTIUM HUB - ИСПРАВЛЕННАЯ КНОПКА ESP
 -- ============================================================
 
 print("🚀 Загрузка...")
@@ -26,26 +26,24 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  КНОПКА W (КРАСНЫЙ КРУГ) - ПОЯВЛЯЕТСЯ ПРИ ЗАКРЫТИИ МЕНЮ
+--  КНОПКА W (КРАСНЫЙ КРУГ)
 -- ============================================================
 local wButton = Instance.new("TextButton")
 wButton.Size = UDim2.new(0, 60, 0, 60)
-wButton.Position = UDim2.new(1, -80, 1, -80) -- правый нижний угол
+wButton.Position = UDim2.new(1, -80, 1, -80)
 wButton.BackgroundColor3 = Color3.fromRGB(200, 30, 30)
 wButton.BackgroundTransparency = 0.1
 wButton.Text = "W"
 wButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 wButton.TextSize = 30
 wButton.Font = Enum.Font.GothamBold
-wButton.Visible = false -- скрыта по умолчанию
+wButton.Visible = false
 wButton.Parent = gui
 
--- Скругление (круг)
 local wCorners = Instance.new("UICorner")
 wCorners.CornerRadius = UDim.new(1, 0)
 wCorners.Parent = wButton
 
--- Белая подсветка у кнопки W
 local wStroke = Instance.new("UIStroke")
 wStroke.Thickness = 2
 wStroke.Color = Color3.fromRGB(255, 255, 255)
@@ -54,7 +52,7 @@ wStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 wStroke.Parent = wButton
 
 -- ============================================================
---  ОСНОВНОЕ ОКНО (БОЛЬШОЕ, КРАСНОЕ)
+--  ОСНОВНОЕ ОКНО
 -- ============================================================
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 900, 0, 500)
@@ -68,12 +66,10 @@ frame.Draggable = true
 frame.ClipsDescendants = true
 frame.Parent = gui
 
--- УГЛЫ
 local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
--- БЕЛАЯ ПОДСВЕТКА
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 4
 stroke.Color = Color3.fromRGB(255, 255, 255)
@@ -94,7 +90,7 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- ЛЕВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
+-- ЛЕВЫЙ ПРИЦЕЛ
 local crosshairL = Instance.new("Frame")
 crosshairL.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairL.Position = UDim2.new(0.02, 0, 0.2, 0)
@@ -138,7 +134,7 @@ local dotLc = Instance.new("UICorner")
 dotLc.CornerRadius = UDim.new(1, 0)
 dotLc.Parent = dotL
 
--- ПРАВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
+-- ПРАВЫЙ ПРИЦЕЛ
 local crosshairR = Instance.new("Frame")
 crosshairR.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairR.Position = UDim2.new(0.88, 0, 0.2, 0)
@@ -182,7 +178,6 @@ local dotRc = Instance.new("UICorner")
 dotRc.CornerRadius = UDim.new(1, 0)
 dotRc.Parent = dotR
 
--- АНИМАЦИЯ ПРИЦЕЛОВ
 local angle2 = 0
 game:GetService("RunService").RenderStepped:Connect(function()
     angle2 = angle2 + 0.03
@@ -202,7 +197,6 @@ title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = header
 
--- ВЕРСИЯ VD
 local version = Instance.new("TextLabel")
 version.Size = UDim2.new(0.4, 0, 0.3, 0)
 version.Position = UDim2.new(0.3, 0, 0.7, 0)
@@ -214,13 +208,11 @@ version.Font = Enum.Font.SourceSansBold
 version.TextXAlignment = Enum.TextXAlignment.Center
 version.Parent = header
 
--- ============================================================
---  КРАСНАЯ КНОПКА ЗАКРЫТИЯ (СПРАВА СВЕРХУ)
--- ============================================================
+-- КРАСНАЯ КНОПКА ЗАКРЫТИЯ
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 40, 0, 40)
 closeBtn.Position = UDim2.new(0.94, 0, 0.5, -20)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200, 30, 30) -- КРАСНАЯ
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 30, 30)
 closeBtn.BackgroundTransparency = 0.1
 closeBtn.Text = "✕"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -232,15 +224,11 @@ local closeCorners = Instance.new("UICorner")
 closeCorners.CornerRadius = UDim.new(0, 8)
 closeCorners.Parent = closeBtn
 
--- ПРИ НАЖАТИИ НА КРЕСТИК - МЕНЮ ЗАКРЫВАЕТСЯ, ПОЯВЛЯЕТСЯ W
 closeBtn.MouseButton1Click:Connect(function()
     frame.Visible = false
     wButton.Visible = true
 end)
 
--- ============================================================
---  НАЖАТИЕ НА W - ОТКРЫВАЕТ МЕНЮ
--- ============================================================
 wButton.MouseButton1Click:Connect(function()
     frame.Visible = true
     wButton.Visible = false
@@ -262,9 +250,7 @@ contentContainer.Position = UDim2.new(0, 145, 0, 85)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- ============================================================
---  ВКЛАДКИ
--- ============================================================
+-- ВКЛАДКИ
 local tabs = {}
 local currentTab = "VISUALS"
 
@@ -292,9 +278,7 @@ createTab("VISUALS", 0)
 createTab("AIM", 50)
 createTab("MISC", 100)
 
--- ============================================================
---  VISUALS
--- ============================================================
+-- VISUALS
 local visualsContent = Instance.new("Frame")
 visualsContent.Size = UDim2.new(1, 0, 1, 0)
 visualsContent.BackgroundTransparency = 1
@@ -317,7 +301,7 @@ espBtn.Size = UDim2.new(0, 200, 0, 45)
 espBtn.Position = UDim2.new(0, 0, 0.15, 0)
 espBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 espBtn.BackgroundTransparency = 0.3
-espBtn.Text = "ESP: Вкл"
+espBtn.Text = "ESP: Выкл"
 espBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 espBtn.TextSize = 20
 espBtn.Font = Enum.Font.SourceSansBold
@@ -328,105 +312,7 @@ espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
 
 -- ============================================================
---  AIM (ПУСТО)
--- ============================================================
-local aimContent = Instance.new("Frame")
-aimContent.Size = UDim2.new(1, 0, 1, 0)
-aimContent.BackgroundTransparency = 1
-aimContent.Visible = false
-aimContent.Parent = contentContainer
-
-local aimTitle = Instance.new("TextLabel")
-aimTitle.Size = UDim2.new(1, 0, 0.1, 0)
-aimTitle.Position = UDim2.new(0, 0, 0, 0)
-aimTitle.BackgroundTransparency = 1
-aimTitle.Text = "AIM"
-aimTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-aimTitle.TextSize = 26
-aimTitle.Font = Enum.Font.SourceSansBold
-aimTitle.TextXAlignment = Enum.TextXAlignment.Left
-aimTitle.Parent = aimContent
-
-local aimLabel = Instance.new("TextLabel")
-aimLabel.Size = UDim2.new(1, 0, 0.5, 0)
-aimLabel.Position = UDim2.new(0, 0, 0.15, 0)
-aimLabel.BackgroundTransparency = 1
-aimLabel.Text = "AIM functions coming soon..."
-aimLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-aimLabel.TextSize = 20
-aimLabel.Font = Enum.Font.SourceSans
-aimLabel.TextXAlignment = Enum.TextXAlignment.Left
-aimLabel.Parent = aimContent
-
--- ============================================================
---  MISC (ПУСТО)
--- ============================================================
-local miscContent = Instance.new("Frame")
-miscContent.Size = UDim2.new(1, 0, 1, 0)
-miscContent.BackgroundTransparency = 1
-miscContent.Visible = false
-miscContent.Parent = contentContainer
-
-local miscTitle = Instance.new("TextLabel")
-miscTitle.Size = UDim2.new(1, 0, 0.1, 0)
-miscTitle.Position = UDim2.new(0, 0, 0, 0)
-miscTitle.BackgroundTransparency = 1
-miscTitle.Text = "MISC"
-miscTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-miscTitle.TextSize = 26
-miscTitle.Font = Enum.Font.SourceSansBold
-miscTitle.TextXAlignment = Enum.TextXAlignment.Left
-miscTitle.Parent = miscContent
-
-local miscLabel = Instance.new("TextLabel")
-miscLabel.Size = UDim2.new(1, 0, 0.5, 0)
-miscLabel.Position = UDim2.new(0, 0, 0.15, 0)
-miscLabel.BackgroundTransparency = 1
-miscLabel.Text = "MISC functions coming soon..."
-miscLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-miscLabel.TextSize = 20
-miscLabel.Font = Enum.Font.SourceSans
-miscLabel.TextXAlignment = Enum.TextXAlignment.Left
-miscLabel.Parent = miscContent
-
--- ============================================================
---  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
--- ============================================================
-local function switchTab(tabName)
-    currentTab = tabName
-    visualsContent.Visible = false
-    aimContent.Visible = false
-    miscContent.Visible = false
-    
-    if tabName == "VISUALS" then
-        visualsContent.Visible = true
-    elseif tabName == "AIM" then
-        aimContent.Visible = true
-    elseif tabName == "MISC" then
-        miscContent.Visible = true
-    end
-    
-    for name, btn in pairs(tabs) do
-        if name == tabName then
-            btn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-            btn.BackgroundTransparency = 0.1
-            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        else
-            btn.BackgroundColor3 = Color3.fromRGB(80, 10, 10)
-            btn.BackgroundTransparency = 0.3
-            btn.TextColor3 = Color3.fromRGB(200, 200, 200)
-        end
-    end
-end
-
-for name, btn in pairs(tabs) do
-    btn.MouseButton1Click:Connect(function()
-        switchTab(name)
-    end)
-end
-
--- ============================================================
---  ESP
+--  ESP ЛОГИКА (ИСПРАВЛЕННАЯ)
 -- ============================================================
 local espEnabled = false
 local espBillboards = {}
@@ -517,8 +403,10 @@ end
 
 local function updateAllESP()
     clearAllBillboards()
-    for _, p in pairs(game.Players:GetPlayers()) do
-        createBillboard(p)
+    if espEnabled then
+        for _, p in pairs(game.Players:GetPlayers()) do
+            createBillboard(p)
+        end
     end
 end
 
@@ -581,16 +469,116 @@ end
 local function toggleESP()
     espEnabled = not espEnabled
     if espEnabled then
-        espBtn.Text = "ESP: Выкл"
+        espBtn.Text = "ESP: Вкл"
         updateAllESP()
         spawn(espLoop)
+        print("✅ ESP включен")
     else
-        espBtn.Text = "ESP: Вкл"
+        espBtn.Text = "ESP: Выкл"
         clearAllBillboards()
+        print("❌ ESP выключен")
     end
 end
 
 espBtn.MouseButton1Click:Connect(toggleESP)
+
+-- ============================================================
+--  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+-- ============================================================
+local function switchTab(tabName)
+    currentTab = tabName
+    visualsContent.Visible = false
+    aimContent.Visible = false
+    miscContent.Visible = false
+    
+    if tabName == "VISUALS" then
+        visualsContent.Visible = true
+    elseif tabName == "AIM" then
+        aimContent.Visible = true
+    elseif tabName == "MISC" then
+        miscContent.Visible = true
+    end
+    
+    for name, btn in pairs(tabs) do
+        if name == tabName then
+            btn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+            btn.BackgroundTransparency = 0.1
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(80, 10, 10)
+            btn.BackgroundTransparency = 0.3
+            btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        end
+    end
+end
+
+for name, btn in pairs(tabs) do
+    btn.MouseButton1Click:Connect(function()
+        switchTab(name)
+    end)
+end
+
+-- ============================================================
+--  AIM (ПУСТО)
+-- ============================================================
+local aimContent = Instance.new("Frame")
+aimContent.Size = UDim2.new(1, 0, 1, 0)
+aimContent.BackgroundTransparency = 1
+aimContent.Visible = false
+aimContent.Parent = contentContainer
+
+local aimTitle = Instance.new("TextLabel")
+aimTitle.Size = UDim2.new(1, 0, 0.1, 0)
+aimTitle.Position = UDim2.new(0, 0, 0, 0)
+aimTitle.BackgroundTransparency = 1
+aimTitle.Text = "AIM"
+aimTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+aimTitle.TextSize = 26
+aimTitle.Font = Enum.Font.SourceSansBold
+aimTitle.TextXAlignment = Enum.TextXAlignment.Left
+aimTitle.Parent = aimContent
+
+local aimLabel = Instance.new("TextLabel")
+aimLabel.Size = UDim2.new(1, 0, 0.5, 0)
+aimLabel.Position = UDim2.new(0, 0, 0.15, 0)
+aimLabel.BackgroundTransparency = 1
+aimLabel.Text = "AIM functions coming soon..."
+aimLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+aimLabel.TextSize = 20
+aimLabel.Font = Enum.Font.SourceSans
+aimLabel.TextXAlignment = Enum.TextXAlignment.Left
+aimLabel.Parent = aimContent
+
+-- ============================================================
+--  MISC (ПУСТО)
+-- ============================================================
+local miscContent = Instance.new("Frame")
+miscContent.Size = UDim2.new(1, 0, 1, 0)
+miscContent.BackgroundTransparency = 1
+miscContent.Visible = false
+miscContent.Parent = contentContainer
+
+local miscTitle = Instance.new("TextLabel")
+miscTitle.Size = UDim2.new(1, 0, 0.1, 0)
+miscTitle.Position = UDim2.new(0, 0, 0, 0)
+miscTitle.BackgroundTransparency = 1
+miscTitle.Text = "MISC"
+miscTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+miscTitle.TextSize = 26
+miscTitle.Font = Enum.Font.SourceSansBold
+miscTitle.TextXAlignment = Enum.TextXAlignment.Left
+miscTitle.Parent = miscContent
+
+local miscLabel = Instance.new("TextLabel")
+miscLabel.Size = UDim2.new(1, 0, 0.5, 0)
+miscLabel.Position = UDim2.new(0, 0, 0.15, 0)
+miscLabel.BackgroundTransparency = 1
+miscLabel.Text = "MISC functions coming soon..."
+miscLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+miscLabel.TextSize = 20
+miscLabel.Font = Enum.Font.SourceSans
+miscLabel.TextXAlignment = Enum.TextXAlignment.Left
+miscLabel.Parent = miscContent
 
 -- ============================================================
 --  АКТИВИРУЕМ ПЕРВУЮ ВКЛАДКУ
@@ -611,5 +599,5 @@ watermark.Font = Enum.Font.SourceSans
 watermark.TextTransparency = 0.5
 watermark.Parent = frame
 
-print("✅ WERTIUM HUB с красной кнопкой сверху и W загружен!")
+print("✅ WERTIUM HUB загружен!")
 print("🔑 F1 - открыть/закрыть")
