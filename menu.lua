@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - С ВКЛАДКАМИ (VISUALS)
+--  WERTIUM HUB - С КНОПКОЙ W (КРАСНЫЙ КРУГ)
 -- ============================================================
 
 print("🚀 Загрузка...")
@@ -25,7 +25,37 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 
 wait(1.5)
 
--- ОСНОВНОЕ ОКНО (БОЛЬШОЕ, КРАСНОЕ)
+-- ============================================================
+--  КНОПКА W (КРАСНЫЙ КРУГ) - ПОЯВЛЯЕТСЯ ПРИ ЗАКРЫТИИ МЕНЮ
+-- ============================================================
+local wButton = Instance.new("TextButton")
+wButton.Size = UDim2.new(0, 60, 0, 60)
+wButton.Position = UDim2.new(1, -80, 1, -80) -- правый нижний угол
+wButton.BackgroundColor3 = Color3.fromRGB(200, 30, 30)
+wButton.BackgroundTransparency = 0.1
+wButton.Text = "W"
+wButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+wButton.TextSize = 30
+wButton.Font = Enum.Font.GothamBold
+wButton.Visible = false -- скрыта по умолчанию
+wButton.Parent = gui
+
+-- Скругление (круг)
+local wCorners = Instance.new("UICorner")
+wCorners.CornerRadius = UDim.new(1, 0)
+wCorners.Parent = wButton
+
+-- Белая подсветка у кнопки W
+local wStroke = Instance.new("UIStroke")
+wStroke.Thickness = 2
+wStroke.Color = Color3.fromRGB(255, 255, 255)
+wStroke.Transparency = 0.3
+wStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+wStroke.Parent = wButton
+
+-- ============================================================
+--  ОСНОВНОЕ ОКНО (БОЛЬШОЕ, КРАСНОЕ)
+-- ============================================================
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 900, 0, 500)
 frame.Position = UDim2.new(0.5, -450, 0.5, -250)
@@ -184,7 +214,9 @@ version.Font = Enum.Font.SourceSansBold
 version.TextXAlignment = Enum.TextXAlignment.Center
 version.Parent = header
 
--- КНОПКА ЗАКРЫТИЯ
+-- ============================================================
+--  КНОПКА ЗАКРЫТИЯ (КРЕСТИК)
+-- ============================================================
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 35, 0, 35)
 closeBtn.Position = UDim2.new(0.95, 0, 0.5, -17)
@@ -198,6 +230,15 @@ closeBtn.Parent = header
 
 closeBtn.MouseButton1Click:Connect(function()
     frame.Visible = false
+    wButton.Visible = true  -- показываем кнопку W
+end)
+
+-- ============================================================
+--  НАЖАТИЕ НА КНОПКУ W - ОТКРЫВАЕТ МЕНЮ
+-- ============================================================
+wButton.MouseButton1Click:Connect(function()
+    frame.Visible = true
+    wButton.Visible = false  -- скрываем кнопку W
 end)
 
 -- ============================================================
@@ -243,7 +284,6 @@ local function createTab(name, yPos)
     return btn
 end
 
--- СОЗДАЁМ ВКЛАДКИ
 createTab("VISUALS", 0)
 createTab("AIM", 50)
 createTab("MISC", 100)
@@ -257,7 +297,6 @@ visualsContent.BackgroundTransparency = 1
 visualsContent.Visible = true
 visualsContent.Parent = contentContainer
 
--- ЗАГОЛОВОК ВКЛАДКИ
 local visualsTitle = Instance.new("TextLabel")
 visualsTitle.Size = UDim2.new(1, 0, 0.1, 0)
 visualsTitle.Position = UDim2.new(0, 0, 0, 0)
@@ -269,7 +308,6 @@ visualsTitle.Font = Enum.Font.SourceSansBold
 visualsTitle.TextXAlignment = Enum.TextXAlignment.Left
 visualsTitle.Parent = visualsContent
 
--- КНОПКА ESP
 local espBtn = Instance.new("TextButton")
 espBtn.Size = UDim2.new(0, 200, 0, 45)
 espBtn.Position = UDim2.new(0, 0, 0.15, 0)
@@ -348,17 +386,14 @@ miscLabel.TextXAlignment = Enum.TextXAlignment.Left
 miscLabel.Parent = miscContent
 
 -- ============================================================
---  ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
+--  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
 -- ============================================================
 local function switchTab(tabName)
     currentTab = tabName
-    
-    -- Скрываем всё
     visualsContent.Visible = false
     aimContent.Visible = false
     miscContent.Visible = false
     
-    -- Показываем нужную
     if tabName == "VISUALS" then
         visualsContent.Visible = true
     elseif tabName == "AIM" then
@@ -367,7 +402,6 @@ local function switchTab(tabName)
         miscContent.Visible = true
     end
     
-    -- Обновляем цвет кнопок
     for name, btn in pairs(tabs) do
         if name == tabName then
             btn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
@@ -381,7 +415,6 @@ local function switchTab(tabName)
     end
 end
 
--- НАЗНАЧАЕМ КНОПКИ
 for name, btn in pairs(tabs) do
     btn.MouseButton1Click:Connect(function()
         switchTab(name)
@@ -389,7 +422,7 @@ for name, btn in pairs(tabs) do
 end
 
 -- ============================================================
---  ЛОГИКА ESP
+--  ESP
 -- ============================================================
 local espEnabled = false
 local espBillboards = {}
@@ -574,13 +607,5 @@ watermark.Font = Enum.Font.SourceSans
 watermark.TextTransparency = 0.5
 watermark.Parent = frame
 
--- ХОТКЕЙ F1
-game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.F1 then
-        frame.Visible = not frame.Visible
-    end
-end)
-
-print("✅ WERTIUM HUB с вкладками загружен!")
+print("✅ WERTIUM HUB с кнопкой W загружен!")
 print("🔑 F1 - открыть/закрыть")
