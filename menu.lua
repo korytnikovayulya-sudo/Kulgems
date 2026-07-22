@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - С КНОПКОЙ W (КРАСНЫЙ КРУГ)
+--  WERTIUM HUB - С КРАСНОЙ КНОПКОЙ СВЕРХУ И W
 -- ============================================================
 
 print("🚀 Загрузка...")
@@ -215,30 +215,35 @@ version.TextXAlignment = Enum.TextXAlignment.Center
 version.Parent = header
 
 -- ============================================================
---  КНОПКА ЗАКРЫТИЯ (КРЕСТИК)
+--  КРАСНАЯ КНОПКА ЗАКРЫТИЯ (СПРАВА СВЕРХУ)
 -- ============================================================
 local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 35, 0, 35)
-closeBtn.Position = UDim2.new(0.95, 0, 0.5, -17)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+closeBtn.Size = UDim2.new(0, 40, 0, 40)
+closeBtn.Position = UDim2.new(0.94, 0, 0.5, -20)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 30, 30) -- КРАСНАЯ
 closeBtn.BackgroundTransparency = 0.1
 closeBtn.Text = "✕"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.TextSize = 20
+closeBtn.TextSize = 22
 closeBtn.Font = Enum.Font.SourceSansBold
 closeBtn.Parent = header
 
+local closeCorners = Instance.new("UICorner")
+closeCorners.CornerRadius = UDim.new(0, 8)
+closeCorners.Parent = closeBtn
+
+-- ПРИ НАЖАТИИ НА КРЕСТИК - МЕНЮ ЗАКРЫВАЕТСЯ, ПОЯВЛЯЕТСЯ W
 closeBtn.MouseButton1Click:Connect(function()
     frame.Visible = false
-    wButton.Visible = true  -- показываем кнопку W
+    wButton.Visible = true
 end)
 
 -- ============================================================
---  НАЖАТИЕ НА КНОПКУ W - ОТКРЫВАЕТ МЕНЮ
+--  НАЖАТИЕ НА W - ОТКРЫВАЕТ МЕНЮ
 -- ============================================================
 wButton.MouseButton1Click:Connect(function()
     frame.Visible = true
-    wButton.Visible = false  -- скрываем кнопку W
+    wButton.Visible = false
 end)
 
 -- ============================================================
@@ -251,7 +256,6 @@ tabContainer.BackgroundColor3 = Color3.fromRGB(100, 15, 15)
 tabContainer.BackgroundTransparency = 0.2
 tabContainer.Parent = frame
 
--- КОНТЕЙНЕР ДЛЯ КОНТЕНТА ВКЛАДОК
 local contentContainer = Instance.new("Frame")
 contentContainer.Size = UDim2.new(1, -150, 1, -90)
 contentContainer.Position = UDim2.new(0, 145, 0, 85)
@@ -259,7 +263,7 @@ contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
 -- ============================================================
---  СОЗДАНИЕ ВКЛАДОК
+--  ВКЛАДКИ
 -- ============================================================
 local tabs = {}
 local currentTab = "VISUALS"
@@ -289,7 +293,7 @@ createTab("AIM", 50)
 createTab("MISC", 100)
 
 -- ============================================================
---  КОНТЕНТ ВКЛАДКИ VISUALS
+--  VISUALS
 -- ============================================================
 local visualsContent = Instance.new("Frame")
 visualsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -324,7 +328,7 @@ espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
 
 -- ============================================================
---  КОНТЕНТ ВКЛАДКИ AIM (ПУСТО)
+--  AIM (ПУСТО)
 -- ============================================================
 local aimContent = Instance.new("Frame")
 aimContent.Size = UDim2.new(1, 0, 1, 0)
@@ -355,7 +359,7 @@ aimLabel.TextXAlignment = Enum.TextXAlignment.Left
 aimLabel.Parent = aimContent
 
 -- ============================================================
---  КОНТЕНТ ВКЛАДКИ MISC (ПУСТО)
+--  MISC (ПУСТО)
 -- ============================================================
 local miscContent = Instance.new("Frame")
 miscContent.Size = UDim2.new(1, 0, 1, 0)
@@ -607,5 +611,5 @@ watermark.Font = Enum.Font.SourceSans
 watermark.TextTransparency = 0.5
 watermark.Parent = frame
 
-print("✅ WERTIUM HUB с кнопкой W загружен!")
+print("✅ WERTIUM HUB с красной кнопкой сверху и W загружен!")
 print("🔑 F1 - открыть/закрыть")
