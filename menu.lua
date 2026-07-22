@@ -656,7 +656,9 @@ local shootLabel = nil
 local shootAngle = 0
 local shootSize = 50
 local isDragging = false
+local dragStartPos = nil
 local dragOffset = nil
+local connections = {}  -- для хранения подключений
 
 -- ГЛАВНАЯ ФУНКЦИЯ СОЗДАНИЯ КВАДРАТА
 local function createShootUI()
@@ -669,7 +671,7 @@ local function createShootUI()
     shootFrame.Size = UDim2.new(0, size, 0, size)
     shootFrame.Position = UDim2.new(0.5, -size/2, 0.5, -size/2)
     shootFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-    shootFrame.BackgroundTransparency = 0  -- ПОЛНОСТЬЮ НЕПРОЗРАЧНЫЙ
+    shootFrame.BackgroundTransparency = 0
     shootFrame.BorderSizePixel = 2
     shootFrame.BorderColor3 = Color3.fromRGB(255, 50, 50)
     shootFrame.ZIndex = 999
@@ -743,50 +745,43 @@ local function createShootUI()
     shootLabel.Parent = shootFrame
     
     -- ПЕРЕТАСКИВАНИЕ МЫШКОЙ
-    local function startDrag(input)
-        isDragging = true
-        local mousePos = Vector2.new(input.Position.X, input.Position.Y)
-        local framePos = Vector2.new(shootFrame.AbsolutePosition.X, shootFrame.AbsolutePosition.Y)
-        dragOffset = mousePos - framePos
-    end
-    
-    local function updateDrag(input)
-        if not isDragging then return end
-        local mousePos = Vector2.new(input.Position.X, input.Position.Y)
-        local newPos = mousePos - dragOffset
-        local parentSize = gui.AbsoluteSize
-        local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
-        
-        newPos = Vector2.new(
-            math.clamp(newPos.X, 0, parentSize.X - frameSize.X),
-            math.clamp(newPos.Y, 0, parentSize.Y - frameSize.Y)
-        )
-        
-        shootFrame.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
-    end
-    
-    local function endDrag()
-        isDragging = false
-    end
-    
-    -- ПОДПИСКА НА СОБЫТИЯ МЫШИ
-    shootFrame.InputBegan:Connect(function(input)
+    local function onInputBegan(input, gameProcessed)
+        if gameProcessed then return end
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            startDrag(input)
+            isDragging = true
+            local mousePos = Vector2.new(input.Position.X, input.Position.Y)
+            local framePos = Vector2.new(shootFrame.AbsolutePosition.X, shootFrame.AbsolutePosition.Y)
+            dragOffset = mousePos - framePos
         end
-    end)
+    end
     
-    shootFrame.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            updateDrag(input)
+    local function onInputChanged(input, gameProcessed)
+        if gameProcessed then return end
+        if input.UserInputType == Enum.UserInputType.MouseMovement and isDragging then
+            local mousePos = Vector2.new(input.Position.X, input.Position.Y)
+            local newPos = mousePos - dragOffset
+            local parentSize = gui.AbsoluteSize
+            local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
+            
+            newPos = Vector2.new(
+                math.clamp(newPos.X, 0, parentSize.X - frameSize.X),
+                math.clamp(newPos.Y, 0, parentSize.Y - frameSize.Y)
+            )
+            
+            shootFrame.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
         end
-    end)
+    end
     
-    shootFrame.InputEnded:Connect(function(input)
+    local function onInputEnded(input, gameProcessed)
+        if gameProcessed then return end
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            endDrag()
+            isDragging = false
         end
-    end)
+    end
+    
+    connections[1] = game:GetService("UserInputService").InputBegan:Connect(onInputBegan)
+    connections[2] = game:GetService("UserInputService").InputChanged:Connect(onInputChanged)
+    connections[3] = game:GetService("UserInputService").InputEnded:Connect(onInputEnded)
     
     -- УБИЙСТВО ПО КЛИКУ НА КВАДРАТ
     shootFrame.MouseButton1Click:Connect(function()
@@ -832,6 +827,12 @@ local function destroyShootUI()
         shootCrosshair = nil
         shootLabel = nil
     end
+    -- ОЧИЩАЕМ ПОДКЛЮЧЕНИЯ
+    for _, conn in pairs(connections) do
+        if conn then conn:Disconnect() end
+    end
+    connections = {}
+    isDragging = false
 end
 
 -- АНИМАЦИЯ ПРИЦЕЛА (КРУТИТСЯ)
@@ -842,11 +843,13 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
--- ПОЛЗУНОК РАЗМЕРА
+-- ПОЛЗУНОК РАЗМЕРА (ОТДЕЛЬНО ОТ КВАДРАТА)
 local sizeDragging = false
 sizeKnob.MouseButton1Down:Connect(function() sizeDragging = true end)
 game:GetService("UserInputService").InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then sizeDragging = false end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+        sizeDragging = false 
+    end
 end)
 
 game:GetService("RunService").RenderStepped:Connect(function()
