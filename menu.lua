@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - SHOOT MURDERER (УБИЙСТВО ПО КНОПКЕ)
+--  WERTIUM HUB - SHOOT MURDERER (ПЕРЕТАСКИВАЕМЫЙ КВАДРАТ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -566,6 +566,46 @@ local shootCorners = Instance.new("UICorner")
 shootCorners.CornerRadius = UDim.new(0, 10)
 shootCorners.Parent = shootBtn
 
+-- Размер квадрата
+local sizeLabel = Instance.new("TextLabel")
+sizeLabel.Size = UDim2.new(0.3, 0, 0.06, 0)
+sizeLabel.Position = UDim2.new(0, 0, 0.32, 0)
+sizeLabel.BackgroundTransparency = 1
+sizeLabel.Text = "Размер: 50"
+sizeLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+sizeLabel.TextSize = 16
+sizeLabel.Font = Enum.Font.SourceSansBold
+sizeLabel.TextXAlignment = Enum.TextXAlignment.Left
+sizeLabel.Parent = aimContent
+
+local sizeSlider = Instance.new("Frame")
+sizeSlider.Size = UDim2.new(0.4, 0, 0.035, 0)
+sizeSlider.Position = UDim2.new(0.35, 0, 0.335, 0)
+sizeSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+sizeSlider.BackgroundTransparency = 0.3
+sizeSlider.BorderSizePixel = 1
+sizeSlider.BorderColor3 = Color3.fromRGB(200, 50, 50)
+sizeSlider.Parent = aimContent
+
+local sizeFill = Instance.new("Frame")
+sizeFill.Size = UDim2.new(0.5, 0, 1, 0)
+sizeFill.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+sizeFill.BackgroundTransparency = 0.5
+sizeFill.BorderSizePixel = 0
+sizeFill.Parent = sizeSlider
+
+local sizeKnob = Instance.new("TextButton")
+sizeKnob.Size = UDim2.new(0, 16, 0, 16)
+sizeKnob.Position = UDim2.new(0.5, -8, 0.5, -8)
+sizeKnob.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+sizeKnob.BackgroundTransparency = 0
+sizeKnob.Text = ""
+sizeKnob.Parent = sizeSlider
+
+local sizeKnobCorners = Instance.new("UICorner")
+sizeKnobCorners.CornerRadius = UDim.new(1, 0)
+sizeKnobCorners.Parent = sizeKnob
+
 -- ============================================================
 --  CAMLOCK ЛОГИКА
 -- ============================================================
@@ -607,36 +647,44 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURDERER (КВАДРАТ С ПРИЦЕЛОМ)
+--  SHOOT MURDERER (ПЕРЕТАСКИВАЕМЫЙ КВАДРАТ С ПОЛЗУНКОМ РАЗМЕРА)
 -- ============================================================
 local shootEnabled = false
 local shootFrame = nil
 local shootCrosshair = nil
 local shootLabel = nil
 local shootAngle = 0
+local shootSize = 50
+local isDragging = false
+local dragStart = nil
+local dragOffset = nil
 
 local function createShootUI()
     if shootFrame then return end
     
-    -- ОСНОВНОЙ КВАДРАТ (ЧЁРНЫЙ, МАТОВЫЙ)
+    local size = 60 + shootSize * 1.2  -- от 60 до 180
+    
+    -- ОСНОВНОЙ КВАДРАТ (МАТОВЫЙ, БЕЗ ПРОЗРАЧНОСТИ)
     shootFrame = Instance.new("Frame")
-    shootFrame.Size = UDim2.new(0, 120, 0, 120)
-    shootFrame.Position = UDim2.new(0.5, -60, 0.5, -60)
+    shootFrame.Size = UDim2.new(0, size, 0, size)
+    shootFrame.Position = UDim2.new(0.5, -size/2, 0.5, -size/2)
     shootFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-    shootFrame.BackgroundTransparency = 0.05
+    shootFrame.BackgroundTransparency = 0  -- ПОЛНОСТЬЮ НЕПРОЗРАЧНЫЙ
     shootFrame.BorderSizePixel = 2
     shootFrame.BorderColor3 = Color3.fromRGB(255, 50, 50)
     shootFrame.ZIndex = 999
+    shootFrame.Active = true
+    shootFrame.Draggable = false
     shootFrame.Parent = gui
     
     local shootCorners = Instance.new("UICorner")
     shootCorners.CornerRadius = UDim.new(0, 12)
     shootCorners.Parent = shootFrame
     
-    -- АНИМИРОВАННЫЙ ПРИЦЕЛ ВНУТРИ КВАДРАТА
+    -- АНИМИРОВАННЫЙ ПРИЦЕЛ (БЕЛЫЙ)
     local crosshairContainer = Instance.new("Frame")
-    crosshairContainer.Size = UDim2.new(0, 60, 0, 60)
-    crosshairContainer.Position = UDim2.new(0.5, -30, 0.5, -30)
+    crosshairContainer.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
+    crosshairContainer.Position = UDim2.new(0.5, -size * 0.25, 0.4, -size * 0.25)
     crosshairContainer.BackgroundTransparency = 1
     crosshairContainer.Parent = shootFrame
     shootCrosshair = crosshairContainer
@@ -645,7 +693,7 @@ local function createShootUI()
     circle.Size = UDim2.new(1, 0, 1, 0)
     circle.BackgroundTransparency = 1
     circle.BorderSizePixel = 2
-    circle.BorderColor3 = Color3.fromRGB(255, 50, 50)
+    circle.BorderColor3 = Color3.fromRGB(255, 255, 255)  -- БЕЛЫЙ
     circle.Parent = crosshairContainer
     local circleCorners2 = Instance.new("UICorner")
     circleCorners2.CornerRadius = UDim.new(1, 0)
@@ -654,7 +702,7 @@ local function createShootUI()
     local hLine = Instance.new("Frame")
     hLine.Size = UDim2.new(0.8, 0, 0.08, 0)
     hLine.Position = UDim2.new(0.1, 0, 0.46, 0)
-    hLine.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    hLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- БЕЛЫЙ
     hLine.BackgroundTransparency = 0.3
     hLine.BorderSizePixel = 0
     hLine.Parent = crosshairContainer
@@ -662,7 +710,7 @@ local function createShootUI()
     local vLine = Instance.new("Frame")
     vLine.Size = UDim2.new(0.08, 0, 0.8, 0)
     vLine.Position = UDim2.new(0.46, 0, 0.1, 0)
-    vLine.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    vLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- БЕЛЫЙ
     vLine.BackgroundTransparency = 0.3
     vLine.BorderSizePixel = 0
     vLine.Parent = crosshairContainer
@@ -670,7 +718,7 @@ local function createShootUI()
     local dot2 = Instance.new("Frame")
     dot2.Size = UDim2.new(0.15, 0, 0.15, 0)
     dot2.Position = UDim2.new(0.425, 0, 0.425, 0)
-    dot2.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    dot2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- БЕЛЫЙ
     dot2.BackgroundTransparency = 0.2
     dot2.BorderSizePixel = 0
     dot2.Parent = crosshairContainer
@@ -678,17 +726,76 @@ local function createShootUI()
     dotCorners2.CornerRadius = UDim.new(1, 0)
     dotCorners2.Parent = dot2
     
-    -- НАДПИСЬ SHOOT
+    -- НАДПИСЬ SHOOT (КРАСНАЯ)
     shootLabel = Instance.new("TextLabel")
-    shootLabel.Size = UDim2.new(1, 0, 0.25, 0)
-    shootLabel.Position = UDim2.new(0, 0, 0.75, 0)
+    shootLabel.Size = UDim2.new(1, 0, 0.2, 0)
+    shootLabel.Position = UDim2.new(0, 0, 0.8, 0)
     shootLabel.BackgroundTransparency = 1
     shootLabel.Text = "SHOOT"
-    shootLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
-    shootLabel.TextSize = 14
+    shootLabel.TextColor3 = Color3.fromRGB(255, 50, 50)  -- КРАСНАЯ
+    shootLabel.TextSize = size * 0.12
     shootLabel.Font = Enum.Font.GothamBold
     shootLabel.TextXAlignment = Enum.TextXAlignment.Center
     shootLabel.Parent = shootFrame
+    
+    -- ПЕРЕТАСКИВАНИЕ
+    local function startDrag(input)
+        isDragging = true
+        local mousePos = Vector2.new(input.Position.X, input.Position.Y)
+        local framePos = Vector2.new(shootFrame.AbsolutePosition.X, shootFrame.AbsolutePosition.Y)
+        dragOffset = mousePos - framePos
+    end
+    
+    local function updateDrag(input)
+        if not isDragging then return end
+        local mousePos = Vector2.new(input.Position.X, input.Position.Y)
+        local newPos = mousePos - dragOffset
+        local parentSize = gui.AbsoluteSize
+        local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
+        
+        newPos = Vector2.new(
+            math.clamp(newPos.X, 0, parentSize.X - frameSize.X),
+            math.clamp(newPos.Y, 0, parentSize.Y - frameSize.Y)
+        )
+        
+        shootFrame.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
+    end
+    
+    local function endDrag()
+        isDragging = false
+    end
+    
+    shootFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            startDrag(input)
+        end
+    end)
+    
+    shootFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            updateDrag(input)
+        end
+    end)
+    
+    shootFrame.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            endDrag()
+        end
+    end)
+    
+    -- УБИЙСТВО ПО КЛИКУ
+    shootFrame.MouseButton1Click:Connect(function()
+        local target = findMurderer()
+        if not target then
+            print("❌ Убийца не найден!")
+            return
+        end
+        local humanoid = target.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.Health = 0
+            print("🔫 Убийца уничтожен!")
+        end
+    end)
 end
 
 local function destroyShootUI()
@@ -700,7 +807,24 @@ local function destroyShootUI()
     end
 end
 
--- АНИМАЦИЯ ПРИЦЕЛА В КВАДРАТЕ
+local function updateShootSize()
+    if not shootFrame then return end
+    local size = 60 + shootSize * 1.2
+    shootFrame.Size = UDim2.new(0, size, 0, size)
+    
+    local crosshair = shootFrame:FindFirstChildOfClass("Frame")
+    if crosshair then
+        crosshair.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
+        crosshair.Position = UDim2.new(0.5, -size * 0.25, 0.4, -size * 0.25)
+    end
+    
+    local label = shootFrame:FindFirstChildOfClass("TextLabel")
+    if label then
+        label.TextSize = size * 0.12
+    end
+end
+
+-- АНИМАЦИЯ ПРИЦЕЛА
 game:GetService("RunService").RenderStepped:Connect(function()
     if shootCrosshair and shootCrosshair.Parent then
         shootAngle = shootAngle + 0.04
@@ -708,29 +832,29 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
--- ФУНКЦИЯ УБИЙСТВА MURDERER
-local function shootMurderer()
-    local target = findMurderer()
-    if not target then
-        print("❌ Убийца не найден!")
-        return
-    end
-    
-    local humanoid = target.Character:FindFirstChild("Humanoid")
-    if humanoid then
-        humanoid.Health = 0
-        print("🔫 Убийца уничтожен!")
-    else
-        print("❌ У игрока нет Humanoid!")
-    end
-end
+-- ПОЛЗУНОК РАЗМЕРА
+local sizeDragging = false
+sizeKnob.MouseButton1Down:Connect(function() sizeDragging = true end)
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then sizeDragging = false end
+end)
 
--- НАЖАТИЕ НА КВАДРАТ
-local function onShootClick()
-    if shootFrame then
-        shootMurderer()
+game:GetService("RunService").RenderStepped:Connect(function()
+    if sizeDragging then
+        local mouse = player:GetMouse()
+        if mouse then
+            local relX = (mouse.X - sizeSlider.AbsolutePosition.X) / sizeSlider.AbsoluteSize.X
+            local val = math.clamp(relX, 0, 1)
+            shootSize = math.round(val * 100)
+            sizeFill.Size = UDim2.new(val, 0, 1, 0)
+            sizeKnob.Position = UDim2.new(val, -8, 0.5, -8)
+            sizeLabel.Text = "Размер: " .. shootSize
+            if shootEnabled then
+                updateShootSize()
+            end
+        end
     end
-end
+end)
 
 -- ВКЛЮЧЕНИЕ/ВЫКЛЮЧЕНИЕ SHOOT
 shootBtn.MouseButton1Click:Connect(function()
@@ -738,7 +862,6 @@ shootBtn.MouseButton1Click:Connect(function()
     if shootEnabled then
         shootBtn.Text = "Shoot Murderer: Вкл"
         createShootUI()
-        shootFrame.MouseButton1Click:Connect(onShootClick)
         print("✅ Shoot Murderer включен")
     else
         shootBtn.Text = "Shoot Murderer: Выкл"
@@ -857,4 +980,6 @@ end)
 print("✅ WERTIUM HUB загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("🎯 Camlock - наводится на убийцу")
-print("🔫 Shoot Murderer - квадрат с прицелом, убивает убийцу по нажатию")
+print("🔫 Shoot Murderer - квадрат с прицелом (белый), убивает убийцу по нажатию")
+print("📐 Размер квадрата регулируется ползунком (0-100)")
+print("🖱️ Квадрат можно перетаскивать мышкой")
