@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - С ESP (ПОЛНАЯ ВЕРСИЯ)
+--  WERTIUM HUB - С ВКЛАДКАМИ (VISUALS)
 -- ============================================================
 
 print("🚀 Загрузка...")
@@ -27,8 +27,8 @@ wait(1.5)
 
 -- ОСНОВНОЕ ОКНО (БОЛЬШОЕ, КРАСНОЕ)
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 800, 0, 500)
-frame.Position = UDim2.new(0.5, -400, 0.5, -250)
+frame.Size = UDim2.new(0, 900, 0, 500)
+frame.Position = UDim2.new(0.5, -450, 0.5, -250)
 frame.BackgroundColor3 = Color3.fromRGB(140, 20, 20)
 frame.BackgroundTransparency = 0.05
 frame.BorderSizePixel = 2
@@ -51,9 +51,11 @@ stroke.Transparency = 0.1
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = frame
 
--- ЗАГОЛОВОК
+-- ============================================================
+--  ЗАГОЛОВОК
+-- ============================================================
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 90)
+header.Size = UDim2.new(1, 0, 0, 80)
 header.BackgroundColor3 = Color3.fromRGB(120, 15, 15)
 header.BackgroundTransparency = 0.15
 header.Parent = frame
@@ -64,7 +66,7 @@ headerCorners.Parent = header
 
 -- ЛЕВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
 local crosshairL = Instance.new("Frame")
-crosshairL.Size = UDim2.new(0, 45, 0.6, 0)
+crosshairL.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairL.Position = UDim2.new(0.02, 0, 0.2, 0)
 crosshairL.BackgroundTransparency = 1
 crosshairL.Parent = header
@@ -108,7 +110,7 @@ dotLc.Parent = dotL
 
 -- ПРАВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
 local crosshairR = Instance.new("Frame")
-crosshairR.Size = UDim2.new(0, 45, 0.6, 0)
+crosshairR.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairR.Position = UDim2.new(0.88, 0, 0.2, 0)
 crosshairR.BackgroundTransparency = 1
 crosshairR.Parent = header
@@ -160,24 +162,24 @@ end)
 
 -- НАЗВАНИЕ
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(0.5, 0, 0.6, 0)
-title.Position = UDim2.new(0.25, 0, 0, 0)
+title.Size = UDim2.new(0.4, 0, 0.7, 0)
+title.Position = UDim2.new(0.3, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Text = "WERTIUM HUB"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 38
+title.TextSize = 34
 title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = header
 
 -- ВЕРСИЯ VD
 local version = Instance.new("TextLabel")
-version.Size = UDim2.new(0.5, 0, 0.25, 0)
-version.Position = UDim2.new(0.25, 0, 0.6, 0)
+version.Size = UDim2.new(0.4, 0, 0.3, 0)
+version.Position = UDim2.new(0.3, 0, 0.7, 0)
 version.BackgroundTransparency = 1
 version.Text = "VD"
 version.TextColor3 = Color3.fromRGB(200, 200, 200)
-version.TextSize = 18
+version.TextSize = 16
 version.Font = Enum.Font.SourceSansBold
 version.TextXAlignment = Enum.TextXAlignment.Center
 version.Parent = header
@@ -199,37 +201,200 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ПАНЕЛЬ УПРАВЛЕНИЯ (ESP КНОПКА ПО ЦЕНТРУ)
+--  ЛЕВАЯ ПАНЕЛЬ С ВКЛАДКАМИ
 -- ============================================================
-local controlPanel = Instance.new("Frame")
-controlPanel.Size = UDim2.new(1, 0, 0, 60)
-controlPanel.Position = UDim2.new(0, 0, 0, 90) -- Сразу под заголовком
-controlPanel.BackgroundTransparency = 1
-controlPanel.Parent = frame
+local tabContainer = Instance.new("Frame")
+tabContainer.Size = UDim2.new(0, 140, 1, -80)
+tabContainer.Position = UDim2.new(0, 0, 0, 80)
+tabContainer.BackgroundColor3 = Color3.fromRGB(100, 15, 15)
+tabContainer.BackgroundTransparency = 0.2
+tabContainer.Parent = frame
 
+-- КОНТЕЙНЕР ДЛЯ КОНТЕНТА ВКЛАДОК
+local contentContainer = Instance.new("Frame")
+contentContainer.Size = UDim2.new(1, -150, 1, -90)
+contentContainer.Position = UDim2.new(0, 145, 0, 85)
+contentContainer.BackgroundTransparency = 1
+contentContainer.Parent = frame
+
+-- ============================================================
+--  СОЗДАНИЕ ВКЛАДОК
+-- ============================================================
+local tabs = {}
+local currentTab = "VISUALS"
+
+local function createTab(name, yPos)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, 0, 0, 45)
+    btn.Position = UDim2.new(0, 0, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(80, 10, 10)
+    btn.BackgroundTransparency = 0.3
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    btn.TextSize = 16
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Parent = tabContainer
+    
+    local btnCorners = Instance.new("UICorner")
+    btnCorners.CornerRadius = UDim.new(0, 0)
+    btnCorners.Parent = btn
+    
+    tabs[name] = btn
+    return btn
+end
+
+-- СОЗДАЁМ ВКЛАДКИ
+createTab("VISUALS", 0)
+createTab("AIM", 50)
+createTab("MISC", 100)
+
+-- ============================================================
+--  КОНТЕНТ ВКЛАДКИ VISUALS
+-- ============================================================
+local visualsContent = Instance.new("Frame")
+visualsContent.Size = UDim2.new(1, 0, 1, 0)
+visualsContent.BackgroundTransparency = 1
+visualsContent.Visible = true
+visualsContent.Parent = contentContainer
+
+-- ЗАГОЛОВОК ВКЛАДКИ
+local visualsTitle = Instance.new("TextLabel")
+visualsTitle.Size = UDim2.new(1, 0, 0.1, 0)
+visualsTitle.Position = UDim2.new(0, 0, 0, 0)
+visualsTitle.BackgroundTransparency = 1
+visualsTitle.Text = "VISUALS"
+visualsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+visualsTitle.TextSize = 26
+visualsTitle.Font = Enum.Font.SourceSansBold
+visualsTitle.TextXAlignment = Enum.TextXAlignment.Left
+visualsTitle.Parent = visualsContent
+
+-- КНОПКА ESP
 local espBtn = Instance.new("TextButton")
 espBtn.Size = UDim2.new(0, 200, 0, 45)
-espBtn.Position = UDim2.new(0.5, -100, 0.5, -22.5)
+espBtn.Position = UDim2.new(0, 0, 0.15, 0)
 espBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 espBtn.BackgroundTransparency = 0.3
 espBtn.Text = "ESP: Вкл"
 espBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-espBtn.TextSize = 22
+espBtn.TextSize = 20
 espBtn.Font = Enum.Font.SourceSansBold
-espBtn.Parent = controlPanel
+espBtn.Parent = visualsContent
 
 local espCorners = Instance.new("UICorner")
 espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
 
 -- ============================================================
+--  КОНТЕНТ ВКЛАДКИ AIM (ПУСТО)
+-- ============================================================
+local aimContent = Instance.new("Frame")
+aimContent.Size = UDim2.new(1, 0, 1, 0)
+aimContent.BackgroundTransparency = 1
+aimContent.Visible = false
+aimContent.Parent = contentContainer
+
+local aimTitle = Instance.new("TextLabel")
+aimTitle.Size = UDim2.new(1, 0, 0.1, 0)
+aimTitle.Position = UDim2.new(0, 0, 0, 0)
+aimTitle.BackgroundTransparency = 1
+aimTitle.Text = "AIM"
+aimTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+aimTitle.TextSize = 26
+aimTitle.Font = Enum.Font.SourceSansBold
+aimTitle.TextXAlignment = Enum.TextXAlignment.Left
+aimTitle.Parent = aimContent
+
+local aimLabel = Instance.new("TextLabel")
+aimLabel.Size = UDim2.new(1, 0, 0.5, 0)
+aimLabel.Position = UDim2.new(0, 0, 0.15, 0)
+aimLabel.BackgroundTransparency = 1
+aimLabel.Text = "AIM functions coming soon..."
+aimLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+aimLabel.TextSize = 20
+aimLabel.Font = Enum.Font.SourceSans
+aimLabel.TextXAlignment = Enum.TextXAlignment.Left
+aimLabel.Parent = aimContent
+
+-- ============================================================
+--  КОНТЕНТ ВКЛАДКИ MISC (ПУСТО)
+-- ============================================================
+local miscContent = Instance.new("Frame")
+miscContent.Size = UDim2.new(1, 0, 1, 0)
+miscContent.BackgroundTransparency = 1
+miscContent.Visible = false
+miscContent.Parent = contentContainer
+
+local miscTitle = Instance.new("TextLabel")
+miscTitle.Size = UDim2.new(1, 0, 0.1, 0)
+miscTitle.Position = UDim2.new(0, 0, 0, 0)
+miscTitle.BackgroundTransparency = 1
+miscTitle.Text = "MISC"
+miscTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+miscTitle.TextSize = 26
+miscTitle.Font = Enum.Font.SourceSansBold
+miscTitle.TextXAlignment = Enum.TextXAlignment.Left
+miscTitle.Parent = miscContent
+
+local miscLabel = Instance.new("TextLabel")
+miscLabel.Size = UDim2.new(1, 0, 0.5, 0)
+miscLabel.Position = UDim2.new(0, 0, 0.15, 0)
+miscLabel.BackgroundTransparency = 1
+miscLabel.Text = "MISC functions coming soon..."
+miscLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+miscLabel.TextSize = 20
+miscLabel.Font = Enum.Font.SourceSans
+miscLabel.TextXAlignment = Enum.TextXAlignment.Left
+miscLabel.Parent = miscContent
+
+-- ============================================================
+--  ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
+-- ============================================================
+local function switchTab(tabName)
+    currentTab = tabName
+    
+    -- Скрываем всё
+    visualsContent.Visible = false
+    aimContent.Visible = false
+    miscContent.Visible = false
+    
+    -- Показываем нужную
+    if tabName == "VISUALS" then
+        visualsContent.Visible = true
+    elseif tabName == "AIM" then
+        aimContent.Visible = true
+    elseif tabName == "MISC" then
+        miscContent.Visible = true
+    end
+    
+    -- Обновляем цвет кнопок
+    for name, btn in pairs(tabs) do
+        if name == tabName then
+            btn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+            btn.BackgroundTransparency = 0.1
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(80, 10, 10)
+            btn.BackgroundTransparency = 0.3
+            btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        end
+    end
+end
+
+-- НАЗНАЧАЕМ КНОПКИ
+for name, btn in pairs(tabs) do
+    btn.MouseButton1Click:Connect(function()
+        switchTab(name)
+    end)
+end
+
+-- ============================================================
 --  ЛОГИКА ESP
 -- ============================================================
 local espEnabled = false
-local espBillboards = {} -- таблица { [Player] = BillboardGui }
+local espBillboards = {}
 
 local function getRole(p)
-    -- Определяем роль по наличию оружия в руках или рюкзаке
     if not p or not p.Character then return "innocent" end
     local char = p.Character
     local backpack = p:FindFirstChild("Backpack")
@@ -245,12 +410,10 @@ local function getRole(p)
         return false
     end
     
-    -- Проверяем в руках
     for _, tool in pairs(char:GetChildren()) do
         local role = checkTool(tool)
         if role then return role end
     end
-    -- Проверяем в рюкзаке
     if backpack then
         for _, tool in pairs(backpack:GetChildren()) do
             local role = checkTool(tool)
@@ -261,7 +424,7 @@ local function getRole(p)
 end
 
 local function createBillboard(p)
-    if p == player then return end -- не показываем себе
+    if p == player then return end
     if espBillboards[p] then return end
 
     local role = getRole(p)
@@ -322,7 +485,6 @@ local function updateAllESP()
     end
 end
 
--- Подписываемся на изменения игроков
 game.Players.PlayerAdded:Connect(function(p)
     p.CharacterAdded:Connect(function()
         wait(0.5)
@@ -344,7 +506,6 @@ game.Players.PlayerRemoving:Connect(function(p)
     removeBillboard(p)
 end)
 
--- Обновление ролей каждые 3 секунды
 local function espLoop()
     while espEnabled do
         for p, bill in pairs(espBillboards) do
@@ -371,7 +532,6 @@ local function espLoop()
                 removeBillboard(p)
             end
         end
-        -- Добавляем новых игроков
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= player and not espBillboards[p] and p.Character and p.Character:FindFirstChild("Head") then
                 createBillboard(p)
@@ -396,6 +556,11 @@ end
 espBtn.MouseButton1Click:Connect(toggleESP)
 
 -- ============================================================
+--  АКТИВИРУЕМ ПЕРВУЮ ВКЛАДКУ
+-- ============================================================
+switchTab("VISUALS")
+
+-- ============================================================
 --  ВОДЯНОЙ ЗНАК
 -- ============================================================
 local watermark = Instance.new("TextLabel")
@@ -417,5 +582,5 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ WERTIUM HUB с ESP загружен! Кнопка ESP по центру сверху.")
+print("✅ WERTIUM HUB с вкладками загружен!")
 print("🔑 F1 - открыть/закрыть")
