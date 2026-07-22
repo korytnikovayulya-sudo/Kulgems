@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP СКВОЗЬ СТЕНЫ (ПОЛНАЯ ВЕРСИЯ)
+--  WERTIUM HUB - ESP С HIGHLIGHT (ВИДНО СКВОЗЬ СТЕНЫ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -30,7 +30,7 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  КНОПКА W (КРАСНЫЙ КРУГ)
+--  КНОПКА W
 -- ============================================================
 local wButton = Instance.new("TextButton")
 wButton.Size = UDim2.new(0, 60, 0, 60)
@@ -182,7 +182,6 @@ local dotRc = Instance.new("UICorner")
 dotRc.CornerRadius = UDim.new(1, 0)
 dotRc.Parent = dotR
 
--- АНИМАЦИЯ ПРИЦЕЛОВ
 local angle2 = 0
 game:GetService("RunService").RenderStepped:Connect(function()
     angle2 = angle2 + 0.03
@@ -202,7 +201,6 @@ title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = header
 
--- ВЕРСИЯ VD
 local version = Instance.new("TextLabel")
 version.Size = UDim2.new(0.4, 0, 0.3, 0)
 version.Position = UDim2.new(0.3, 0, 0.7, 0)
@@ -214,7 +212,7 @@ version.Font = Enum.Font.SourceSansBold
 version.TextXAlignment = Enum.TextXAlignment.Center
 version.Parent = header
 
--- КРАСНАЯ КНОПКА ЗАКРЫТИЯ
+-- КНОПКА ЗАКРЫТИЯ
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 40, 0, 40)
 closeBtn.Position = UDim2.new(0.94, 0, 0.5, -20)
@@ -327,10 +325,10 @@ espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
 
 -- ============================================================
---  ESP ЛОГИКА (С ALWAYSONTOP ДЛЯ ВИДИМОСТИ СКВОЗЬ СТЕНЫ)
+--  ESP (С HIGHLIGHT + BILLBOARD)
 -- ============================================================
 local espEnabled = false
-local espBillboards = {}
+local espLabels = {}
 
 local function getRole(p)
     if not p or not p.Character then return "innocent" end
@@ -363,7 +361,7 @@ end
 
 local function createBillboard(p)
     if p == player then return end
-    if espBillboards[p] then return end
+    if espLabels[p] then return end
 
     local role = getRole(p)
     local text = ""
@@ -379,16 +377,29 @@ local function createBillboard(p)
         color = Color3.fromRGB(0, 255, 0)
     end
 
+    -- HIGHLIGHT (подсветка игрока)
+    local highlight = Instance.new("Highlight")
+    highlight.Adornee = p.Character
+    highlight.FillColor = color
+    highlight.FillTransparency = 0.5
+    highlight.OutlineColor = color
+    highlight.OutlineTransparency = 0.3
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.Parent = p.Character
+
+    -- BILLBOARD (текст над головой)
     local head = p.Character and p.Character:FindFirstChild("Head")
-    if not head then return end
+    if not head then 
+        highlight:Destroy()
+        return 
+    end
 
     local bill = Instance.new("BillboardGui")
     bill.Size = UDim2.new(0, 200, 0, 40)
     bill.Adornee = head
-    bill.StudsOffset = Vector3.new(0, 2.5, 0)
-    bill.AlwaysOnTop = true           -- 👈 ВИДНО СКВОЗЬ СТЕНЫ!
+    bill.StudsOffset = Vector3.new(0, 3.5, 0)
+    bill.AlwaysOnTop = true
     bill.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    bill.Active = true
     bill.Parent = gui
 
     local label = Instance.new("TextLabel")
@@ -396,27 +407,29 @@ local function createBillboard(p)
     label.BackgroundTransparency = 1
     label.Text = text
     label.TextColor3 = color
-    label.TextSize = 20
+    label.TextSize = 22
     label.Font = Enum.Font.SourceSansBold
     label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-    label.TextStrokeTransparency = 0.2
+    label.TextStrokeTransparency = 0.1
     label.Parent = bill
 
-    espBillboards[p] = bill
+    espLabels[p] = { label = label, bill = bill, highlight = highlight }
 end
 
 local function removeBillboard(p)
-    if espBillboards[p] then
-        espBillboards[p]:Destroy()
-        espBillboards[p] = nil
+    if espLabels[p] then
+        if espLabels[p].bill then espLabels[p].bill:Destroy() end
+        if espLabels[p].highlight then espLabels[p].highlight:Destroy() end
+        espLabels[p] = nil
     end
 end
 
 local function clearAllBillboards()
-    for _, bill in pairs(espBillboards) do
-        bill:Destroy()
+    for p, data in pairs(espLabels) do
+        if data.bill then data.bill:Destroy() end
+        if data.highlight then data.highlight:Destroy() end
     end
-    espBillboards = {}
+    espLabels = {}
 end
 
 local function updateAllESP()
@@ -451,7 +464,7 @@ end)
 
 local function espLoop()
     while espEnabled do
-        for p, bill in pairs(espBillboards) do
+        for p, data in pairs(espLabels) do
             if p and p.Character and p.Character:FindFirstChild("Head") then
                 local role = getRole(p)
                 local text = ""
@@ -466,17 +479,20 @@ local function espLoop()
                     text = "INNOCENT"
                     color = Color3.fromRGB(0, 255, 0)
                 end
-                local label = bill:FindFirstChild("TextLabel")
-                if label then
-                    label.Text = text
-                    label.TextColor3 = color
+                if data.label then
+                    data.label.Text = text
+                    data.label.TextColor3 = color
+                end
+                if data.highlight then
+                    data.highlight.FillColor = color
+                    data.highlight.OutlineColor = color
                 end
             else
                 removeBillboard(p)
             end
         end
         for _, p in pairs(game.Players:GetPlayers()) do
-            if p ~= player and not espBillboards[p] and p.Character and p.Character:FindFirstChild("Head") then
+            if p ~= player and not espLabels[p] and p.Character and p.Character:FindFirstChild("Head") then
                 createBillboard(p)
             end
         end
@@ -563,7 +579,7 @@ miscLabel.TextXAlignment = Enum.TextXAlignment.Left
 miscLabel.Parent = miscContent
 
 -- ============================================================
---  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (С АНИМАЦИЕЙ)
+--  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
 -- ============================================================
 local function switchTab(tabName)
     currentTab = tabName
@@ -605,9 +621,6 @@ for name, btn in pairs(tabs) do
     end)
 end
 
--- ============================================================
---  АКТИВИРУЕМ ПЕРВУЮ ВКЛАДКУ
--- ============================================================
 switchTab("VISUALS")
 
 -- ============================================================
@@ -625,7 +638,7 @@ watermark.TextTransparency = 0.5
 watermark.Parent = frame
 
 -- ============================================================
---  ХОТКЕЙ F1
+--  F1
 -- ============================================================
 game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
@@ -643,5 +656,4 @@ end)
 
 print("✅ WERTIUM HUB загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
-print("🔴 Кнопка W - открыть меню")
-print("👁️ ESP видно сквозь стены!")
+print("👁️ ESP видно сквозь стены (Highlight + Billboard)")
