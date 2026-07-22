@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - CAMLOCK ТОЛЬКО НА MURDERER (РЕЗКО)
+--  WERTIUM HUB - SHOOT MURDERER (УБИЙСТВО ПО КНОПКЕ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -515,7 +515,7 @@ end
 espBtn.MouseButton1Click:Connect(toggleESP)
 
 -- ============================================================
---  AIM (CAMLOCK ТОЛЬКО НА MURDERER, РЕЗКО)
+--  AIM (CAMLOCK + SHOOT MURDERER)
 -- ============================================================
 local aimContent = Instance.new("Frame")
 aimContent.Size = UDim2.new(1, 0, 1, 0)
@@ -536,13 +536,13 @@ aimTitle.Parent = aimContent
 
 -- Camlock Toggle
 local camlockBtn = Instance.new("TextButton")
-camlockBtn.Size = UDim2.new(0, 200, 0, 45)
+camlockBtn.Size = UDim2.new(0, 200, 0, 40)
 camlockBtn.Position = UDim2.new(0, 0, 0.12, 0)
 camlockBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 camlockBtn.BackgroundTransparency = 0.3
 camlockBtn.Text = "Camlock: Выкл"
 camlockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-camlockBtn.TextSize = 20
+camlockBtn.TextSize = 18
 camlockBtn.Font = Enum.Font.SourceSansBold
 camlockBtn.Parent = aimContent
 
@@ -550,8 +550,24 @@ local camlockCorners = Instance.new("UICorner")
 camlockCorners.CornerRadius = UDim.new(0, 10)
 camlockCorners.Parent = camlockBtn
 
+-- Shoot Murderer Toggle
+local shootBtn = Instance.new("TextButton")
+shootBtn.Size = UDim2.new(0, 200, 0, 40)
+shootBtn.Position = UDim2.new(0, 0, 0.22, 0)
+shootBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+shootBtn.BackgroundTransparency = 0.3
+shootBtn.Text = "Shoot Murderer: Выкл"
+shootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+shootBtn.TextSize = 18
+shootBtn.Font = Enum.Font.SourceSansBold
+shootBtn.Parent = aimContent
+
+local shootCorners = Instance.new("UICorner")
+shootCorners.CornerRadius = UDim.new(0, 10)
+shootCorners.Parent = shootBtn
+
 -- ============================================================
---  CAMLOCK ЛОГИКА (ТОЛЬКО НА MURDERER)
+--  CAMLOCK ЛОГИКА
 -- ============================================================
 local camlockEnabled = false
 local camera = workspace.CurrentCamera
@@ -560,14 +576,13 @@ camlockBtn.MouseButton1Click:Connect(function()
     camlockEnabled = not camlockEnabled
     if camlockEnabled then
         camlockBtn.Text = "Camlock: Вкл"
-        print("✅ Camlock включен, ищем убийцу...")
+        print("✅ Camlock включен")
     else
         camlockBtn.Text = "Camlock: Выкл"
         print("❌ Camlock выключен")
     end
 end)
 
--- ПОИСК ТОЛЬКО УБИЙЦЫ
 local function findMurderer()
     for _, p in pairs(game.Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("Head") then
@@ -579,21 +594,157 @@ local function findMurderer()
     return nil
 end
 
--- НАВЕДЕНИЕ (РЕЗКОЕ, БЕЗ ПЛАВНОСТИ)
 game:GetService("RunService").RenderStepped:Connect(function()
     if not camlockEnabled then return end
-    
     local target = findMurderer()
     if not target then return end
-    
     local head = target.Character:FindFirstChild("Head")
     if not head then return end
-    
     local targetPos = head.Position
     local currentPos = camera.CFrame.Position
     local direction = (targetPos - currentPos).Unit
-    
     camera.CFrame = CFrame.new(currentPos, currentPos + direction)
+end)
+
+-- ============================================================
+--  SHOOT MURDERER (КВАДРАТ С ПРИЦЕЛОМ)
+-- ============================================================
+local shootEnabled = false
+local shootFrame = nil
+local shootCrosshair = nil
+local shootLabel = nil
+local shootAngle = 0
+
+local function createShootUI()
+    if shootFrame then return end
+    
+    -- ОСНОВНОЙ КВАДРАТ (ЧЁРНЫЙ, МАТОВЫЙ)
+    shootFrame = Instance.new("Frame")
+    shootFrame.Size = UDim2.new(0, 120, 0, 120)
+    shootFrame.Position = UDim2.new(0.5, -60, 0.5, -60)
+    shootFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+    shootFrame.BackgroundTransparency = 0.05
+    shootFrame.BorderSizePixel = 2
+    shootFrame.BorderColor3 = Color3.fromRGB(255, 50, 50)
+    shootFrame.ZIndex = 999
+    shootFrame.Parent = gui
+    
+    local shootCorners = Instance.new("UICorner")
+    shootCorners.CornerRadius = UDim.new(0, 12)
+    shootCorners.Parent = shootFrame
+    
+    -- АНИМИРОВАННЫЙ ПРИЦЕЛ ВНУТРИ КВАДРАТА
+    local crosshairContainer = Instance.new("Frame")
+    crosshairContainer.Size = UDim2.new(0, 60, 0, 60)
+    crosshairContainer.Position = UDim2.new(0.5, -30, 0.5, -30)
+    crosshairContainer.BackgroundTransparency = 1
+    crosshairContainer.Parent = shootFrame
+    shootCrosshair = crosshairContainer
+    
+    local circle = Instance.new("Frame")
+    circle.Size = UDim2.new(1, 0, 1, 0)
+    circle.BackgroundTransparency = 1
+    circle.BorderSizePixel = 2
+    circle.BorderColor3 = Color3.fromRGB(255, 50, 50)
+    circle.Parent = crosshairContainer
+    local circleCorners2 = Instance.new("UICorner")
+    circleCorners2.CornerRadius = UDim.new(1, 0)
+    circleCorners2.Parent = circle
+    
+    local hLine = Instance.new("Frame")
+    hLine.Size = UDim2.new(0.8, 0, 0.08, 0)
+    hLine.Position = UDim2.new(0.1, 0, 0.46, 0)
+    hLine.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    hLine.BackgroundTransparency = 0.3
+    hLine.BorderSizePixel = 0
+    hLine.Parent = crosshairContainer
+    
+    local vLine = Instance.new("Frame")
+    vLine.Size = UDim2.new(0.08, 0, 0.8, 0)
+    vLine.Position = UDim2.new(0.46, 0, 0.1, 0)
+    vLine.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    vLine.BackgroundTransparency = 0.3
+    vLine.BorderSizePixel = 0
+    vLine.Parent = crosshairContainer
+    
+    local dot2 = Instance.new("Frame")
+    dot2.Size = UDim2.new(0.15, 0, 0.15, 0)
+    dot2.Position = UDim2.new(0.425, 0, 0.425, 0)
+    dot2.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    dot2.BackgroundTransparency = 0.2
+    dot2.BorderSizePixel = 0
+    dot2.Parent = crosshairContainer
+    local dotCorners2 = Instance.new("UICorner")
+    dotCorners2.CornerRadius = UDim.new(1, 0)
+    dotCorners2.Parent = dot2
+    
+    -- НАДПИСЬ SHOOT
+    shootLabel = Instance.new("TextLabel")
+    shootLabel.Size = UDim2.new(1, 0, 0.25, 0)
+    shootLabel.Position = UDim2.new(0, 0, 0.75, 0)
+    shootLabel.BackgroundTransparency = 1
+    shootLabel.Text = "SHOOT"
+    shootLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+    shootLabel.TextSize = 14
+    shootLabel.Font = Enum.Font.GothamBold
+    shootLabel.TextXAlignment = Enum.TextXAlignment.Center
+    shootLabel.Parent = shootFrame
+end
+
+local function destroyShootUI()
+    if shootFrame then
+        shootFrame:Destroy()
+        shootFrame = nil
+        shootCrosshair = nil
+        shootLabel = nil
+    end
+end
+
+-- АНИМАЦИЯ ПРИЦЕЛА В КВАДРАТЕ
+game:GetService("RunService").RenderStepped:Connect(function()
+    if shootCrosshair and shootCrosshair.Parent then
+        shootAngle = shootAngle + 0.04
+        shootCrosshair.Rotation = math.deg(shootAngle)
+    end
+end)
+
+-- ФУНКЦИЯ УБИЙСТВА MURDERER
+local function shootMurderer()
+    local target = findMurderer()
+    if not target then
+        print("❌ Убийца не найден!")
+        return
+    end
+    
+    local humanoid = target.Character:FindFirstChild("Humanoid")
+    if humanoid then
+        humanoid.Health = 0
+        print("🔫 Убийца уничтожен!")
+    else
+        print("❌ У игрока нет Humanoid!")
+    end
+end
+
+-- НАЖАТИЕ НА КВАДРАТ
+local function onShootClick()
+    if shootFrame then
+        shootMurderer()
+    end
+end
+
+-- ВКЛЮЧЕНИЕ/ВЫКЛЮЧЕНИЕ SHOOT
+shootBtn.MouseButton1Click:Connect(function()
+    shootEnabled = not shootEnabled
+    if shootEnabled then
+        shootBtn.Text = "Shoot Murderer: Вкл"
+        createShootUI()
+        shootFrame.MouseButton1Click:Connect(onShootClick)
+        print("✅ Shoot Murderer включен")
+    else
+        shootBtn.Text = "Shoot Murderer: Выкл"
+        destroyShootUI()
+        print("❌ Shoot Murderer выключен")
+    end
 end)
 
 -- ============================================================
@@ -703,6 +854,7 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gameProce
     end
 end)
 
-print("✅ WERTIUM HUB с Camlock загружен успешно!")
+print("✅ WERTIUM HUB загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
-print("🎯 Camlock: наводится ТОЛЬКО на убийцу (MURDERER)")
+print("🎯 Camlock - наводится на убийцу")
+print("🔫 Shoot Murderer - квадрат с прицелом, убивает убийцу по нажатию")
