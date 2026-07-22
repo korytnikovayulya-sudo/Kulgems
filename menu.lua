@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - SHOOT MURDERER (ПЕРЕТАСКИВАЕМЫЙ КВАДРАТ)
+--  WERTIUM HUB - SHOOT MURDERER (ПОЛНОСТЬЮ РАБОЧИЙ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -94,7 +94,7 @@ local headerCorners = Instance.new("UICorner")
 headerCorners.CornerRadius = UDim.new(0, 20)
 headerCorners.Parent = header
 
--- ЛЕВЫЙ ПРИЦЕЛ
+-- ЛЕВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
 local crosshairL = Instance.new("Frame")
 crosshairL.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairL.Position = UDim2.new(0.02, 0, 0.2, 0)
@@ -138,7 +138,7 @@ local dotLc = Instance.new("UICorner")
 dotLc.CornerRadius = UDim.new(1, 0)
 dotLc.Parent = dotL
 
--- ПРАВЫЙ ПРИЦЕЛ
+-- ПРАВЫЙ ПРИЦЕЛ (ЧЁРНЫЙ)
 local crosshairR = Instance.new("Frame")
 crosshairR.Size = UDim2.new(0, 40, 0.6, 0)
 crosshairR.Position = UDim2.new(0.88, 0, 0.2, 0)
@@ -647,7 +647,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURDERER (ПЕРЕТАСКИВАЕМЫЙ КВАДРАТ С ПОЛЗУНКОМ РАЗМЕРА)
+--  SHOOT MURDERER (РАБОЧАЯ ВЕРСИЯ)
 -- ============================================================
 local shootEnabled = false
 local shootFrame = nil
@@ -656,9 +656,9 @@ local shootLabel = nil
 local shootAngle = 0
 local shootSize = 50
 local isDragging = false
-local dragStart = nil
 local dragOffset = nil
 
+-- ГЛАВНАЯ ФУНКЦИЯ СОЗДАНИЯ КВАДРАТА
 local function createShootUI()
     if shootFrame then return end
     
@@ -681,44 +681,48 @@ local function createShootUI()
     shootCorners.CornerRadius = UDim.new(0, 12)
     shootCorners.Parent = shootFrame
     
-    -- АНИМИРОВАННЫЙ ПРИЦЕЛ (БЕЛЫЙ)
+    -- КОНТЕЙНЕР ДЛЯ ПРИЦЕЛА
     local crosshairContainer = Instance.new("Frame")
     crosshairContainer.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
-    crosshairContainer.Position = UDim2.new(0.5, -size * 0.25, 0.4, -size * 0.25)
+    crosshairContainer.Position = UDim2.new(0.5, -size * 0.25, 0.35, -size * 0.25)
     crosshairContainer.BackgroundTransparency = 1
     crosshairContainer.Parent = shootFrame
     shootCrosshair = crosshairContainer
     
+    -- КРУГ (БЕЛЫЙ)
     local circle = Instance.new("Frame")
     circle.Size = UDim2.new(1, 0, 1, 0)
     circle.BackgroundTransparency = 1
     circle.BorderSizePixel = 2
-    circle.BorderColor3 = Color3.fromRGB(255, 255, 255)  -- БЕЛЫЙ
+    circle.BorderColor3 = Color3.fromRGB(255, 255, 255)
     circle.Parent = crosshairContainer
     local circleCorners2 = Instance.new("UICorner")
     circleCorners2.CornerRadius = UDim.new(1, 0)
     circleCorners2.Parent = circle
     
+    -- ГОРИЗОНТАЛЬНАЯ ЛИНИЯ
     local hLine = Instance.new("Frame")
     hLine.Size = UDim2.new(0.8, 0, 0.08, 0)
     hLine.Position = UDim2.new(0.1, 0, 0.46, 0)
-    hLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- БЕЛЫЙ
+    hLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     hLine.BackgroundTransparency = 0.3
     hLine.BorderSizePixel = 0
     hLine.Parent = crosshairContainer
     
+    -- ВЕРТИКАЛЬНАЯ ЛИНИЯ
     local vLine = Instance.new("Frame")
     vLine.Size = UDim2.new(0.08, 0, 0.8, 0)
     vLine.Position = UDim2.new(0.46, 0, 0.1, 0)
-    vLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- БЕЛЫЙ
+    vLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     vLine.BackgroundTransparency = 0.3
     vLine.BorderSizePixel = 0
     vLine.Parent = crosshairContainer
     
+    -- ТОЧКА В ЦЕНТРЕ
     local dot2 = Instance.new("Frame")
     dot2.Size = UDim2.new(0.15, 0, 0.15, 0)
     dot2.Position = UDim2.new(0.425, 0, 0.425, 0)
-    dot2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- БЕЛЫЙ
+    dot2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     dot2.BackgroundTransparency = 0.2
     dot2.BorderSizePixel = 0
     dot2.Parent = crosshairContainer
@@ -729,16 +733,16 @@ local function createShootUI()
     -- НАДПИСЬ SHOOT (КРАСНАЯ)
     shootLabel = Instance.new("TextLabel")
     shootLabel.Size = UDim2.new(1, 0, 0.2, 0)
-    shootLabel.Position = UDim2.new(0, 0, 0.8, 0)
+    shootLabel.Position = UDim2.new(0, 0, 0.78, 0)
     shootLabel.BackgroundTransparency = 1
     shootLabel.Text = "SHOOT"
-    shootLabel.TextColor3 = Color3.fromRGB(255, 50, 50)  -- КРАСНАЯ
-    shootLabel.TextSize = size * 0.12
+    shootLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+    shootLabel.TextSize = size * 0.14
     shootLabel.Font = Enum.Font.GothamBold
     shootLabel.TextXAlignment = Enum.TextXAlignment.Center
     shootLabel.Parent = shootFrame
     
-    -- ПЕРЕТАСКИВАНИЕ
+    -- ПЕРЕТАСКИВАНИЕ МЫШКОЙ
     local function startDrag(input)
         isDragging = true
         local mousePos = Vector2.new(input.Position.X, input.Position.Y)
@@ -765,6 +769,7 @@ local function createShootUI()
         isDragging = false
     end
     
+    -- ПОДПИСКА НА СОБЫТИЯ МЫШИ
     shootFrame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             startDrag(input)
@@ -783,7 +788,7 @@ local function createShootUI()
         end
     end)
     
-    -- УБИЙСТВО ПО КЛИКУ
+    -- УБИЙСТВО ПО КЛИКУ НА КВАДРАТ
     shootFrame.MouseButton1Click:Connect(function()
         local target = findMurderer()
         if not target then
@@ -798,6 +803,28 @@ local function createShootUI()
     end)
 end
 
+-- ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЕРА
+local function updateShootSize()
+    if not shootFrame then return end
+    local size = 60 + shootSize * 1.2
+    shootFrame.Size = UDim2.new(0, size, 0, size)
+    
+    -- ОБНОВЛЯЕМ ПРИЦЕЛ
+    local crosshair = shootFrame:FindFirstChildOfClass("Frame")
+    if crosshair and crosshair ~= shootFrame then
+        crosshair.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
+        crosshair.Position = UDim2.new(0.5, -size * 0.25, 0.35, -size * 0.25)
+        shootCrosshair = crosshair
+    end
+    
+    -- ОБНОВЛЯЕМ НАДПИСЬ
+    local label = shootFrame:FindFirstChildOfClass("TextLabel")
+    if label then
+        label.TextSize = size * 0.14
+    end
+end
+
+-- УНИЧТОЖЕНИЕ КВАДРАТА
 local function destroyShootUI()
     if shootFrame then
         shootFrame:Destroy()
@@ -807,24 +834,7 @@ local function destroyShootUI()
     end
 end
 
-local function updateShootSize()
-    if not shootFrame then return end
-    local size = 60 + shootSize * 1.2
-    shootFrame.Size = UDim2.new(0, size, 0, size)
-    
-    local crosshair = shootFrame:FindFirstChildOfClass("Frame")
-    if crosshair then
-        crosshair.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
-        crosshair.Position = UDim2.new(0.5, -size * 0.25, 0.4, -size * 0.25)
-    end
-    
-    local label = shootFrame:FindFirstChildOfClass("TextLabel")
-    if label then
-        label.TextSize = size * 0.12
-    end
-end
-
--- АНИМАЦИЯ ПРИЦЕЛА
+-- АНИМАЦИЯ ПРИЦЕЛА (КРУТИТСЯ)
 game:GetService("RunService").RenderStepped:Connect(function()
     if shootCrosshair and shootCrosshair.Parent then
         shootAngle = shootAngle + 0.04
@@ -849,7 +859,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
             sizeFill.Size = UDim2.new(val, 0, 1, 0)
             sizeKnob.Position = UDim2.new(val, -8, 0.5, -8)
             sizeLabel.Text = "Размер: " .. shootSize
-            if shootEnabled then
+            if shootEnabled and shootFrame then
                 updateShootSize()
             end
         end
