@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - SHOOT MURDERER (ПОЛНОСТЬЮ РАБОЧИЙ)
+--  WERTIUM HUB - SHOOT MURDERER (ИСПРАВЛЕННЫЙ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -647,7 +647,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURDERER (РАБОЧАЯ ВЕРСИЯ)
+--  SHOOT MURDERER (ИСПРАВЛЕННЫЙ)
 -- ============================================================
 local shootEnabled = false
 local shootFrame = nil
@@ -656,17 +656,15 @@ local shootLabel = nil
 local shootAngle = 0
 local shootSize = 50
 local isDragging = false
-local dragStartPos = nil
 local dragOffset = nil
-local connections = {}  -- для хранения подключений
 
 -- ГЛАВНАЯ ФУНКЦИЯ СОЗДАНИЯ КВАДРАТА
 local function createShootUI()
     if shootFrame then return end
     
-    local size = 60 + shootSize * 1.2  -- от 60 до 180
+    local size = 60 + shootSize * 1.2
     
-    -- ОСНОВНОЙ КВАДРАТ (МАТОВЫЙ, БЕЗ ПРОЗРАЧНОСТИ)
+    -- ОСНОВНОЙ КВАДРАТ
     shootFrame = Instance.new("Frame")
     shootFrame.Size = UDim2.new(0, size, 0, size)
     shootFrame.Position = UDim2.new(0.5, -size/2, 0.5, -size/2)
@@ -676,14 +674,13 @@ local function createShootUI()
     shootFrame.BorderColor3 = Color3.fromRGB(255, 50, 50)
     shootFrame.ZIndex = 999
     shootFrame.Active = true
-    shootFrame.Draggable = false
     shootFrame.Parent = gui
     
     local shootCorners = Instance.new("UICorner")
     shootCorners.CornerRadius = UDim.new(0, 12)
     shootCorners.Parent = shootFrame
     
-    -- КОНТЕЙНЕР ДЛЯ ПРИЦЕЛА
+    -- АНИМИРОВАННЫЙ ПРИЦЕЛ (БЕЛЫЙ)
     local crosshairContainer = Instance.new("Frame")
     crosshairContainer.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
     crosshairContainer.Position = UDim2.new(0.5, -size * 0.25, 0.35, -size * 0.25)
@@ -691,7 +688,7 @@ local function createShootUI()
     crosshairContainer.Parent = shootFrame
     shootCrosshair = crosshairContainer
     
-    -- КРУГ (БЕЛЫЙ)
+    -- КРУГ
     local circle = Instance.new("Frame")
     circle.Size = UDim2.new(1, 0, 1, 0)
     circle.BackgroundTransparency = 1
@@ -720,7 +717,7 @@ local function createShootUI()
     vLine.BorderSizePixel = 0
     vLine.Parent = crosshairContainer
     
-    -- ТОЧКА В ЦЕНТРЕ
+    -- ТОЧКА
     local dot2 = Instance.new("Frame")
     dot2.Size = UDim2.new(0.15, 0, 0.15, 0)
     dot2.Position = UDim2.new(0.425, 0, 0.425, 0)
@@ -732,7 +729,7 @@ local function createShootUI()
     dotCorners2.CornerRadius = UDim.new(1, 0)
     dotCorners2.Parent = dot2
     
-    -- НАДПИСЬ SHOOT (КРАСНАЯ)
+    -- НАДПИСЬ SHOOT
     shootLabel = Instance.new("TextLabel")
     shootLabel.Size = UDim2.new(1, 0, 0.2, 0)
     shootLabel.Position = UDim2.new(0, 0, 0.78, 0)
@@ -744,13 +741,34 @@ local function createShootUI()
     shootLabel.TextXAlignment = Enum.TextXAlignment.Center
     shootLabel.Parent = shootFrame
     
-    -- ПЕРЕТАСКИВАНИЕ МЫШКОЙ
+    -- ПЕРЕТАСКИВАНИЕ И КЛИК ЧЕРЕЗ UserInputService
     local function onInputBegan(input, gameProcessed)
         if gameProcessed then return end
+        
+        -- КЛИК ПО КВАДРАТУ (УБИЙСТВО)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            isDragging = true
             local mousePos = Vector2.new(input.Position.X, input.Position.Y)
             local framePos = Vector2.new(shootFrame.AbsolutePosition.X, shootFrame.AbsolutePosition.Y)
+            local frameSize = Vector2.new(shootFrame.AbsoluteSize.X, shootFrame.AbsoluteSize.Y)
+            
+            if mousePos.X >= framePos.X and mousePos.X <= framePos.X + frameSize.X and
+               mousePos.Y >= framePos.Y and mousePos.Y <= framePos.Y + frameSize.Y then
+                -- УБИВАЕМ УБИЙЦУ
+                local target = findMurderer()
+                if not target then
+                    print("❌ Убийца не найден!")
+                    return
+                end
+                local humanoid = target.Character:FindFirstChild("Humanoid")
+                if humanoid then
+                    humanoid.Health = 0
+                    print("🔫 Убийца уничтожен!")
+                end
+                return
+            end
+            
+            -- НАЧАЛО ПЕРЕТАСКИВАНИЯ
+            isDragging = true
             dragOffset = mousePos - framePos
         end
     end
@@ -779,32 +797,20 @@ local function createShootUI()
         end
     end
     
-    connections[1] = game:GetService("UserInputService").InputBegan:Connect(onInputBegan)
-    connections[2] = game:GetService("UserInputService").InputChanged:Connect(onInputChanged)
-    connections[3] = game:GetService("UserInputService").InputEnded:Connect(onInputEnded)
-    
-    -- УБИЙСТВО ПО КЛИКУ НА КВАДРАТ
-    shootFrame.MouseButton1Click:Connect(function()
-        local target = findMurderer()
-        if not target then
-            print("❌ Убийца не найден!")
-            return
-        end
-        local humanoid = target.Character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid.Health = 0
-            print("🔫 Убийца уничтожен!")
-        end
-    end)
+    -- ПОДПИСКИ
+    shootFrame._connections = {
+        game:GetService("UserInputService").InputBegan:Connect(onInputBegan),
+        game:GetService("UserInputService").InputChanged:Connect(onInputChanged),
+        game:GetService("UserInputService").InputEnded:Connect(onInputEnded)
+    }
 end
 
--- ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЕРА
+-- ОБНОВЛЕНИЕ РАЗМЕРА
 local function updateShootSize()
     if not shootFrame then return end
     local size = 60 + shootSize * 1.2
     shootFrame.Size = UDim2.new(0, size, 0, size)
     
-    -- ОБНОВЛЯЕМ ПРИЦЕЛ
     local crosshair = shootFrame:FindFirstChildOfClass("Frame")
     if crosshair and crosshair ~= shootFrame then
         crosshair.Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
@@ -812,30 +818,29 @@ local function updateShootSize()
         shootCrosshair = crosshair
     end
     
-    -- ОБНОВЛЯЕМ НАДПИСЬ
     local label = shootFrame:FindFirstChildOfClass("TextLabel")
     if label then
         label.TextSize = size * 0.14
     end
 end
 
--- УНИЧТОЖЕНИЕ КВАДРАТА
+-- УНИЧТОЖЕНИЕ
 local function destroyShootUI()
     if shootFrame then
+        if shootFrame._connections then
+            for _, conn in pairs(shootFrame._connections) do
+                if conn then conn:Disconnect() end
+            end
+        end
         shootFrame:Destroy()
         shootFrame = nil
         shootCrosshair = nil
         shootLabel = nil
     end
-    -- ОЧИЩАЕМ ПОДКЛЮЧЕНИЯ
-    for _, conn in pairs(connections) do
-        if conn then conn:Disconnect() end
-    end
-    connections = {}
     isDragging = false
 end
 
--- АНИМАЦИЯ ПРИЦЕЛА (КРУТИТСЯ)
+-- АНИМАЦИЯ ПРИЦЕЛА
 game:GetService("RunService").RenderStepped:Connect(function()
     if shootCrosshair and shootCrosshair.Parent then
         shootAngle = shootAngle + 0.04
@@ -843,7 +848,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
--- ПОЛЗУНОК РАЗМЕРА (ОТДЕЛЬНО ОТ КВАДРАТА)
+-- ПОЛЗУНОК РАЗМЕРА
 local sizeDragging = false
 sizeKnob.MouseButton1Down:Connect(function() sizeDragging = true end)
 game:GetService("UserInputService").InputEnded:Connect(function(input)
