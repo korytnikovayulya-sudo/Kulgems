@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (NEW DESIGN)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -515,7 +515,7 @@ end
 espBtn.MouseButton1Click:Connect(toggleESP)
 
 -- ============================================================
---  AIM (CAMLOCK + SHOOT MURD SQUARE)
+--  AIM (CAMLOCK + SHOOT MURD SQUARE) - НОВЫЙ ДИЗАЙН
 -- ============================================================
 local aimContent = Instance.new("Frame")
 aimContent.Size = UDim2.new(1, 0, 1, 0)
@@ -550,9 +550,7 @@ local camlockCorners = Instance.new("UICorner")
 camlockCorners.CornerRadius = UDim.new(0, 10)
 camlockCorners.Parent = camlockBtn
 
--- ============================================================
---  SHOOT MURD SQUARE TOGGLE
--- ============================================================
+-- Shoot Square Toggle
 local shootToggleBtn = Instance.new("TextButton")
 shootToggleBtn.Size = UDim2.new(0, 200, 0, 45)
 shootToggleBtn.Position = UDim2.new(0, 0, 0.26, 0)
@@ -609,7 +607,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURD SQUARE (ЧЕРНЫЙ МАТОВЫЙ КВАДРАТ 100x100)
+--  SHOOT MURD SQUARE (НОВЫЙ ДИЗАЙН - как на скриншоте)
 -- ============================================================
 local shootSquareEnabled = false
 local shootSquare = nil
@@ -621,13 +619,12 @@ local frameStart = nil
 local function createShootSquare()
     if shootSquare then return end
     
-    -- Создаем ScreenGui для квадрата
     shootSquare = Instance.new("ScreenGui")
     shootSquare.Name = "ShootSquare"
     shootSquare.ResetOnSpawn = false
     shootSquare.Parent = player.PlayerGui
     
-    -- Основной квадрат
+    -- Основной квадрат 100x100 (чёрный матовый)
     shootFrame = Instance.new("Frame")
     shootFrame.Size = UDim2.new(0, 100, 0, 100)
     shootFrame.Position = UDim2.new(0.5, -50, 0.5, -50)
@@ -638,91 +635,74 @@ local function createShootSquare()
     shootFrame.Active = true
     shootFrame.Parent = shootSquare
     
-    -- Матовый эффект
-    local squareCorner = Instance.new("UICorner")
-    squareCorner.CornerRadius = UDim.new(0, 8)
-    squareCorner.Parent = shootFrame
+    -- Матовый угол
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = shootFrame
     
-    local squareGradient = Instance.new("UIGradient")
-    squareGradient.Color = ColorSequence.new({
+    -- Градиент для матовости
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new({
         ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 15)),
         ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 35, 35))
     })
-    squareGradient.Rotation = 45
-    squareGradient.Parent = shootFrame
+    gradient.Rotation = 45
+    gradient.Parent = shootFrame
     
-    -- Стекло (глянец)
-    local glass = Instance.new("Frame")
-    glass.Size = UDim2.new(1, 0, 0.4, 0)
-    glass.Position = UDim2.new(0, 0, 0, 0)
-    glass.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    glass.BackgroundTransparency = 0.03
-    glass.BorderSizePixel = 0
-    glass.Parent = shootFrame
-    local glassCorner = Instance.new("UICorner")
-    glassCorner.CornerRadius = UDim.new(0, 8)
-    glassCorner.Parent = glass
+    -- ===== ПРИЦЕЛ (КАК В МЕНЮ, НО ОДИН) =====
+    local crosshair = Instance.new("Frame")
+    crosshair.Size = UDim2.new(0, 60, 0, 60)
+    crosshair.Position = UDim2.new(0.5, -30, 0.5, -35) -- сместим чуть выше для текста
+    crosshair.BackgroundTransparency = 1
+    crosshair.Parent = shootFrame
     
-    -- ===== АНИМИРОВАННЫЙ ПРИЦЕЛ =====
-    -- Внешний круг (вращающийся)
-    local outerCircle = Instance.new("Frame")
-    outerCircle.Size = UDim2.new(0, 70, 0, 70)
-    outerCircle.Position = UDim2.new(0.5, -35, 0.5, -35)
-    outerCircle.BackgroundTransparency = 1
-    outerCircle.BorderSizePixel = 2
-    outerCircle.BorderColor3 = Color3.fromRGB(200, 50, 50)
-    outerCircle.Parent = shootFrame
-    local outerCircleCorner = Instance.new("UICorner")
-    outerCircleCorner.CornerRadius = UDim.new(1, 0)
-    outerCircleCorner.Parent = outerCircle
+    -- Внешний круг
+    local circle = Instance.new("Frame")
+    circle.Size = UDim2.new(1, 0, 1, 0)
+    circle.BackgroundTransparency = 1
+    circle.BorderSizePixel = 2
+    circle.BorderColor3 = Color3.fromRGB(200, 50, 50)
+    circle.Parent = crosshair
+    local circleCorner = Instance.new("UICorner")
+    circleCorner.CornerRadius = UDim.new(1, 0)
+    circleCorner.Parent = circle
     
-    -- Внутренний круг (пульсирующий)
-    local innerCircle = Instance.new("Frame")
-    innerCircle.Size = UDim2.new(0, 30, 0, 30)
-    innerCircle.Position = UDim2.new(0.5, -15, 0.5, -15)
-    innerCircle.BackgroundTransparency = 1
-    innerCircle.BorderSizePixel = 2
-    innerCircle.BorderColor3 = Color3.fromRGB(255, 100, 100)
-    innerCircle.Parent = shootFrame
-    local innerCircleCorner = Instance.new("UICorner")
-    innerCircleCorner.CornerRadius = UDim.new(1, 0)
-    innerCircleCorner.Parent = innerCircle
+    -- Горизонтальная линия
+    local hLine = Instance.new("Frame")
+    hLine.Size = UDim2.new(0.8, 0, 0.08, 0)
+    hLine.Position = UDim2.new(0.1, 0, 0.46, 0)
+    hLine.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    hLine.BackgroundTransparency = 0.2
+    hLine.BorderSizePixel = 0
+    hLine.Parent = crosshair
+    
+    -- Вертикальная линия
+    local vLine = Instance.new("Frame")
+    vLine.Size = UDim2.new(0.08, 0, 0.8, 0)
+    vLine.Position = UDim2.new(0.46, 0, 0.1, 0)
+    vLine.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    vLine.BackgroundTransparency = 0.2
+    vLine.BorderSizePixel = 0
+    vLine.Parent = crosshair
     
     -- Центральная точка
-    local centerDot = Instance.new("Frame")
-    centerDot.Size = UDim2.new(0, 6, 0, 6)
-    centerDot.Position = UDim2.new(0.5, -3, 0.5, -3)
-    centerDot.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-    centerDot.BorderSizePixel = 0
-    centerDot.Parent = shootFrame
-    local centerDotCorner = Instance.new("UICorner")
-    centerDotCorner.CornerRadius = UDim.new(1, 0)
-    centerDotCorner.Parent = centerDot
+    local dot = Instance.new("Frame")
+    dot.Size = UDim2.new(0.15, 0, 0.15, 0)
+    dot.Position = UDim2.new(0.425, 0, 0.425, 0)
+    dot.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    dot.BackgroundTransparency = 0.1
+    dot.BorderSizePixel = 0
+    dot.Parent = crosshair
+    local dotCorner = Instance.new("UICorner")
+    dotCorner.CornerRadius = UDim.new(1, 0)
+    dotCorner.Parent = dot
     
-    -- Перекрестие (горизонталь)
-    local crossH = Instance.new("Frame")
-    crossH.Size = UDim2.new(0, 30, 0, 2)
-    crossH.Position = UDim2.new(0.5, -15, 0.5, -1)
-    crossH.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-    crossH.BorderSizePixel = 0
-    crossH.BackgroundTransparency = 0.5
-    crossH.Parent = shootFrame
-    
-    -- Перекрестие (вертикаль)
-    local crossV = Instance.new("Frame")
-    crossV.Size = UDim2.new(0, 2, 0, 30)
-    crossV.Position = UDim2.new(0.5, -1, 0.5, -15)
-    crossV.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-    crossV.BorderSizePixel = 0
-    crossV.BackgroundTransparency = 0.5
-    crossV.Parent = shootFrame
-    
-    -- ===== ТЕКСТ "SHOOT" СНИЗУ =====
+    -- ===== ТЕКСТ "SHOOT MURD" СНИЗУ =====
     local shootText = Instance.new("TextLabel")
     shootText.Size = UDim2.new(1, 0, 0, 20)
     shootText.Position = UDim2.new(0, 0, 1, -22)
     shootText.BackgroundTransparency = 1
-    shootText.Text = "SHOOT"
+    shootText.Text = "SHOOT MURD"
     shootText.TextColor3 = Color3.fromRGB(255, 70, 70)
     shootText.TextScaled = true
     shootText.Font = Enum.Font.GothamBold
@@ -730,27 +710,15 @@ local function createShootSquare()
     shootText.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
     shootText.Parent = shootFrame
     
-    -- ===== АНИМАЦИИ =====
+    -- ===== АНИМАЦИЯ ВРАЩЕНИЯ (КАК В МЕНЮ) =====
     local angle = 0
-    local pulse = 0
-    
     game:GetService("RunService").RenderStepped:Connect(function()
         if not shootSquareEnabled then return end
-        
-        angle = angle + 0.02
-        outerCircle.Rotation = math.deg(angle)
-        
-        pulse = pulse + 0.03
-        local scale = 1 + math.sin(pulse) * 0.15
-        innerCircle.Size = UDim2.new(0, 30 * scale, 0, 30 * scale)
-        innerCircle.Position = UDim2.new(0.5, -15 * scale, 0.5, -15 * scale)
-        
-        local dotScale = 1 + math.sin(pulse + 0.5) * 0.3
-        centerDot.Size = UDim2.new(0, 6 * dotScale, 0, 6 * dotScale)
-        centerDot.Position = UDim2.new(0.5, -3 * dotScale, 0.5, -3 * dotScale)
+        angle = angle + 0.03
+        crosshair.Rotation = math.deg(angle)
     end)
     
-    -- ===== DRAGGABLE (ПЕРЕТАСКИВАНИЕ) =====
+    -- ===== DRAGGABLE =====
     shootFrame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             isDragging = true
@@ -779,7 +747,7 @@ local function createShootSquare()
         end
     end)
     
-    -- ===== КЛИК ПО КВАДРАТУ =====
+    -- ===== КЛИК =====
     shootFrame.MouseButton1Click:Connect(function()
         shootMurderer()
     end)
