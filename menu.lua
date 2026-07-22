@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ПОЛНАЯ ВЕРСИЯ (С ПОДСКАЗКОЙ)
+--  WERTIUM HUB - С ОКРУГЛЁННЫМИ ВКЛАДКАМИ И АНИМАЦИЕЙ
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -243,7 +243,7 @@ wButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ЛЕВАЯ ПАНЕЛЬ С ВКЛАДКАМИ
+--  ЛЕВАЯ ПАНЕЛЬ С ВКЛАДКАМИ (ОКРУГЛЁННЫЕ)
 -- ============================================================
 local tabContainer = Instance.new("Frame")
 tabContainer.Size = UDim2.new(0, 140, 1, -80)
@@ -252,6 +252,11 @@ tabContainer.BackgroundColor3 = Color3.fromRGB(100, 15, 15)
 tabContainer.BackgroundTransparency = 0.2
 tabContainer.Parent = frame
 
+-- Углы у панели вкладок
+local tabContainerCorners = Instance.new("UICorner")
+tabContainerCorners.CornerRadius = UDim.new(0, 12)
+tabContainerCorners.Parent = tabContainer
+
 local contentContainer = Instance.new("Frame")
 contentContainer.Size = UDim2.new(1, -150, 1, -90)
 contentContainer.Position = UDim2.new(0, 145, 0, 85)
@@ -259,15 +264,16 @@ contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
 -- ============================================================
---  ВКЛАДКИ
+--  ВКЛАДКИ (С АНИМАЦИЕЙ)
 -- ============================================================
 local tabs = {}
 local currentTab = "VISUALS"
+local tweenService = game:GetService("TweenService")
 
 local function createTab(name, yPos)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, 0, 0, 45)
-    btn.Position = UDim2.new(0, 0, 0, yPos)
+    btn.Size = UDim2.new(1, -10, 0, 45)
+    btn.Position = UDim2.new(0.05, 0, 0, yPos)
     btn.BackgroundColor3 = Color3.fromRGB(80, 10, 10)
     btn.BackgroundTransparency = 0.3
     btn.Text = name
@@ -276,20 +282,21 @@ local function createTab(name, yPos)
     btn.Font = Enum.Font.SourceSansBold
     btn.Parent = tabContainer
     
+    -- ОКРУГЛЁННЫЕ УГЛЫ У КАЖДОЙ ВКЛАДКИ
     local btnCorners = Instance.new("UICorner")
-    btnCorners.CornerRadius = UDim.new(0, 0)
+    btnCorners.CornerRadius = UDim.new(0, 12)
     btnCorners.Parent = btn
     
     tabs[name] = btn
     return btn
 end
 
-createTab("VISUALS", 0)
-createTab("AIM", 50)
-createTab("MISC", 100)
+createTab("VISUALS", 5)
+createTab("AIM", 55)
+createTab("MISC", 105)
 
 -- ============================================================
---  VISUALS (С ПОДСКАЗКОЙ)
+--  VISUALS (БЕЗ ПОДСКАЗКИ)
 -- ============================================================
 local visualsContent = Instance.new("Frame")
 visualsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -323,19 +330,6 @@ espBtn.Parent = visualsContent
 local espCorners = Instance.new("UICorner")
 espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
-
--- ПОДСКАЗКА ПОД КНОПКОЙ
-local espHint = Instance.new("TextLabel")
-espHint.Size = UDim2.new(0, 400, 0, 30)
-espHint.Position = UDim2.new(0, 5, 0.3, 5)
-espHint.BackgroundTransparency = 1
-espHint.Text = "THIS FUNCTION WORKS WHEN THE STATUS IS OFF"
-espHint.TextColor3 = Color3.fromRGB(255, 255, 255)
-espHint.TextSize = 14
-espHint.Font = Enum.Font.SourceSansItalic
-espHint.TextXAlignment = Enum.TextXAlignment.Left
-espHint.TextTransparency = 0.3
-espHint.Parent = visualsContent
 
 -- ============================================================
 --  ESP ЛОГИКА
@@ -571,7 +565,7 @@ miscLabel.TextXAlignment = Enum.TextXAlignment.Left
 miscLabel.Parent = miscContent
 
 -- ============================================================
---  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+--  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (С АНИМАЦИЕЙ)
 -- ============================================================
 local function switchTab(tabName)
     currentTab = tabName
@@ -588,14 +582,22 @@ local function switchTab(tabName)
     end
     
     for name, btn in pairs(tabs) do
+        local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
         if name == tabName then
-            btn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-            btn.BackgroundTransparency = 0.1
-            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            -- АНИМАЦИЯ ПРИ ВЫБОРЕ: ярче, чуть больше
+            tweenService:Create(btn, tweenInfo, {
+                BackgroundColor3 = Color3.fromRGB(180, 40, 40),
+                BackgroundTransparency = 0.1,
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                Size = UDim2.new(1, -10, 0, 48)
+            }):Play()
         else
-            btn.BackgroundColor3 = Color3.fromRGB(80, 10, 10)
-            btn.BackgroundTransparency = 0.3
-            btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+            tweenService:Create(btn, tweenInfo, {
+                BackgroundColor3 = Color3.fromRGB(80, 10, 10),
+                BackgroundTransparency = 0.3,
+                TextColor3 = Color3.fromRGB(200, 200, 200),
+                Size = UDim2.new(1, -10, 0, 45)
+            }):Play()
         end
     end
 end
