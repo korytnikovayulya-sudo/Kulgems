@@ -1,8 +1,8 @@
 -- ============================================================
---  WERTIUM HUB - С ТЕКСТОМ ПОД ESP
+--  WERTIUM HUB - ПОЛНАЯ ВЕРСИЯ (С ПОДСКАЗКОЙ)
 -- ============================================================
 
-print("🚀 Загрузка...")
+print("🚀 Загрузка Wertium Hub...")
 
 local player = game:GetService("Players").LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -10,7 +10,9 @@ gui.Name = "WertiumHub"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- ПРИВЕТСТВИЕ HELLO
+-- ============================================================
+--  ПРИВЕТСТВИЕ HELLO
+-- ============================================================
 local hello = Instance.new("TextLabel")
 hello.Size = UDim2.new(1, 0, 1, 0)
 hello.BackgroundTransparency = 1
@@ -18,6 +20,8 @@ hello.Text = "HELLO"
 hello.TextColor3 = Color3.fromRGB(255, 215, 0)
 hello.TextScaled = true
 hello.Font = Enum.Font.GothamBold
+hello.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+hello.TextStrokeTransparency = 0.5
 hello.Parent = gui
 
 game:GetService("TweenService"):Create(hello, TweenInfo.new(1.5, Enum.EasingStyle.Quad), {TextTransparency = 1}):Play()
@@ -26,7 +30,7 @@ game:GetService("Debris"):AddItem(hello, 1.5)
 wait(1.5)
 
 -- ============================================================
---  КНОПКА W
+--  КНОПКА W (КРАСНЫЙ КРУГ)
 -- ============================================================
 local wButton = Instance.new("TextButton")
 wButton.Size = UDim2.new(0, 60, 0, 60)
@@ -66,10 +70,12 @@ frame.Draggable = true
 frame.ClipsDescendants = true
 frame.Parent = gui
 
+-- УГЛЫ
 local corners = Instance.new("UICorner")
 corners.CornerRadius = UDim.new(0, 20)
 corners.Parent = frame
 
+-- БЕЛАЯ ПОДСВЕТКА
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 4
 stroke.Color = Color3.fromRGB(255, 255, 255)
@@ -178,6 +184,7 @@ local dotRc = Instance.new("UICorner")
 dotRc.CornerRadius = UDim.new(1, 0)
 dotRc.Parent = dotR
 
+-- АНИМАЦИЯ ПРИЦЕЛОВ
 local angle2 = 0
 game:GetService("RunService").RenderStepped:Connect(function()
     angle2 = angle2 + 0.03
@@ -197,6 +204,7 @@ title.Font = Enum.Font.GothamBold
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = header
 
+-- ВЕРСИЯ VD
 local version = Instance.new("TextLabel")
 version.Size = UDim2.new(0.4, 0, 0.3, 0)
 version.Position = UDim2.new(0.3, 0, 0.7, 0)
@@ -250,7 +258,9 @@ contentContainer.Position = UDim2.new(0, 145, 0, 85)
 contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
--- ВКЛАДКИ
+-- ============================================================
+--  ВКЛАДКИ
+-- ============================================================
 local tabs = {}
 local currentTab = "VISUALS"
 
@@ -279,7 +289,7 @@ createTab("AIM", 50)
 createTab("MISC", 100)
 
 -- ============================================================
---  VISUALS (С ТЕКСТОМ ПОД КНОПКОЙ)
+--  VISUALS (С ПОДСКАЗКОЙ)
 -- ============================================================
 local visualsContent = Instance.new("Frame")
 visualsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -298,6 +308,7 @@ visualsTitle.Font = Enum.Font.SourceSansBold
 visualsTitle.TextXAlignment = Enum.TextXAlignment.Left
 visualsTitle.Parent = visualsContent
 
+-- КНОПКА ESP
 local espBtn = Instance.new("TextButton")
 espBtn.Size = UDim2.new(0, 200, 0, 45)
 espBtn.Position = UDim2.new(0, 0, 0.15, 0)
@@ -313,7 +324,7 @@ local espCorners = Instance.new("UICorner")
 espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
 
--- ТЕКСТ ПОД КНОПКОЙ
+-- ПОДСКАЗКА ПОД КНОПКОЙ
 local espHint = Instance.new("TextLabel")
 espHint.Size = UDim2.new(0, 400, 0, 30)
 espHint.Position = UDim2.new(0, 5, 0.3, 5)
@@ -614,5 +625,23 @@ watermark.Font = Enum.Font.SourceSans
 watermark.TextTransparency = 0.5
 watermark.Parent = frame
 
-print("✅ WERTIUM HUB загружен!")
+-- ============================================================
+--  ХОТКЕЙ F1
+-- ============================================================
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.F1 then
+        if frame then
+            frame.Visible = not frame.Visible
+            if frame.Visible then
+                wButton.Visible = false
+            else
+                wButton.Visible = true
+            end
+        end
+    end
+end)
+
+print("✅ WERTIUM HUB загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
+print("🔴 Кнопка W - открыть меню")
