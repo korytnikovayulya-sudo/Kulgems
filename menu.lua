@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT MURD
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -515,7 +515,7 @@ end
 espBtn.MouseButton1Click:Connect(toggleESP)
 
 -- ============================================================
---  AIM (CAMLOCK + SHOOT MURD)
+--  AIM (CAMLOCK + SHOOT MURD SQUARE)
 -- ============================================================
 local aimContent = Instance.new("Frame")
 aimContent.Size = UDim2.new(1, 0, 1, 0)
@@ -551,37 +551,22 @@ camlockCorners.CornerRadius = UDim.new(0, 10)
 camlockCorners.Parent = camlockBtn
 
 -- ============================================================
---  SHOOT MURD (НОВАЯ КНОПКА)
+--  SHOOT MURD SQUARE TOGGLE
 -- ============================================================
-local shootBtn = Instance.new("TextButton")
-shootBtn.Size = UDim2.new(0, 200, 0, 45)
-shootBtn.Position = UDim2.new(0, 0, 0.26, 0)
-shootBtn.BackgroundColor3 = Color3.fromRGB(200, 30, 30)
-shootBtn.BackgroundTransparency = 0.2
-shootBtn.Text = "🔫 SHOOT MURD"
-shootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-shootBtn.TextSize = 20
-shootBtn.Font = Enum.Font.SourceSansBold
-shootBtn.Parent = aimContent
+local shootToggleBtn = Instance.new("TextButton")
+shootToggleBtn.Size = UDim2.new(0, 200, 0, 45)
+shootToggleBtn.Position = UDim2.new(0, 0, 0.26, 0)
+shootToggleBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+shootToggleBtn.BackgroundTransparency = 0.3
+shootToggleBtn.Text = "Shoot Square: Выкл"
+shootToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+shootToggleBtn.TextSize = 20
+shootToggleBtn.Font = Enum.Font.SourceSansBold
+shootToggleBtn.Parent = aimContent
 
-local shootCorners = Instance.new("UICorner")
-shootCorners.CornerRadius = UDim.new(0, 10)
-shootCorners.Parent = shootBtn
-
--- Анимация пульсации для кнопки
-local shootTween = game:GetService("TweenService")
-spawn(function()
-    while true do
-        shootTween:Create(shootBtn, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-            BackgroundTransparency = 0.05
-        }):Play()
-        wait(0.8)
-        shootTween:Create(shootBtn, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-            BackgroundTransparency = 0.3
-        }):Play()
-        wait(0.8)
-    end
-end)
+local shootToggleCorners = Instance.new("UICorner")
+shootToggleCorners.CornerRadius = UDim.new(0, 10)
+shootToggleCorners.Parent = shootToggleBtn
 
 -- ============================================================
 --  CAMLOCK ЛОГИКА
@@ -624,7 +609,192 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURD - INSTANT HITLOCK (БЕЗ ПОВОРОТА КАМЕРЫ)
+--  SHOOT MURD SQUARE (ЧЕРНЫЙ МАТОВЫЙ КВАДРАТ 100x100)
+-- ============================================================
+local shootSquareEnabled = false
+local shootSquare = nil
+local shootFrame = nil
+local isDragging = false
+local dragStart = nil
+local frameStart = nil
+
+local function createShootSquare()
+    if shootSquare then return end
+    
+    -- Создаем ScreenGui для квадрата
+    shootSquare = Instance.new("ScreenGui")
+    shootSquare.Name = "ShootSquare"
+    shootSquare.ResetOnSpawn = false
+    shootSquare.Parent = player.PlayerGui
+    
+    -- Основной квадрат
+    shootFrame = Instance.new("Frame")
+    shootFrame.Size = UDim2.new(0, 100, 0, 100)
+    shootFrame.Position = UDim2.new(0.5, -50, 0.5, -50)
+    shootFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    shootFrame.BackgroundTransparency = 0.05
+    shootFrame.BorderSizePixel = 2
+    shootFrame.BorderColor3 = Color3.fromRGB(50, 50, 50)
+    shootFrame.Active = true
+    shootFrame.Parent = shootSquare
+    
+    -- Матовый эффект
+    local squareCorner = Instance.new("UICorner")
+    squareCorner.CornerRadius = UDim.new(0, 8)
+    squareCorner.Parent = shootFrame
+    
+    local squareGradient = Instance.new("UIGradient")
+    squareGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 15)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 35, 35))
+    })
+    squareGradient.Rotation = 45
+    squareGradient.Parent = shootFrame
+    
+    -- Стекло (глянец)
+    local glass = Instance.new("Frame")
+    glass.Size = UDim2.new(1, 0, 0.4, 0)
+    glass.Position = UDim2.new(0, 0, 0, 0)
+    glass.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    glass.BackgroundTransparency = 0.03
+    glass.BorderSizePixel = 0
+    glass.Parent = shootFrame
+    local glassCorner = Instance.new("UICorner")
+    glassCorner.CornerRadius = UDim.new(0, 8)
+    glassCorner.Parent = glass
+    
+    -- ===== АНИМИРОВАННЫЙ ПРИЦЕЛ =====
+    -- Внешний круг (вращающийся)
+    local outerCircle = Instance.new("Frame")
+    outerCircle.Size = UDim2.new(0, 70, 0, 70)
+    outerCircle.Position = UDim2.new(0.5, -35, 0.5, -35)
+    outerCircle.BackgroundTransparency = 1
+    outerCircle.BorderSizePixel = 2
+    outerCircle.BorderColor3 = Color3.fromRGB(200, 50, 50)
+    outerCircle.Parent = shootFrame
+    local outerCircleCorner = Instance.new("UICorner")
+    outerCircleCorner.CornerRadius = UDim.new(1, 0)
+    outerCircleCorner.Parent = outerCircle
+    
+    -- Внутренний круг (пульсирующий)
+    local innerCircle = Instance.new("Frame")
+    innerCircle.Size = UDim2.new(0, 30, 0, 30)
+    innerCircle.Position = UDim2.new(0.5, -15, 0.5, -15)
+    innerCircle.BackgroundTransparency = 1
+    innerCircle.BorderSizePixel = 2
+    innerCircle.BorderColor3 = Color3.fromRGB(255, 100, 100)
+    innerCircle.Parent = shootFrame
+    local innerCircleCorner = Instance.new("UICorner")
+    innerCircleCorner.CornerRadius = UDim.new(1, 0)
+    innerCircleCorner.Parent = innerCircle
+    
+    -- Центральная точка
+    local centerDot = Instance.new("Frame")
+    centerDot.Size = UDim2.new(0, 6, 0, 6)
+    centerDot.Position = UDim2.new(0.5, -3, 0.5, -3)
+    centerDot.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    centerDot.BorderSizePixel = 0
+    centerDot.Parent = shootFrame
+    local centerDotCorner = Instance.new("UICorner")
+    centerDotCorner.CornerRadius = UDim.new(1, 0)
+    centerDotCorner.Parent = centerDot
+    
+    -- Перекрестие (горизонталь)
+    local crossH = Instance.new("Frame")
+    crossH.Size = UDim2.new(0, 30, 0, 2)
+    crossH.Position = UDim2.new(0.5, -15, 0.5, -1)
+    crossH.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    crossH.BorderSizePixel = 0
+    crossH.BackgroundTransparency = 0.5
+    crossH.Parent = shootFrame
+    
+    -- Перекрестие (вертикаль)
+    local crossV = Instance.new("Frame")
+    crossV.Size = UDim2.new(0, 2, 0, 30)
+    crossV.Position = UDim2.new(0.5, -1, 0.5, -15)
+    crossV.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    crossV.BorderSizePixel = 0
+    crossV.BackgroundTransparency = 0.5
+    crossV.Parent = shootFrame
+    
+    -- ===== ТЕКСТ "SHOOT" СНИЗУ =====
+    local shootText = Instance.new("TextLabel")
+    shootText.Size = UDim2.new(1, 0, 0, 20)
+    shootText.Position = UDim2.new(0, 0, 1, -22)
+    shootText.BackgroundTransparency = 1
+    shootText.Text = "SHOOT"
+    shootText.TextColor3 = Color3.fromRGB(255, 70, 70)
+    shootText.TextScaled = true
+    shootText.Font = Enum.Font.GothamBold
+    shootText.TextStrokeTransparency = 0.3
+    shootText.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    shootText.Parent = shootFrame
+    
+    -- ===== АНИМАЦИИ =====
+    local angle = 0
+    local pulse = 0
+    
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if not shootSquareEnabled then return end
+        
+        angle = angle + 0.02
+        outerCircle.Rotation = math.deg(angle)
+        
+        pulse = pulse + 0.03
+        local scale = 1 + math.sin(pulse) * 0.15
+        innerCircle.Size = UDim2.new(0, 30 * scale, 0, 30 * scale)
+        innerCircle.Position = UDim2.new(0.5, -15 * scale, 0.5, -15 * scale)
+        
+        local dotScale = 1 + math.sin(pulse + 0.5) * 0.3
+        centerDot.Size = UDim2.new(0, 6 * dotScale, 0, 6 * dotScale)
+        centerDot.Position = UDim2.new(0.5, -3 * dotScale, 0.5, -3 * dotScale)
+    end)
+    
+    -- ===== DRAGGABLE (ПЕРЕТАСКИВАНИЕ) =====
+    shootFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            isDragging = true
+            dragStart = input.Position
+            frameStart = shootFrame.Position
+        end
+    end)
+    
+    shootFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if isDragging and dragStart and frameStart then
+                local delta = input.Position - dragStart
+                shootFrame.Position = UDim2.new(
+                    frameStart.X.Scale, frameStart.X.Offset + delta.X,
+                    frameStart.Y.Scale, frameStart.Y.Offset + delta.Y
+                )
+            end
+        end
+    end)
+    
+    shootFrame.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            isDragging = false
+            dragStart = nil
+            frameStart = nil
+        end
+    end)
+    
+    -- ===== КЛИК ПО КВАДРАТУ =====
+    shootFrame.MouseButton1Click:Connect(function()
+        shootMurderer()
+    end)
+end
+
+local function removeShootSquare()
+    if shootSquare then
+        shootSquare:Destroy()
+        shootSquare = nil
+        shootFrame = nil
+    end
+end
+
+-- ============================================================
+--  SHOOT MURDERER FUNCTION
 -- ============================================================
 local function shootMurderer()
     local murderer = findMurderer()
@@ -642,7 +812,6 @@ local function shootMurderer()
     local targetPos = targetRoot.Position
     print("🎯 Цель: " .. murderer.Name .. " | Позиция: " .. tostring(targetPos))
     
-    -- Пытаемся найти оружие (пистолет)
     local gun = player.Character:FindFirstChild("Gun") or 
                 player.Character:FindFirstChild("Pistol") or
                 player.Character:FindFirstChild("Revolver") or
@@ -655,19 +824,16 @@ local function shootMurderer()
         return
     end
     
-    -- Активируем оружие
     if gun.Parent ~= player.Character then
         gun.Parent = player.Character
     end
     
-    -- Пытаемся вызвать выстрел через RemoteEvent (MM2)
     local remote = game:GetService("ReplicatedStorage"):FindFirstChild("GunEvent") or
                    game:GetService("ReplicatedStorage"):FindFirstChild("ShootEvent") or
                    game:GetService("ReplicatedStorage"):FindFirstChild("FireGun") or
                    game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvent")
     
     if remote then
-        -- Отправляем выстрел с позицией убийцы
         local args = {
             Origin = targetPos + Vector3.new(0, 1, 0),
             Target = targetPos,
@@ -676,7 +842,6 @@ local function shootMurderer()
         remote:FireServer(unpack(args))
         print("✅ Выстрел отправлен через RemoteEvent!")
     else
-        -- Альтернативный способ: эмулируем клик
         local tool = gun
         if tool and tool:FindFirstChild("Activate") then
             tool.Activate:Fire()
@@ -690,8 +855,20 @@ local function shootMurderer()
     end
 end
 
-shootBtn.MouseButton1Click:Connect(function()
-    shootMurderer()
+-- ============================================================
+--  TOGGLE SHOOT SQUARE
+-- ============================================================
+shootToggleBtn.MouseButton1Click:Connect(function()
+    shootSquareEnabled = not shootSquareEnabled
+    if shootSquareEnabled then
+        shootToggleBtn.Text = "Shoot Square: Вкл"
+        createShootSquare()
+        print("✅ Shoot Square включен")
+    else
+        shootToggleBtn.Text = "Shoot Square: Выкл"
+        removeShootSquare()
+        print("❌ Shoot Square выключен")
+    end
 end)
 
 -- ============================================================
@@ -805,4 +982,4 @@ print("✅ WERTIUM HUB загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("👁️ ESP - показывает игроков сквозь стены")
 print("🎯 Camlock - наводится на убийцу")
-print("🔫 SHOOT MURD - мгновенное убийство убийцы")
+print("🔲 Shoot Square - квадрат с анимированным прицелом")
