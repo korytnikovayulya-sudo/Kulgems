@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ОКРУГЛЁННЫЕ ВКЛАДКИ + АНИМАЦИЯ (БЕЗ ПОДСКАЗКИ)
+--  WERTIUM HUB - ESP СКВОЗЬ СТЕНЫ (ПОЛНАЯ ВЕРСИЯ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -250,7 +250,6 @@ tabContainer.BackgroundColor3 = Color3.fromRGB(100, 15, 15)
 tabContainer.BackgroundTransparency = 0.2
 tabContainer.Parent = frame
 
--- ОКРУГЛЕНИЕ ПАНЕЛИ ВКЛАДОК
 local tabContainerCorners = Instance.new("UICorner")
 tabContainerCorners.CornerRadius = UDim.new(0, 20)
 tabContainerCorners.Parent = tabContainer
@@ -262,7 +261,7 @@ contentContainer.BackgroundTransparency = 1
 contentContainer.Parent = frame
 
 -- ============================================================
---  ВКЛАДКИ С ОКРУГЛЕНИЕМ 20PX И АНИМАЦИЕЙ
+--  ВКЛАДКИ
 -- ============================================================
 local tabs = {}
 local currentTab = "VISUALS"
@@ -280,7 +279,6 @@ local function createTab(name, yPos)
     btn.Font = Enum.Font.SourceSansBold
     btn.Parent = tabContainer
     
-    -- ОКРУГЛЕНИЕ 20PX (КАК У ГЛАВНОГО ОКНА)
     local btnCorners = Instance.new("UICorner")
     btnCorners.CornerRadius = UDim.new(0, 20)
     btnCorners.Parent = btn
@@ -294,7 +292,7 @@ createTab("AIM", 55)
 createTab("MISC", 105)
 
 -- ============================================================
---  VISUALS (БЕЗ ПОДСКАЗКИ)
+--  VISUALS
 -- ============================================================
 local visualsContent = Instance.new("Frame")
 visualsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -313,7 +311,6 @@ visualsTitle.Font = Enum.Font.SourceSansBold
 visualsTitle.TextXAlignment = Enum.TextXAlignment.Left
 visualsTitle.Parent = visualsContent
 
--- КНОПКА ESP
 local espBtn = Instance.new("TextButton")
 espBtn.Size = UDim2.new(0, 200, 0, 45)
 espBtn.Position = UDim2.new(0, 0, 0.15, 0)
@@ -330,7 +327,7 @@ espCorners.CornerRadius = UDim.new(0, 10)
 espCorners.Parent = espBtn
 
 -- ============================================================
---  ESP ЛОГИКА
+--  ESP ЛОГИКА (С ALWAYSONTOP ДЛЯ ВИДИМОСТИ СКВОЗЬ СТЕНЫ)
 -- ============================================================
 local espEnabled = false
 local espBillboards = {}
@@ -389,6 +386,9 @@ local function createBillboard(p)
     bill.Size = UDim2.new(0, 200, 0, 40)
     bill.Adornee = head
     bill.StudsOffset = Vector3.new(0, 2.5, 0)
+    bill.AlwaysOnTop = true           -- 👈 ВИДНО СКВОЗЬ СТЕНЫ!
+    bill.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    bill.Active = true
     bill.Parent = gui
 
     local label = Instance.new("TextLabel")
@@ -644,3 +644,4 @@ end)
 print("✅ WERTIUM HUB загружен успешно!")
 print("🔑 F1 - открыть/закрыть")
 print("🔴 Кнопка W - открыть меню")
+print("👁️ ESP видно сквозь стены!")
