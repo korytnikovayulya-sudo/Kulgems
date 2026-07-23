@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FINAL)
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (УПРОЩЁННЫЙ)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -499,7 +499,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURDERER (С ПЕРЕБОРОМ АРГУМЕНТОВ)
+--  SHOOT MURDERER (УПРОЩЁННАЯ - ДОСТАЁТ ПИСТОЛЕТ И СТРЕЛЯЕТ)
 -- ============================================================
 local function shootMurderer()
     print("🔫 Выстрел по убийце!")
@@ -510,42 +510,44 @@ local function shootMurderer()
         print("❌ Убийца не найден!")
         return
     end
-    local targetRoot = murderer.Character:FindFirstChild("HumanoidRootPart")
-    if not targetRoot then
-        print("❌ HumanoidRootPart отсутствует")
+    local targetHead = murderer.Character:FindFirstChild("Head")
+    if not targetHead then
+        print("❌ Голова убийцы не найдена!")
         return
     end
-    local targetPos = targetRoot.Position
-    print("📍 Позиция убийцы: " .. tostring(targetPos))
+    local targetPos = targetHead.Position
+    print("📍 Позиция головы убийцы: " .. tostring(targetPos))
 
-    -- 2. Найти пистолет
+    -- 2. Найти пистолет (везде: руки, рюкзак, персонаж)
     local gun = player.Character:FindFirstChild("Gun") or
                 player.Character:FindFirstChild("Pistol") or
                 player.Character:FindFirstChild("Revolver") or
                 player.Backpack:FindFirstChild("Gun") or
                 player.Backpack:FindFirstChild("Pistol") or
                 player.Backpack:FindFirstChild("Revolver")
+    
     if not gun then
-        print("❌ Пистолет не найден!")
+        print("❌ Пистолет не найден! Ты не шериф?")
         return
     end
     print("🔫 Найден пистолет: " .. gun.Name)
 
-    -- 3. Экипировать пистолет (сначала экипируем!)
+    -- 3. Достаём пистолет (если в рюкзаке - перемещаем в руки)
     if gun.Parent ~= player.Character then
         gun.Parent = player.Character
         wait(0.1)
     end
+    
+    -- 4. Активируем пистолет (надеваем в руки)
     local hum = player.Character:FindFirstChild("Humanoid")
     if hum then
         hum:EquipTool(gun)
         print("🔄 Пистолет активирован")
     end
+    
+    wait(0.15) -- даём время на активацию
 
-    -- Даём время на активацию
-    wait(0.2)
-
-    -- 4. Найти RemoteEvent "Shoot"
+    -- 5. Находим RemoteEvent "Shoot"
     local shootRemote = nil
     for _, child in pairs(gun:GetChildren()) do
         if child:IsA("RemoteEvent") and child.Name == "Shoot" then
@@ -559,59 +561,26 @@ local function shootMurderer()
         return
     end
 
-    print("🔍 Найден RemoteEvent: Shoot (в " .. gun.Name .. ")")
+    print("🔍 Найден RemoteEvent: Shoot (отправляем выстрел)")
 
-    -- 5. Перебор аргументов
-    local success = false
-    local results = {}
+    -- 6. Отправляем выстрел (позиция головы убийцы)
+    local ok, err = pcall(function()
+        shootRemote:FireServer(targetPos)
+    end)
 
-    local argsList = {
-        -- Вариант 1: позиция цели (было)
-        {targetPos},
-        -- Вариант 2: позиция цели + позиция камеры
-        {targetPos, workspace.CurrentCamera.CFrame.Position},
-        -- Вариант 3: позиция цели + направление
-        {targetPos, (targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
-        -- Вариант 4: позиция цели + CFrame камеры
-        {targetPos, workspace.CurrentCamera.CFrame},
-        -- Вариант 5: позиция цели + позиция игрока
-        {targetPos, player.Character.HumanoidRootPart.Position},
-        -- Вариант 6: CFrame камеры + позиция цели
-        {workspace.CurrentCamera.CFrame, targetPos},
-        -- Вариант 7: направление + позиция цели
-        {(targetPos - workspace.CurrentCamera.CFrame.Position).Unit, targetPos},
-        -- Вариант 8: позиция цели с высотой + направление
-        {targetPos + Vector3.new(0, 1.5, 0), (targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
-        -- Вариант 9: только направление
-        {(targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
-        -- Вариант 10: без аргументов
-        {},
-    }
-
-    print("🔍 Пробую " .. #argsList .. " вариантов аргументов...")
-
-    for i, args in ipairs(argsList) do
-        local ok, err = pcall(function()
-            shootRemote:FireServer(unpack(args))
-        end)
-        if ok then
-            print("   ✅ Аргументы #" .. i .. " сработали! (без ошибок)")
-            results[i] = "✅ СРАБОТАЛО"
-            success = true
-            break
-        else
-            print("   ❌ Аргументы #" .. i .. " не сработали: " .. tostring(err))
-            results[i] = "❌ Ошибка: " .. tostring(err)
-        end
-    end
-
-    if success then
-        print("✅ ВЫСТРЕЛ УСПЕШНО ОТПРАВЛЕН! (проверь игру)")
+    if ok then
+        print("✅ ВЫСТРЕЛ ОТПРАВЛЕН!")
     else
-        print("❌ НИ ОДИН ВАРИАНТ НЕ СРАБОТАЛ!")
-        print("📋 Результаты:")
-        for i, result in ipairs(results) do
-            print("   #" .. i .. ": " .. result)
+        print("❌ Ошибка выстрела: " .. tostring(err))
+        -- Пробуем с направлением
+        local dir = (targetPos - workspace.CurrentCamera.CFrame.Position).Unit
+        local ok2, err2 = pcall(function()
+            shootRemote:FireServer(targetPos, dir)
+        end)
+        if ok2 then
+            print("✅ ВЫСТРЕЛ ОТПРАВЛЕН (с направлением)!")
+        else
+            print("❌ Ошибка: " .. tostring(err2))
         end
     end
 end
