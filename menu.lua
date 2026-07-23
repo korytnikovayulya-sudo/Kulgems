@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FINAL FIX)
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FINAL)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -477,7 +477,6 @@ camlockBtn.MouseButton1Click:Connect(function()
     print(camlockEnabled and "✅ Camlock включен" or "❌ Camlock выключен")
 end)
 
--- ФУНКЦИЯ ПОИСКА УБИЙЦЫ
 local function findMurderer()
     for _, p in pairs(game.Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -487,7 +486,6 @@ local function findMurderer()
     return nil
 end
 
--- Camlock обновление
 game:GetService("RunService").RenderStepped:Connect(function()
     if not camlockEnabled then return end
     local target = findMurderer()
@@ -501,11 +499,12 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  SHOOT MURDERER (ИСПРАВЛЕННАЯ ВЕРСИЯ)
+--  SHOOT MURDERER (С ПЕРЕБОРОМ АРГУМЕНТОВ)
 -- ============================================================
 local function shootMurderer()
     print("🔫 Выстрел по убийце!")
 
+    -- 1. Найти убийцу
     local murderer = findMurderer()
     if not murderer then
         print("❌ Убийца не найден!")
@@ -519,6 +518,7 @@ local function shootMurderer()
     local targetPos = targetRoot.Position
     print("📍 Позиция убийцы: " .. tostring(targetPos))
 
+    -- 2. Найти пистолет
     local gun = player.Character:FindFirstChild("Gun") or
                 player.Character:FindFirstChild("Pistol") or
                 player.Character:FindFirstChild("Revolver") or
@@ -531,6 +531,7 @@ local function shootMurderer()
     end
     print("🔫 Найден пистолет: " .. gun.Name)
 
+    -- 3. Экипировать пистолет (сначала экипируем!)
     if gun.Parent ~= player.Character then
         gun.Parent = player.Character
         wait(0.1)
@@ -541,88 +542,82 @@ local function shootMurderer()
         print("🔄 Пистолет активирован")
     end
 
-    -- Ищем правильный RemoteEvent для выстрела
-    local success = false
-    
-    -- 1. Проверяем RemoteEvent внутри пистолета
+    -- Даём время на активацию
+    wait(0.2)
+
+    -- 4. Найти RemoteEvent "Shoot"
+    local shootRemote = nil
     for _, child in pairs(gun:GetChildren()) do
-        if child:IsA("RemoteEvent") and type(child.FireServer) == "function" then
-            print("🔍 Найден RemoteEvent в пистолете: " .. child.Name)
-            -- Пробуем с позицией
-            local ok, err = pcall(function()
-                child:FireServer(targetPos)
-            end)
-            if ok then
-                print("✅ Выстрел через " .. child.Name .. " (с позицией)")
-                success = true
-                break
-            else
-                -- Пробуем без аргументов
-                local ok2, err2 = pcall(function()
-                    child:FireServer()
-                end)
-                if ok2 then
-                    print("✅ Выстрел через " .. child.Name .. " (без аргументов)")
-                    success = true
-                    break
-                end
-            end
+        if child:IsA("RemoteEvent") and child.Name == "Shoot" then
+            shootRemote = child
+            break
         end
     end
 
-    -- 2. Если не сработало – пробуем Tool.Activated
-    if not success then
-        local activated = gun:FindFirstChild("Activated")
-        if activated and type(activated.Fire) == "function" then
-            local ok, err = pcall(function()
-                activated:Fire()
-            end)
-            if ok then
-                print("✅ Выстрел через Activated!")
-                success = true
-            end
-        end
+    if not shootRemote then
+        print("❌ RemoteEvent 'Shoot' не найден!")
+        return
     end
 
-    -- 3. Если не сработало – пробуем Activate
-    if not success then
-        local activate = gun:FindFirstChild("Activate")
-        if activate and activate:IsA("BindableEvent") and type(activate.Fire) == "function" then
-            local ok, err = pcall(function()
-                activate:Fire()
-            end)
-            if ok then
-                print("✅ Выстрел через Activate!")
-                success = true
-            end
-        end
-    end
+    print("🔍 Найден RemoteEvent: Shoot (в " .. gun.Name .. ")")
 
-    -- 4. Если ничего не помогло – выводим список всех RemoteEvent
-    if not success then
-        print("⚠️ RemoteEvent в пистолете не найден или не сработал.")
-        print("🔍 Список всех RemoteEvent в игре:")
-        for _, child in pairs(game:GetService("ReplicatedStorage"):GetChildren()) do
-            if child:IsA("RemoteEvent") then
-                print("   - " .. child.Name .. " (ReplicatedStorage)")
-            end
-        end
-        for _, child in pairs(gun:GetChildren()) do
-            if child:IsA("RemoteEvent") then
-                print("   - " .. child.Name .. " (в пистолете)")
-            end
+    -- 5. Перебор аргументов
+    local success = false
+    local results = {}
+
+    local argsList = {
+        -- Вариант 1: позиция цели (было)
+        {targetPos},
+        -- Вариант 2: позиция цели + позиция камеры
+        {targetPos, workspace.CurrentCamera.CFrame.Position},
+        -- Вариант 3: позиция цели + направление
+        {targetPos, (targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
+        -- Вариант 4: позиция цели + CFrame камеры
+        {targetPos, workspace.CurrentCamera.CFrame},
+        -- Вариант 5: позиция цели + позиция игрока
+        {targetPos, player.Character.HumanoidRootPart.Position},
+        -- Вариант 6: CFrame камеры + позиция цели
+        {workspace.CurrentCamera.CFrame, targetPos},
+        -- Вариант 7: направление + позиция цели
+        {(targetPos - workspace.CurrentCamera.CFrame.Position).Unit, targetPos},
+        -- Вариант 8: позиция цели с высотой + направление
+        {targetPos + Vector3.new(0, 1.5, 0), (targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
+        -- Вариант 9: только направление
+        {(targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
+        -- Вариант 10: без аргументов
+        {},
+    }
+
+    print("🔍 Пробую " .. #argsList .. " вариантов аргументов...")
+
+    for i, args in ipairs(argsList) do
+        local ok, err = pcall(function()
+            shootRemote:FireServer(unpack(args))
+        end)
+        if ok then
+            print("   ✅ Аргументы #" .. i .. " сработали! (без ошибок)")
+            results[i] = "✅ СРАБОТАЛО"
+            success = true
+            break
+        else
+            print("   ❌ Аргументы #" .. i .. " не сработали: " .. tostring(err))
+            results[i] = "❌ Ошибка: " .. tostring(err)
         end
     end
 
     if success then
-        print("✅ Выстрел успешно отправлен!")
+        print("✅ ВЫСТРЕЛ УСПЕШНО ОТПРАВЛЕН! (проверь игру)")
     else
-        print("❌ Выстрел не удался!")
+        print("❌ НИ ОДИН ВАРИАНТ НЕ СРАБОТАЛ!")
+        print("📋 Результаты:")
+        for i, result in ipairs(results) do
+            print("   #" .. i .. ": " .. result)
+        end
     end
 end
 
 -- ============================================================
---  SHOOT SQUARE (СОЗДАНИЕ И УПРАВЛЕНИЕ)
+--  SHOOT SQUARE
 -- ============================================================
 local shootSquareEnabled = false
 local shootSquare = nil
@@ -666,7 +661,6 @@ local function createShootSquare()
     stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     stroke.Parent = shootFrame
 
-    -- Прицел (белый, вращающийся)
     local crosshair = Instance.new("Frame")
     crosshair.Size = UDim2.new(0, 70, 0, 70)
     crosshair.Position = UDim2.new(0.5, -35, 0.5, -40)
@@ -719,7 +713,6 @@ local function createShootSquare()
     shootText.TextXAlignment = Enum.TextXAlignment.Center
     shootText.Parent = shootFrame
 
-    -- Анимация вращения
     local angle = 0
     game:GetService("RunService").RenderStepped:Connect(function()
         if not shootSquareEnabled then return end
@@ -727,10 +720,8 @@ local function createShootSquare()
         crosshair.Rotation = math.deg(angle)
     end)
 
-    -- Обработка клика и перетаскивания
     local function onShoot()
         shootMurderer()
-        -- Вспышка
         local flash = Instance.new("Frame")
         flash.Size = UDim2.new(1, 0, 1, 0)
         flash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -790,7 +781,6 @@ local function removeShootSquare()
     end
 end
 
--- Toggle Shoot Square
 shootToggleBtn.MouseButton1Click:Connect(function()
     shootSquareEnabled = not shootSquareEnabled
     if shootSquareEnabled then
@@ -805,7 +795,7 @@ shootToggleBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================================
---  ГОРЯЧАЯ КЛАВИША ДЛЯ ВЫСТРЕЛА (R)
+--  ГОРЯЧАЯ КЛАВИША R
 -- ============================================================
 game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
