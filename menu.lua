@@ -1,5 +1,5 @@
 -- ============================================================
---  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FINAL WORKING)
+--  WERTIUM HUB - ESP + CAMLOCK + SHOOT SQUARE (FINAL FIX)
 -- ============================================================
 
 print("🚀 Загрузка Wertium Hub...")
@@ -501,12 +501,11 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ============================================================
---  НОВАЯ ФУНКЦИЯ ВЫСТРЕЛА (ТОЧНЫЙ ПОИСК)
+--  SHOOT MURDERER (ИСПРАВЛЕННАЯ ВЕРСИЯ)
 -- ============================================================
 local function shootMurderer()
     print("🔫 Выстрел по убийце!")
 
-    -- 1. Найти убийцу
     local murderer = findMurderer()
     if not murderer then
         print("❌ Убийца не найден!")
@@ -520,7 +519,6 @@ local function shootMurderer()
     local targetPos = targetRoot.Position
     print("📍 Позиция убийцы: " .. tostring(targetPos))
 
-    -- 2. Найти пистолет
     local gun = player.Character:FindFirstChild("Gun") or
                 player.Character:FindFirstChild("Pistol") or
                 player.Character:FindFirstChild("Revolver") or
@@ -533,7 +531,6 @@ local function shootMurderer()
     end
     print("🔫 Найден пистолет: " .. gun.Name)
 
-    -- 3. Экипировать
     if gun.Parent ~= player.Character then
         gun.Parent = player.Character
         wait(0.1)
@@ -544,102 +541,75 @@ local function shootMurderer()
         print("🔄 Пистолет активирован")
     end
 
-    -- 4. Ищем RemoteEvent ТОЛЬКО внутри пистолета
+    -- Ищем правильный RemoteEvent для выстрела
     local success = false
-    local toolRemote = nil
     
+    -- 1. Проверяем RemoteEvent внутри пистолета
     for _, child in pairs(gun:GetChildren()) do
         if child:IsA("RemoteEvent") and type(child.FireServer) == "function" then
-            toolRemote = child
-            break
-        end
-    end
-
-    if toolRemote then
-        print("🔍 Найден RemoteEvent в пистолете: " .. toolRemote.Name)
-        local argSets = {
-            {targetPos},
-            {targetPos, targetPos + Vector3.new(0, 1, 0)},
-            {targetPos, (targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
-            {}
-        }
-        for i, args in ipairs(argSets) do
+            print("🔍 Найден RemoteEvent в пистолете: " .. child.Name)
+            -- Пробуем с позицией
             local ok, err = pcall(function()
-                toolRemote:FireServer(unpack(args))
+                child:FireServer(targetPos)
             end)
             if ok then
-                print("   ✅ Выстрел через " .. toolRemote.Name .. " (аргументы #" .. i .. ")")
+                print("✅ Выстрел через " .. child.Name .. " (с позицией)")
                 success = true
                 break
             else
-                print("   ❌ " .. toolRemote.Name .. " с аргументами #" .. i .. " не сработал: " .. tostring(err))
+                -- Пробуем без аргументов
+                local ok2, err2 = pcall(function()
+                    child:FireServer()
+                end)
+                if ok2 then
+                    print("✅ Выстрел через " .. child.Name .. " (без аргументов)")
+                    success = true
+                    break
+                end
             end
         end
-    else
-        print("⚠️ RemoteEvent внутри пистолета не найден")
     end
 
-    -- 5. Пробуем Tool.Activated
+    -- 2. Если не сработало – пробуем Tool.Activated
     if not success then
-        print("🔍 Пробуем Tool.Activated")
         local activated = gun:FindFirstChild("Activated")
         if activated and type(activated.Fire) == "function" then
             local ok, err = pcall(function()
                 activated:Fire()
             end)
             if ok then
-                print("   ✅ Выстрел через Activated!")
+                print("✅ Выстрел через Activated!")
                 success = true
-            else
-                print("   ❌ Activated не сработал: " .. tostring(err))
             end
-        else
-            print("⚠️ Activated не найден")
         end
     end
 
-    -- 6. Пробуем Activate
+    -- 3. Если не сработало – пробуем Activate
     if not success then
-        print("🔍 Пробуем Activate")
         local activate = gun:FindFirstChild("Activate")
         if activate and activate:IsA("BindableEvent") and type(activate.Fire) == "function" then
             local ok, err = pcall(function()
                 activate:Fire()
             end)
             if ok then
-                print("   ✅ Выстрел через Activate!")
+                print("✅ Выстрел через Activate!")
                 success = true
-            else
-                print("   ❌ Activate не сработал: " .. tostring(err))
             end
-        else
-            print("⚠️ Activate не найден")
         end
     end
 
-    -- 7. Ищем другие RemoteEvent в ReplicatedStorage (кроме UpdateData)
+    -- 4. Если ничего не помогло – выводим список всех RemoteEvent
     if not success then
-        print("🔍 Ищем другие RemoteEvent в ReplicatedStorage (кроме UpdateData)")
+        print("⚠️ RemoteEvent в пистолете не найден или не сработал.")
+        print("🔍 Список всех RemoteEvent в игре:")
         for _, child in pairs(game:GetService("ReplicatedStorage"):GetChildren()) do
-            if child:IsA("RemoteEvent") and child.Name ~= "UpdateData" and type(child.FireServer) == "function" then
-                print("🔍 Пробуем " .. child.Name)
-                local argSets = {
-                    {targetPos},
-                    {targetPos, targetPos + Vector3.new(0, 1, 0)},
-                    {targetPos, (targetPos - workspace.CurrentCamera.CFrame.Position).Unit},
-                    {}
-                }
-                for i, args in ipairs(argSets) do
-                    local ok, err = pcall(function()
-                        child:FireServer(unpack(args))
-                    end)
-                    if ok then
-                        print("   ✅ Выстрел через " .. child.Name .. " (аргументы #" .. i .. ")")
-                        success = true
-                        break
-                    end
-                end
-                if success then break end
+            if child:IsA("RemoteEvent") then
+                print("   - " .. child.Name .. " (ReplicatedStorage)")
+            end
+        end
+        for _, child in pairs(gun:GetChildren()) do
+            if child:IsA("RemoteEvent") then
+                print("   - " .. child.Name .. " (в пистолете)")
             end
         end
     end
@@ -647,7 +617,7 @@ local function shootMurderer()
     if success then
         print("✅ Выстрел успешно отправлен!")
     else
-        print("❌ НИ ОДИН СПОСОБ НЕ СРАБОТАЛ. Проверьте консоль выше.")
+        print("❌ Выстрел не удался!")
     end
 end
 
